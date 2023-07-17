@@ -201,59 +201,56 @@ const Content: React.FC = () => {
         {products.map((product) => (
           <ListItem
             key={product.id}
-            className=" flex items-center justify-between bg-gray-400 rounded-md p-4 mb-4"
+            className="flex flex-col sm:flex-row items-center justify-between bg-gray-400 rounded-md p-4 mb-4"
           >
-            <Grid container alignItems="center">
-              <Grid item xs={12} sm={3}>
-                <TextField
-                  type="text"
-                  label="ID"
-                  value={product.id}
-                  onChange={(e) => handleProductChange(product.id, 'id', e.target.value)}
-                  variant="outlined"
-                  disabled={editingProductId !== null && editingProductId !== product.id}
-                />
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <TextField
-                  type="text"
-                  label="Nome"
-                  value={product.name}
-                  onChange={(e) => handleProductChange(product.id, 'name', e.target.value)}
-                  variant="outlined"
-                  disabled={editingProductId !== null && editingProductId !== product.id}
-                />
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <TextField
-                  type="number"
-                  label="Quantidade"
-                  value={product.quantity}
-                  onChange={(e) =>
-                    handleProductChange(product.id, 'quantity', parseInt(e.target.value) || 0)
-                  }
-                  variant="outlined"
-                  disabled={editingProductId !== null && editingProductId !== product.id}
-                  inputProps={{ min: 0 }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <TextField
-                  type="number"
-                  label="Valor"
-                  value={product.value}
-                  onChange={(e) =>
-                    handleProductChange(product.id, 'value', parseFloat(e.target.value) || 0)
-                  }
-                  variant="outlined"
-                  disabled={editingProductId !== null && editingProductId !== product.id}
-                  inputProps={{ min: 0, step: 0.01 }}
-                />
-              </Grid>
-            </Grid>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row w-full">
+              <TextField
+                className="mb-2 sm:mr-2"
+                type="text"
+                label="ID"
+                value={product.id}
+                onChange={(e) => handleProductChange(product.id, 'id', e.target.value)}
+                variant="outlined"
+                disabled={editingProductId !== null && editingProductId !== product.id}
+              />
+              <TextField
+                className="mb-2 sm:mr-2"
+                type="text"
+                label="Nome"
+                value={product.name}
+                onChange={(e) => handleProductChange(product.id, 'name', e.target.value)}
+                variant="outlined"
+                disabled={editingProductId !== null && editingProductId !== product.id}
+              />
+              <TextField
+                className="mb-2 sm:mr-2"
+                type="number"
+                label="Quantidade"
+                value={product.quantity}
+                onChange={(e) =>
+                  handleProductChange(product.id, 'quantity', parseInt(e.target.value) || 0)
+                }
+                variant="outlined"
+                disabled={editingProductId !== null && editingProductId !== product.id}
+                inputProps={{ min: 0 }}
+              />
+              <TextField
+                className="mb-2 sm:mr-2"
+                type="number"
+                label="Valor"
+                value={product.value}
+                onChange={(e) =>
+                  handleProductChange(product.id, 'value', parseFloat(e.target.value) || 0)
+                }
+                variant="outlined"
+                disabled={editingProductId !== null && editingProductId !== product.id}
+                inputProps={{ min: 0, step: 0.01 }}
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2">
               {editingProductId !== product.id ? (
                 <Button
+                  className="mb-2 sm:mb-0"
                   onClick={() => setEditingProductId(product.id)}
                   variant="contained"
                   color="primary"
@@ -262,6 +259,7 @@ const Content: React.FC = () => {
                 </Button>
               ) : (
                 <Button
+                  className="mb-2 sm:mb-0"
                   onClick={() => {
                     setEditingProductId(null);
                     salvarProduto(product.id);
