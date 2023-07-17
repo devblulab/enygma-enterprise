@@ -1,0 +1,61 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .header-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .user-icon {
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  
+  .content-text {
+    font-size: 16px;
+  }
+  
+  .card {
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .card-media {
+    height: 150px;
+  }
+  
+  .comments-section {
+    margin-top: 20px;
+  }
+  
+  .comment-input {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .comment-input textarea {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  .comment-list {
+    margin-top: 10px;
+  }
+  
+  .comment-list p {
+    margin-bottom: 5px;
+  }
+  
+  .like-share-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  

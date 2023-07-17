@@ -1,0 +1,17 @@
+.header-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .user-icon {
+    margin-right: 5px;
+    font-size: 24px;
+  }
+  
+  .content-text {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+  }
+  
