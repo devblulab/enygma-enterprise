@@ -40,7 +40,7 @@ export default function MenuUsuario() {
         <Link href="/post">
           <Menu.Item icon={<IconUser size={14} />}>Feed</Menu.Item>
         </Link>
-        <Link href="/inventorio">
+        <Link href="/inventario">
           <Menu.Item icon={<IconUser size={14} />}>Produto</Menu.Item>
         </Link>
         <Link href="/list">
