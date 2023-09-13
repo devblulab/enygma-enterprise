@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Button, Card, CardContent, useMediaQuery, Typography, Grid } from '@material-ui/core';
+import { Button, Card, Paper , CardContent, useMediaQuery, Typography, Grid } from '@material-ui/core';
 import { makeStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import Rodape from '../../components/inventario/Footer';
 import {  Fa500Px ,FaCity ,FaMotorcycle ,FaCar ,FaHamburger  ,FaArchive , FaStore } from 'react-icons/fa';
@@ -28,6 +28,7 @@ const theme = createTheme();
       flexDirection: 'column',
       justifyContent: 'center',
       marginBottom: theme.spacing(2), // Adicione espaço inferior
+    
     },
   
   button: {
@@ -40,14 +41,26 @@ const theme = createTheme();
   },
   container: {
     
+    
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    
-    padding: '0 6em', // Espaço de 2rem (32px) nos lados
-    
+    display: 'flex',
+    padding: '0 9em', // Espaço de 2rem (32px) nos lados
    
   },
+
+  paper: {
+    display: 'flex',
+    flexDirection: 'column',
+    background: 'linear-gradient(45deg, #000 30%, #002340 90%)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '2rem',
+    marginBottom: theme.spacing(2),
+  },
+
+ 
 
   iconWrapper: {
     display: 'flex',
@@ -76,6 +89,7 @@ const Enterprises: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
+    
     <motion.div
       className={classes.container}
       initial="initial"
@@ -87,7 +101,8 @@ const Enterprises: React.FC = () => {
         <FaCity size={50} className={classes.icon} /> 
       </div>
     
-     <Grid container spacing={2}>
+       <Paper className={classes.paper}>
+     <Grid container spacing={3}>
      <Grid item xs={12} sm={6} md={4}>
   <motion.div
     className={classes.card}
@@ -267,8 +282,13 @@ const Enterprises: React.FC = () => {
         
       
       </Grid>
+    
+      </Paper>
       <Rodape />
+      
     </motion.div>
+   
+   
     
   );
 };
