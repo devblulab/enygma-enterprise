@@ -42,11 +42,8 @@ export default function MenuUsuario() {
           <Menu.Item icon={<IconUser size={14} />}>Feed</Menu.Item>
         </Link>
         <Menu.Label>ControlePrises</Menu.Label>
-        <Link href="/inventario">
-          <Menu.Item icon={<IconUser size={14} />}>Produto</Menu.Item>
-        </Link>
         <Link href="/list">
-          <Menu.Item icon={<IconUser size={14} />}>Lista</Menu.Item>
+          <Menu.Item icon={<IconUser size={14} />}>Lista Compras</Menu.Item>
         </Link>
         <Link href="/avisos">
           <Menu.Item icon={<IconUser size={14} />}>Avisos</Menu.Item>
