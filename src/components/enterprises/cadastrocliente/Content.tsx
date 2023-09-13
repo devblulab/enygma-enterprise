@@ -2,21 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button, Typography, Grid, Paper, ListItem, List } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { collection, getFirestore, onSnapshot, deleteDoc, doc, updateDoc, getDocs, where, query } from 'firebase/firestore';
-import { app } from '../../logic/firebase/config/app';
-import Colecao from '../../logic/firebase/db/Colecao';
-import Autenticacao from '../../logic/firebase/auth/Autenticacao';
+import { app } from '@/logic/firebase/config/app';
+import Colecao from '@/logic/firebase/db/Colecao';
+import Autenticacao from '@/logic/firebase/auth/Autenticacao';
 import Header from './Header';
-import ValorTotal from './ValorTotal';
+
 
 const db = getFirestore(app);
-const ProductsCollectionRef = collection(db, 'inventory');
+const ProductsCollectionRef = collection(db, 'cadastrocliente');
 
 interface Product {
-  id: string;
   name: string;
-  quantity: number;
-  value: number;
+  cpf: string;
+  celular: string;
+  idade: string;
   userId: string;
+  id: string,
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -45,17 +46,19 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#FF0000',
     color: 'black',
   },
-}));
+})); 
 
 const Content: React.FC = () => {
   const classes = useStyles();
   const [products, setProducts] = useState<Product[]>([]);
   const [newProduct, setNewProduct] = useState<Product>({
-    id: '',
+    id:'',
     name: '',
-    quantity: 0,
-    value: 0,
+    cpf: '',
+    celular: '',
+    idade: '',
     userId: '',
+    
   });
   const colecao = new Colecao();
   const autenticacao = new Autenticacao();
@@ -81,9 +84,11 @@ const Content: React.FC = () => {
           fetchedProducts.push({
             id: doc.id,
             name: doc.data().name,
-            quantity: doc.data().quantity,
-            value: doc.data().value,
+            cpf: doc.data().cpf,
+            celular: doc.data().celular,
+            idade: doc.data().idade,
             userId: doc.data().userId,
+            
           });
         });
 
@@ -96,69 +101,69 @@ const Content: React.FC = () => {
     }
   }, [user]);
 
-  const adicionarProduto = async () => {
+  const adicionarCliente = async () => {
     try {
       if (user) {
-        const produtoSalvo = await colecao.salvar('inventory', { ...newProduct, userId: user.id });
-        setProducts([...products, produtoSalvo]);
-        setNewProduct({ id: '', name: '', quantity: 0, value: 0, userId: '' });
+        const ClienteSalvo = await colecao.salvar('cadastrocliente', { ...newProduct, userId: user.id });
+        setProducts([...products, ClienteSalvo]);
+        setNewProduct({id: '' , name: '', cpf: '', celular: '', idade: '', userId: ''  });
       }
-    } catch (error) {
-      console.error('Erro ao adicionar o produto:', error);
+    } catch (error) { 
+      console.error('Erro ao adicionar o Cliente:', error);
     }
   };
 
-  const removerProduto = async (productId: string) => {
+  const removerCliente = async (productId: string) => {
     try {
       if (user) {
-        await colecao.excluir('inventory', productId);
+        await colecao.excluir('cadastrocliente', productId);
         const updatedProducts = products.filter((product) => product.id !== productId);
         setProducts(updatedProducts);
       }
     } catch (error) {
-      console.error('Erro ao remover o produto:', error);
+      console.error('Erro ao remover o Cliente:', error);
     }
   };
 
-  const editarQuantidade = async (productId: string, newQuantity: number) => {
+  const editarQuantidade = async (productId: string, newQuantity: string) => {
     try {
       if (user) {
-        await colecao.atualizar('inventory', productId, { quantity: newQuantity });
+        await colecao.atualizar('cadastrocliente', productId, { celular: newQuantity });
         const updatedProducts = products.map((product) => {
           if (product.id === productId) {
-            return { ...product, quantity: newQuantity };
+            return { ...product, celular: newQuantity };
           }
           return product;
         });
         setProducts(updatedProducts);
       }
     } catch (error) {
-      console.error('Erro ao editar a quantidade do produto:', error);
+      console.error('Erro ao editar a quantidade do Cliente:', error);
     }
   };
 
-  const editarValor = async (productId: string, newValue: number) => {
+  const editarValor = async (productId: string, newValue: string) => {
     try {
       if (user) {
-        await colecao.atualizar('inventory', productId, { value: newValue });
+        await colecao.atualizar('cadastrocliente', productId, { idade: newValue });
         const updatedProducts = products.map((product) => {
-          if (product.id === productId) {
-            return { ...product, value: newValue };
+          if (product.id=== productId) {
+            return { ...product, idade: newValue };
           }
           return product;
         });
         setProducts(updatedProducts);
       }
     } catch (error) {
-      console.error('Erro ao editar o valor do produto:', error);
+      console.error('Erro ao editar o valor do Cliente:', error);
     }
   };
 
-  const salvarProduto = async (productId: string) => {
+  const salvarCliente = async (productId: string) => {
     try {
       const productToSave = products.find((product) => product.id === productId);
       if (productToSave) {
-        await colecao.salvar('inventory', productToSave, productId);
+        await colecao.salvar('cadastrocliente', productToSave, productId);
         const updatedProducts = products.map((product) => {
           if (product.id === productId) {
             return productToSave;
@@ -168,34 +173,28 @@ const Content: React.FC = () => {
         setProducts(updatedProducts);
       }
     } catch (error) {
-      console.error('Erro ao salvar o produto:', error);
+      console.error('Erro ao salvar o Cliente:', error);
     }
   };
 
-  const handleProductChange = (productId: string, field: keyof Product, value: any) => {
+  const handleProductChange = (productId: string, field: keyof Product, idade: any) => {
     const updatedProducts = products.map((product) => {
       if (product.id === productId) {
-        return { ...product, [field]: value };
+        return { ...product, [field]: idade };
       }
       return product;
     });
     setProducts(updatedProducts);
   };
 
-  const calcularValorTotalEstoque = () => {
-    let totalValue = 0;
-    products.forEach((product) => {
-      totalValue += product.quantity * product.value;
-    });
-    return totalValue.toFixed(2);
-  };
+ 
 
   return (
     <div className="justify-center container mx-auto p-4">
       <Header
         newProduct={newProduct}
         onProductChange={setNewProduct}
-        onAddProduct={adicionarProduto}
+        onAddProduct={adicionarCliente}
       />
       <List>
         {products.map((product) => (
@@ -207,15 +206,6 @@ const Content: React.FC = () => {
               <TextField
                 className="mb-2 sm:mr-2"
                 type="text"
-                label="ID"
-                value={product.id}
-                onChange={(e) => handleProductChange(product.id, 'id', e.target.value)}
-                variant="outlined"
-                disabled={editingProductId !== null && editingProductId !== product.id}
-              />
-              <TextField
-                className="mb-2 sm:mr-2"
-                type="text"
                 label="Nome"
                 value={product.name}
                 onChange={(e) => handleProductChange(product.id, 'name', e.target.value)}
@@ -224,11 +214,20 @@ const Content: React.FC = () => {
               />
               <TextField
                 className="mb-2 sm:mr-2"
+                type="text"
+                label="CPF"
+                value={product.cpf}
+                onChange={(e) => handleProductChange(product.id, 'cpf', e.target.value)}
+                variant="outlined"
+                disabled={editingProductId !== null && editingProductId !== product.id}
+              />
+              <TextField
+                className="mb-2 sm:mr-2"
                 type="number"
-                label="Quantidade"
-                value={product.quantity}
+                label="CELULAR"
+                value={product.celular}
                 onChange={(e) =>
-                  handleProductChange(product.id, 'quantity', parseInt(e.target.value) )
+                  handleProductChange(product.id, 'celular', parseInt(e.target.value) )
                 }
                 variant="outlined"
                 disabled={editingProductId !== null && editingProductId !== product.id}
@@ -237,15 +236,28 @@ const Content: React.FC = () => {
               <TextField
                 className="mb-2 sm:mr-2"
                 type="number"
-                label="Valor"
-                value={product.value}
+                label="IDADE"
+                value={product.idade}
                 onChange={(e) =>
-                  handleProductChange(product.id, 'value', parseFloat(e.target.value) )
+                  handleProductChange(product.id, 'idade', parseFloat(e.target.value) )
                 }
                 variant="outlined"
                 disabled={editingProductId !== null && editingProductId !== product.id}
                 inputProps={{ min: 0, step: 0.01 }}
               />
+              <TextField
+                className="mb-2 sm:mr-2"
+                type="number"
+                label="ID"
+                value={product.id}
+                onChange={(e) =>
+                  handleProductChange(product.id, 'id', parseFloat(e.target.value) )
+                }
+                variant="outlined"
+                disabled={editingProductId !== null && editingProductId !== product.id}
+                inputProps={{ min: 0, step: 0.01 }}
+              />
+              
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
               {editingProductId !== product.id ? (
@@ -262,7 +274,7 @@ const Content: React.FC = () => {
                   className="mb-2 sm:mb-0"
                   onClick={() => {
                     setEditingProductId(null);
-                    salvarProduto(product.id);
+                    salvarCliente(product.id);
                   }}
                   variant="contained"
                   color="primary"
@@ -271,7 +283,7 @@ const Content: React.FC = () => {
                 </Button>
               )}
               <Button
-                onClick={() => removerProduto(product.id)}
+                onClick={() => removerCliente(product.id)}
                 variant="contained"
                 color="secondary"
               >
@@ -281,7 +293,7 @@ const Content: React.FC = () => {
           </ListItem>
         ))}
       </List>
-      <ValorTotal valorTotal={calcularValorTotalEstoque()} />
+     
     </div>
   );
 };

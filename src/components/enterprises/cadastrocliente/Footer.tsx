@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
   return (
     <footer className={classes.footer}>
       <Typography variant="body2" color="textSecondary">
-        © {new Date().getFullYear()} Enygma Dev. Todos os direitos reservados.
+        © {new Date().getFullYear()} Meu Site. Todos os direitos reservados.
       </Typography>
     </footer>
   );

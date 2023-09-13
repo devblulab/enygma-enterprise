@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button, Typography, Grid, Paper, ListItem, List } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { collection, getFirestore, onSnapshot, deleteDoc, doc, updateDoc, getDocs, where, query } from 'firebase/firestore';
-import { app } from '../../logic/firebase/config/app';
-import Colecao from '../../logic/firebase/db/Colecao';
-import Autenticacao from '../../logic/firebase/auth/Autenticacao';
+import { app } from '@/logic/firebase/config/app';
+import Colecao from '@/logic/firebase/db/Colecao';
+import Autenticacao from '@/logic/firebase/auth/Autenticacao';
 import Header from './Header';
 import ValorTotal from './ValorTotal';
 
 const db = getFirestore(app);
-const ProductsCollectionRef = collection(db, 'inventory');
+const ProductsCollectionRef = collection(db, 'controledeentregas');
 
 interface Product {
   id: string;
@@ -99,31 +99,31 @@ const Content: React.FC = () => {
   const adicionarProduto = async () => {
     try {
       if (user) {
-        const produtoSalvo = await colecao.salvar('inventory', { ...newProduct, userId: user.id });
+        const produtoSalvo = await colecao.salvar('controledeentregas', { ...newProduct, userId: user.id });
         setProducts([...products, produtoSalvo]);
         setNewProduct({ id: '', name: '', quantity: 0, value: 0, userId: '' });
       }
     } catch (error) {
-      console.error('Erro ao adicionar o produto:', error);
+      console.error('Erro ao adicionar o Entregas:', error);
     }
   };
 
   const removerProduto = async (productId: string) => {
     try {
       if (user) {
-        await colecao.excluir('inventory', productId);
+        await colecao.excluir('controledeentregas', productId);
         const updatedProducts = products.filter((product) => product.id !== productId);
         setProducts(updatedProducts);
       }
     } catch (error) {
-      console.error('Erro ao remover o produto:', error);
+      console.error('Erro ao remover o Entregas:', error);
     }
   };
 
   const editarQuantidade = async (productId: string, newQuantity: number) => {
     try {
       if (user) {
-        await colecao.atualizar('inventory', productId, { quantity: newQuantity });
+        await colecao.atualizar('controledeentregas', productId, { quantity: newQuantity });
         const updatedProducts = products.map((product) => {
           if (product.id === productId) {
             return { ...product, quantity: newQuantity };
@@ -133,14 +133,14 @@ const Content: React.FC = () => {
         setProducts(updatedProducts);
       }
     } catch (error) {
-      console.error('Erro ao editar a quantidade do produto:', error);
+      console.error('Erro ao editar a quantidade do Entregas:', error);
     }
   };
 
   const editarValor = async (productId: string, newValue: number) => {
     try {
       if (user) {
-        await colecao.atualizar('inventory', productId, { value: newValue });
+        await colecao.atualizar('controledeentregas', productId, { value: newValue });
         const updatedProducts = products.map((product) => {
           if (product.id === productId) {
             return { ...product, value: newValue };
@@ -150,7 +150,7 @@ const Content: React.FC = () => {
         setProducts(updatedProducts);
       }
     } catch (error) {
-      console.error('Erro ao editar o valor do produto:', error);
+      console.error('Erro ao editar o valor do Entregas:', error);
     }
   };
 
@@ -158,7 +158,7 @@ const Content: React.FC = () => {
     try {
       const productToSave = products.find((product) => product.id === productId);
       if (productToSave) {
-        await colecao.salvar('inventory', productToSave, productId);
+        await colecao.salvar('controledeentregas', productToSave, productId);
         const updatedProducts = products.map((product) => {
           if (product.id === productId) {
             return productToSave;
@@ -168,7 +168,7 @@ const Content: React.FC = () => {
         setProducts(updatedProducts);
       }
     } catch (error) {
-      console.error('Erro ao salvar o produto:', error);
+      console.error('Erro ao salvar o Entregas:', error);
     }
   };
 

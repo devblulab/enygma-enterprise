@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button, Typography, Grid, Paper, ListItem, List } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { collection, getFirestore, onSnapshot, deleteDoc, doc, updateDoc, getDocs, where, query } from 'firebase/firestore';
-import { app } from '../../logic/firebase/config/app';
-import Colecao from '../../logic/firebase/db/Colecao';
-import Autenticacao from '../../logic/firebase/auth/Autenticacao';
+import { app } from '@/logic/firebase/config/app';
+import Colecao from '@/logic/firebase/db/Colecao';
+import Autenticacao from '@/logic/firebase/auth/Autenticacao';
 import Header from './Header';
 import ValorTotal from './ValorTotal';
 

@@ -22,6 +22,7 @@ import Sumario from "./Sumario";
 
 
 export default function Financas() {
+ 
   const {
     data,
     alterarData,
@@ -37,28 +38,26 @@ export default function Financas() {
   
 
   function renderizarControles() {
-    return (
-      <div className="flex justify-between">
-        <CampoMesAno data={data} dataMudou={alterarData} />
-      
-        <div className="flex gap-5">
-       
-          <Button
-            className="bg-cyan-900"
-            leftIcon={<IconPlus />}
-            onClick={() => selecionar(transacaoVazia)}
-          >
-            Nova transação
-          </Button>
-          <SegmentedControl
-            data={[
-              { label: <IconList />, value: "lista" },
-              { label: <IconLayoutGrid />, value: "grade" },
-            ]}
-            onChange={(tipo) => alterarExibicao(tipo as TipoExibicao)}
-          />
-        </div>
-      </div>
+  return (
+    <div className="flex flex-col mb-1"> {/* Adicione a classe flex-col para dispor os itens em coluna */}
+      <CampoMesAno data={data} dataMudou={alterarData} />
+      <Button
+        className="bg-cyan-900 mt-5" // Adicione a classe mt-2 para adicionar uma margem superior
+        
+        leftIcon={<IconPlus />}
+        onClick={() => selecionar(transacaoVazia)}
+      >
+        Nova transação
+      </Button>
+      <SegmentedControl
+        
+        data={[
+          { label: <IconList />, value: "lista" },
+          { label: <IconLayoutGrid />, value: "grade" },
+        ]}
+        onChange={(tipo) => alterarExibicao(tipo as TipoExibicao)}
+      />
+    </div>
     );
   }
 
@@ -70,7 +69,7 @@ export default function Financas() {
   return (
     <Pagina>
       <Cabecalho />
-      <Conteudo className="gap-5">
+      <Conteudo className="gap-5 justify-between">
         <Sumario transacoes={transacoes} />
         {renderizarControles()}
         {transacao ? (
