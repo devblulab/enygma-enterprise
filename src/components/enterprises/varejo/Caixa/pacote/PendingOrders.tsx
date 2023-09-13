@@ -304,13 +304,13 @@ const PedidoLista = () => {
           <Typography variant="subtitle1" gutterBottom className={classes.pedidoContent}>
             Pedidos: {pedido.item.nome}
           </Typography>
-          <Typography variant="body1" gutterBottom className={classes.pedidoContent}>
-            Cliente: {pedido.cliente}
+          <Typography variant="h6" gutterBottom className={classes.pedidoContent}>
+            Atendente: {pedido.cliente}
           </Typography>
-          <Typography variant="body1" gutterBottom className={classes.pedidoContent}>
+          <Typography variant="h6" gutterBottom className={classes.pedidoContent}>
             Status: {pedido.status}
           </Typography>
-          <Typography variant="body1" gutterBottom className={classes.pedidoContent}>
+          <Typography variant="h6" gutterBottom className={classes.pedidoContent}>
             Hora: {pedido.item.timestamp.toDate().toLocaleTimeString()}
             </Typography>
              <IconButton
