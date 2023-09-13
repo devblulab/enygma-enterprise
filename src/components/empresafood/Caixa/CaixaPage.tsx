@@ -64,14 +64,7 @@ const CaixaPage: React.FC = () => {
     Adicionar Produtos
   </motion.button>
 </Link>
-<Link href="/ifood/caixa/todasmesas" passHref>
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    className={`${classes.blackButton}`} 
-  >
-    Todas Mesas
-  </motion.button>
-</Link>
+
 
       </Paper>
       <Mesastodas/>
