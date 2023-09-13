@@ -10,7 +10,7 @@ import '@/styles/globals.css'
 
 // Defina os temas aqui
 const lightTheme = {
-  backgroundColor: 'white',
+  backgroundColor: '#f0f0f0',
   textColor: 'black',
 };
 
