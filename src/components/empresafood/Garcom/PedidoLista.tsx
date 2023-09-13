@@ -704,9 +704,9 @@ if (hideCompletedMesas && isMesaConcluida) {
   className={classes.button}
   variant="contained"
   color="secondary"
-  onClick={() => handleStatusChange(pedido.idcard, 'cobrar')}
+  onClick={() => handleStatusChange(pedido.idcard, 'pago')}
 >
-  Cobrar
+  Finalizado
 </Button>
 
 
