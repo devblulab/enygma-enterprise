@@ -6,10 +6,13 @@ import Particles from '@/components/landing/particles'
 
 
 
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <MantineProvider theme={{ colorScheme: 'dark' }}>
       <AutenticacaoProvider>
+     
+      
         <Component {...pageProps} />
         
         <Particles className="absolute inset-0 -z-10 animate-fade-in" quantity={100} />
