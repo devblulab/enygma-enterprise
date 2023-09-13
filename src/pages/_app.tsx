@@ -3,8 +3,8 @@ import { ThemeProvider } from 'styled-components';
 import { AutenticacaoProvider } from '@/data/contexts/AutenticacaoContext';
 import { MantineProvider } from '@mantine/core';
 import Particles from '@/components/landing/particles';
-import { GlobalStyles } from './GlobalStyle';
-import { lightTheme, darkTheme } from './themes';
+import { GlobalStyles } from './GlobalStyle.js';
+import { lightTheme, darkTheme } from './themes.js';
 import '@/styles/globals.css';
 import { FaSun, FaMoon } from 'react-icons/fa';
 import type { AppProps } from 'next/app'
