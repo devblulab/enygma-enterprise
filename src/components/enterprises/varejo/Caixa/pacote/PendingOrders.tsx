@@ -326,7 +326,7 @@ const PedidoLista = () => {
   className={`${classes.button} ${classes.statusButton}`}  
   onClick={() => handleUpdateStatus(pedido.idcard, 'concluido')}
 >
-  Concluir
+  Pronto
 </Button>
 <Button
   variant="contained"
@@ -344,7 +344,7 @@ const PedidoLista = () => {
   className={`${classes.pago} ${classes.statusButton}`} 
   onClick={() => handleUpdateStatus(pedido.idcard, 'pago')}
 >
-  Pago
+  Finalizar
   {pedido.status === 'pendente' && (
                 <motion.div className={classes.fireEffect} /> // Add fire effect for pending status
               )}
