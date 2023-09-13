@@ -8,6 +8,7 @@ import Usuario from '../../../logic/core/usuario/Usuario';
 import Link from 'next/link';
 import Mesas from './MesasCaixa';
 import { motion } from 'framer-motion';
+import Mesastodas from '../Garcom/PedidoLista';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -73,6 +74,7 @@ const CaixaPage: React.FC = () => {
 </Link>
 
       </Paper>
+      <Mesastodas/>
       <Mesas />
     </div>
   );
