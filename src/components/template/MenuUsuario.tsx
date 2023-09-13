@@ -37,9 +37,11 @@ export default function MenuUsuario() {
         <Link href="/contato">
           <Menu.Item icon={<IconUser size={14} />}>Contato</Menu.Item>
         </Link>
+        <Menu.Label>Social</Menu.Label>
         <Link href="/post">
           <Menu.Item icon={<IconUser size={14} />}>Feed</Menu.Item>
         </Link>
+        <Menu.Label>ControlePrises</Menu.Label>
         <Link href="/inventario">
           <Menu.Item icon={<IconUser size={14} />}>Produto</Menu.Item>
         </Link>
@@ -48,6 +50,9 @@ export default function MenuUsuario() {
         </Link>
         <Link href="/avisos">
           <Menu.Item icon={<IconUser size={14} />}>Avisos</Menu.Item>
+        </Link>
+        <Link href="/enterprises">
+          <Menu.Item icon={<IconUser size={14} />}>EnterPrises</Menu.Item>
         </Link>
         <Menu.Divider />
         <Menu.Item color="red" icon={<IconLogout size={14} />} onClick={logout}>
