@@ -10,13 +10,13 @@ import '@/styles/globals.css'
 
 // Defina os temas aqui
 const lightTheme = {
-  backgroundColor: '#f0f0f0',
+  backgroundColor: 'lightgray',
   textColor: 'black',
 };
 
 const darkTheme = {
   backgroundColor: 'black',
-  textColor: 'white',
+  
 };
 
 // Defina os estilos globais aqui
