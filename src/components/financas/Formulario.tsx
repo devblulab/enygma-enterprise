@@ -19,9 +19,9 @@ export default function Formulario(props: FormularioProps) {
     return (
         <div className={`
             flex flex-col border border-zinc-700
-            rounded-xl overflow-hidden
+            rounded-xl overflow-hidden bg-zinc-300
         `}>
-            <div className="bg-white py-3 px-7 text-zinc-900">Formulário</div>
+            <div className="bg-zinc-400 py-3 px-7 text-zinc-999">Formulário</div>
             <div className="flex flex-col gap-4 p-4 sm:p-7">
                 <TextInput
                     label="Descrição"
