@@ -34,28 +34,28 @@ function App({ Component, pageProps }: AppProps) {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  return (
+ return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
     <GlobalStyles />
     <MantineProvider>
       <AutenticacaoProvider>
-        
+   
         <div style={{ position: 'relative' }}>
           <button 
             onClick={toggleTheme} 
             style={{ 
               position: 'fixed', // Define o botão como fixo
-              top: '90px', 
-              right: '50px',
+              top: '1px', 
+              right: '1px',
               border: '1px solid #cc32c', 
               background: 'linear-gradient(45deg, #807770 29%, #002340 90%)',
               borderRadius: '4px', 
-              padding: '10px', 
+              padding: '8px', 
               cursor: 'pointer',
               zIndex: 1000, // Para garantir que o botão fique acima de outros elementos
             }}
           >
-            {theme === 'light' ? <FaSun style={{ fontSize: '1em' }} /> : <FaMoon style={{ fontSize: '1em' }} />} 
+            {theme === 'light' ? <FaMoon style={{ fontSize: '1em' }} /> : <FaSun style={{ fontSize: '1em' }} />} 
             
           </button>
         </div>
