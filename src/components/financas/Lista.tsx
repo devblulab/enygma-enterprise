@@ -40,7 +40,7 @@ const Lista: React.FC<ListaProps> = (props) => {
         exit="exit"
         className={`
           flex items-center gap-3 p-3 cursor-pointer
-          ${indice % 2 === 0 ? 'bg-zinc-900' : 'bg-zinc-800'}
+          ${indice % 2 === 0 ? 'bg-zinc-500' : 'bg-zinc-800'}
         `}
         onClick={() => props.selecionarTransacao?.(transacao)}
       >
