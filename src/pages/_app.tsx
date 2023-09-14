@@ -28,7 +28,7 @@ body {
 `;
 
 function App({ Component, pageProps }: AppProps) {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState('dark');
 
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
