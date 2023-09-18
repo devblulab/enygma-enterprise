@@ -145,7 +145,7 @@ const Enterprises: React.FC = () => {
         <FaHamburger className={classes.icon} /> 
       </div>
               <Typography variant="h5" component="div">
-               IFood
+               Food
               </Typography>
               <Link href="/ifood">
                 <motion.div
