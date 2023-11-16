@@ -69,7 +69,7 @@
     "rehype-pretty-code": "^0.9.4",
     "rehype-slug": "^5.1.0",
     "remark-gfm": "^3.0.1",
-    "sharp": "^0.32.1",
+    "sharp": "^0.32.6",
     "styled-components": "^6.0.4",
     "three": "^0.146.0",
     "three-bmfont-text": "^3.0.1",
