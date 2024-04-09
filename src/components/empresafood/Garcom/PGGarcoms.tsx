@@ -150,6 +150,8 @@ const PGGarcom = () => {
  
   const [menuItems, setMenuItems] = useState<ExtendedItem[]>([]);
   const [novoPedidoItemId, setNovoPedidoItemId] = useState<string | null>(null);
+  const [updatedItems, setUpdatedItems] = useState<Item[]>([]);
+  const [searchText, setSearchText] = useState<string>('');
 
   const [novoPedidoMesa, setNovoPedidoMesa] = useState('');
   const [novoPedidoCliente, setNovoPedidoCliente] = useState('');
@@ -234,6 +236,16 @@ const PGGarcom = () => {
   }, [quantidadesSelecionadas]);
   
   useEffect(() => {
+    
+    const delayDebounceFn = setTimeout(() => {
+      handleSearch(searchText);
+    }, 300); // Aguarde 300 milissegundos após a última mudança no texto de busca antes de acionar a função de busca
+  
+    return () => clearTimeout(delayDebounceFn); // Limpe o timeout anteriormente configurado em cada mudança no texto de busca
+  }, [searchText]);
+  
+  useEffect(() => {
+    
     if (user) {
     const fetchItems = async () => {
       const querySnapshot = await getDocs(itemsCollectionRef);
@@ -398,7 +410,70 @@ const PGGarcom = () => {
     setHideCompletedMesas((prevHideCompletedMesas) => !prevHideCompletedMesas);
   };
 
+  const handleSearch = async (searchText: string) => {
+    try {
+      const fetchedItems: Item[] = [];
 
+      if (user) {
+        const userItemsQuery = query(
+          itemsCollectionRef,
+          where('userId', '==', user.id)
+        );
+
+        const querySnapshot = await getDocs(userItemsQuery);
+        querySnapshot.forEach((doc) => {
+          const data = doc.data() as Item;
+          if (
+            data.id.toLowerCase().includes(searchText.toLowerCase()) ||
+            data.nome.toLowerCase().includes(searchText.toLowerCase()) ||
+            data.tipo.toLowerCase().includes(searchText.toLowerCase()) 
+        
+          ) {
+            fetchedItems.push(data);
+          }
+        });
+      } else {
+        const querySnapshot = await getDocs(itemsCollectionRef);
+        querySnapshot.forEach((doc) => {
+          const data = doc.data() as Item;
+          if (
+            data.id.toLowerCase().includes(searchText.toLowerCase()) ||
+            data.nome.toLowerCase().includes(searchText.toLowerCase()) ||
+            data.tipo.toLowerCase().includes(searchText.toLowerCase()) 
+            
+          ) {
+            fetchedItems.push(data);
+          }
+        });
+      }
+
+      setUpdatedItems(fetchedItems);
+    } catch (error) {
+      console.error('Erro ao buscar os itens:', error);
+    }
+  };
+
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchText = e.target.value.toLowerCase(); // Converta o texto de busca para minúsculas para uma comparação de correspondência de texto sem distinção entre maiúsculas e minúsculas
+    setSearchText(searchText);
+  
+    if (searchText === '') {
+      // Se o texto de busca estiver vazio, exiba todos os itens do cardápio
+      setMenuItems(updatedItems);
+    } else {
+      // Filtrando os itens do cardápio com base no texto de busca
+      const filteredItems = updatedItems.filter((item) =>
+        item.id.toLowerCase().includes(searchText) ||
+        item.nome.toLowerCase().includes(searchText) ||
+        item.tipo.toLowerCase().includes(searchText)
+      );
+  
+      // Atualizando os itens do cardápio exibidos com base no resultado da busca
+      setMenuItems(filteredItems);
+    }
+  };
+  
+  
   
 
   return (
@@ -455,6 +530,16 @@ const PGGarcom = () => {
         </Button>
       </Paper>
       <div>
+      <TextField
+  label="Buscar Item"
+  value={searchText}
+  onChange={handleSearchInputChange}
+  variant="outlined"
+  fullWidth
+  margin="normal"
+  style={{ backgroundColor: '#FFFFFF' }} // Define o background como branco
+/>
+
         <Typography variant="h6" align="center" gutterBottom>
           Itens do Cardápio
         </Typography>
