@@ -14,10 +14,13 @@ interface Item {
   nome: string;
   quantidade: number;
   mesa: string;
+  tipo: string;
   concluido: boolean;
   userId: string;
   unidadevalor: number;
-
+  imagemUrl: string;
+  
+  
  
   
 

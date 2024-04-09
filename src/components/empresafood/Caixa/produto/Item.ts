@@ -9,7 +9,7 @@ interface Item {
   unidadevalor: number;
   concluido: boolean;
     
-   
+  tipo: string,
     
     quantidade: number;
   
@@ -18,7 +18,7 @@ interface Item {
    
     
     selected: boolean;
-  
+    imagemUrl: string;
 }
 
 export default Item;
