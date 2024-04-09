@@ -125,7 +125,23 @@ const autenticacao = new Autenticacao();
 
 interface ExtendedItem extends Item {
   selected: boolean;
+  
 }
+
+interface ImageThumbnailProps {
+  id: string;
+  imagemUrl: string;
+}
+
+const ImageThumbnail: React.FC<ImageThumbnailProps> = ({ id, imagemUrl }) => {
+  console.log('Image URL:', imagemUrl); // Add this line for debugging
+  return (
+    <div className="flex-shrink-0 w-16 h-16 mr-4">
+      <img src={imagemUrl} alt={`Thumbnail-${id}`} className="w-full h-full object-cover rounded" />
+    </div>
+  );
+};
+
 
 const PGGarcom = () => {
   
@@ -245,6 +261,8 @@ const PGGarcom = () => {
             
             timestamp: data.timestamp,
             selected: data.selected,
+            imagemUrl: data.imagemUrl,
+            tipo: data.tipo || '',
             
         };
       })
@@ -449,6 +467,9 @@ const PGGarcom = () => {
       }`}
       onClick={() => toggleItemSelection(item)}
     >
+      
+      <ImageThumbnail id={item.id} imagemUrl={item.imagemUrl} />
+
       <Typography variant="subtitle1">{item.nome}</Typography>
       <Typography variant="body1">Preço: R$ {item.unidadevalor}</Typography>
       <TextField
@@ -462,16 +483,14 @@ const PGGarcom = () => {
               ...prevQuantidadesSelecionadas,
               [item.id]: newQuantity,
             }));
-            
           }
         }}
-        
         variant="outlined"
         size="small"
       />
       <IconButton onClick={() => handleDeleteItem(item.id)} size="small">
-                    <DeleteOutline />
-                  </IconButton>
+        <DeleteOutline />
+      </IconButton>
     </Paper>
   </Grid>
 ))}
