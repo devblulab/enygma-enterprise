@@ -101,9 +101,6 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   return (
     <div className={`${styles.container} ${classes.form} `}>
       <Paper className={classes.form}>
-        <Typography variant="h5" align="center" gutterBottom>
-          Adicione Imoveis
-        </Typography>
         <Grid container spacing={2}>
        
           {[...Array(4)].map((_, index) => (
