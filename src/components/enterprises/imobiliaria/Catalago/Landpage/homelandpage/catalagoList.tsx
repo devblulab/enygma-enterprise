@@ -158,7 +158,7 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
       Lista de Imóveis
     </Typography>
         <TextField
-  label="Buscar Item"
+  label="Buscar"
   value={searchText}
   onChange={handleSearchInputChange}
   variant="outlined"
