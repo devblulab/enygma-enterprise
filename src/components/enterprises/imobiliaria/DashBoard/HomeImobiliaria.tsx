@@ -60,18 +60,7 @@ const HomeFood: React.FC = () => {
             </Button>
           </Link>
         </Grid>
-        <Grid item>
-          <Link href="/enterprises/imobiliaria/agenda">
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              onClick={handleGarcomClick}
-            >
-              Agenda
-            </Button>
-          </Link>
-        </Grid>
+        
         <Grid item>
           <Link href="/homelandpage">
             <Button
@@ -84,18 +73,7 @@ const HomeFood: React.FC = () => {
             </Button>
           </Link>
         </Grid>
-        <Grid item>
-          <Link href="/enterprises/imobiliaria/visor">
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              onClick={handleCozinhaClick}
-            >
-              Visor
-            </Button>
-          </Link>
-        </Grid>
+       
       </Grid>
     </Paper>
   );
