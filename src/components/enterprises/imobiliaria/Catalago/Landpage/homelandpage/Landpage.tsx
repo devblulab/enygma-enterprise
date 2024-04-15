@@ -3,7 +3,7 @@ import { Button } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import ItemList from './ItemList';
 import CatalagoList from './catalagoList';
-import Botaonv from './BotoesNavegacao';
+
 
 
 interface Item {
@@ -41,7 +41,7 @@ const Produtoset: React.FC = () => {
   return (
     <>
    
-      <Botaonv/>
+     
       <ItemList items={items} />
       <CatalagoList items={items} />
     </>
