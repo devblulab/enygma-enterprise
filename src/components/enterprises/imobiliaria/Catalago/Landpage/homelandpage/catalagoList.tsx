@@ -138,7 +138,7 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
   };
 
   const handleWhatsApp = (item: Item) => {
-    const whatsappNumber = 'wa.me/5548996421279';
+    const whatsappNumber = 'SEU_NUMERO_DO_WHATSAPP';
     const message = `Olá, estou interessado(a) no imóvel ${item.nome} - ${item.tipo}. Por favor, entre em contato comigo para mais informações.`;
     const whatsappLink = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(
       message
@@ -158,7 +158,7 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
       Lista de Imóveis
     </Typography>
         <TextField
-  label="Buscar"
+  label="Buscar Item"
   value={searchText}
   onChange={handleSearchInputChange}
   variant="outlined"
