@@ -5,6 +5,9 @@
     height: 400px;
     position: relative;
     overflow: hidden;
+    border-radius: 0 100px 0 100px;
+    
+    
   }
   
   .root::before {
@@ -12,17 +15,44 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 50px;
-    height: 50px;
-    background-color: var(--primary-color);
-    border-radius: 0 12px 0 0;
+    width: 1350px;
+    height: 1350px;
+    background-color: rgba(0, 0, 0, 0.486);
+    
+    
   }
+  .fundo {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, rgba(1, 96, 139, 0.9), rgba(0, 0, 0, 0.9)); /* Gradiente de cores */
+    border-radius: 250px 20px 250px 40px;
+    animation: moveBackground 20s infinite alternate; /* Animação do movimento de fundo */
+  
+    /* Efeitos extras */
+    filter: brightness(1.2) contrast(1.2); /* Ajuste de brilho e contraste */
+  }
+  
+  @keyframes moveBackground {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 100% 100%;
+    }
+  }
+  
   
   .imageContainer {
     width: 100%;
     height: 100%;
     overflow: hidden;
     position: relative;
+    border-radius: 200px 0 200px 0;
+    background-color: rgba(127, 127, 127, 0.9);
+ 
+    
   }
   
   .image {
@@ -34,5 +64,7 @@
     left: 0;
     min-height: 400px;
     min-width: 400px;
+    background-color: rgba(197, 197, 197, 0.9);
+    
   }
   
