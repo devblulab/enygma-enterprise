@@ -22,15 +22,11 @@ const BotoesNavegacao = () => {
       <Menu.Item icon={<FaShoppingCart />} style={menuItemStyle}>
         <Link href="/enterprises/imobiliaria/dashboard">DashBoard</Link>
       </Menu.Item>
-      <Menu.Item icon={<FaUser />} style={menuItemStyle}>
-        <Link href="/enterprises/imobiliaria/agenda">Agenda</Link>
-      </Menu.Item>
+     
       <Menu.Item icon={<FaStore />} style={menuItemStyle}>
-        <Link href="/enterprises/imobiliaria/catalago">Catalago</Link>
+        <Link href="/enterprises/homelandpage">Catalago</Link>
       </Menu.Item>
-      <Menu.Item icon={<FaStore />} style={menuItemStyle}>
-        <Link href="/enterprises/imobiliaria/visor">Visor</Link>
-      </Menu.Item>
+      
       <style jsx>{`
         @media (max-width: 767px) {
           .ant-menu-horizontal {
