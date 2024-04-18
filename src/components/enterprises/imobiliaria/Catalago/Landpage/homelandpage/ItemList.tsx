@@ -5,28 +5,9 @@ import { motion } from 'framer-motion';
 import { collection, getFirestore, onSnapshot, deleteDoc, doc, getDocs } from 'firebase/firestore';
 
 import { app } from '../../../../../../logic/firebase/config/app';
+import styles from './ItemList.module.css'; // Importando os estilos do CSS module
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(0),
-    margin: theme.spacing(2, 'auto'),
-    maxWidth: '100%',
-    height: '400px', // Altura fixa para o Paper
-    
-  },
-  imageContainer: {
-    width: '100%',
-    height: '100%', // Define a altura do contêiner de imagem como 100% do Paper
-    overflow: 'hidden', // Garante que a imagem não ultrapasse o container
-  },
-  image: {
-    width: '100%',
-    height: '100%', // Altura 100% do contêiner
-    objectFit: 'cover', // Redimensiona a imagem para preencher o container mantendo a proporção
-    minHeight: '400px', // Altura mínima da imagem igual à altura do Paper
-    minWidth: '400px', // Largura mínima da imagem igual à largura do Paper
-  },
-}));
+const useStyles = makeStyles((theme) => ({})); // Não é necessário mais estilos aqui
 
 const db = getFirestore(app);
 const itemsCollectionRef = collection(db, 'ImobiliariaiLandIMagenscapa');
@@ -52,7 +33,6 @@ interface ItemListProps {
 }
 
 const ItemList: React.FC<ItemListProps> = ({ items }) => {
-  const classes = useStyles();
   const [updatedItems, setUpdatedItems] = useState<Item[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
@@ -73,20 +53,20 @@ const ItemList: React.FC<ItemListProps> = ({ items }) => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % 4); // Alterna entre as 4 imagens
-    }, 10000); // Muda a imagem a cada 2 segundos
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % 4);
+    }, 10000);
 
-    return () => clearInterval(intervalId); // Limpa o intervalo quando o componente é desmontado
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
     <Container>
-      <Paper className={classes.root}>
-        <div className={classes.imageContainer}>
+      <Paper className={styles.root}> 
+        <div className={styles.imageContainer}> =
           <motion.img
             src={updatedItems.length > 0 ? updatedItems[0]?.imagemUrls[currentImageIndex] : ''}
             alt={`Thumbnail-${updatedItems[0]?.id}`}
-            className={classes.image}
+            className={styles.image} 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}

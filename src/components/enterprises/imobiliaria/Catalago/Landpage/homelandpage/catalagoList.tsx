@@ -9,48 +9,9 @@ import { faCar, faUtensils, faBath, faBed, faCouch } from '@fortawesome/free-sol
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons'; // Importe o ícone de adição
 import { faPlus } from '@fortawesome/free-solid-svg-icons'; 
 import Link from 'next/link';
+import styles from './CatalagoList.module.css'; // Importando os estilos do CSS module
 
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(1),
-    borderRadius: theme.spacing(2),
-    margin: theme.spacing(2, 'auto'),
-    maxWidth: '100%',
-    backgroundColor: 'rgba(127, 127, 127, 0.2)', // Cinza com transparência
-    
-  },
-  item: {
-    marginBottom: theme.spacing(2),
-    padding: theme.spacing(2),
-    border: '1px solid #ddd',
-    borderRadius: theme.spacing(1),
-  },
-  imageContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  image: {
-    width: '100%',
-    height: 'auto',
-    maxWidth: '100%',
-    maxHeight: '200px', // Altura máxima desejada para a imagem
-    borderRadius: '12px', // Arredonda as bordas da imagem
-  },
-  icon: {
-    fontSize: '1.3rem', // Tamanho do ícone
-    marginRight: theme.spacing(1), // Espaçamento à direita do ícone
-  },
-  text: {
-    fontSize: '1rem', // Tamanho do texto
-    marginRight: theme.spacing(2),
-    fontWeight: 'bold', // Negrito no texto
-    textTransform: 'uppercase', // Transformação de texto em caixa alta
-    fontFamily: 'Arial, sans-serif', // Fonte do texto
-    color: '#4287f0',
- // Cor do texto
-  },
-}));
+const useStyles = makeStyles((theme) => ({})); // Não é necessário mais estilos aqui
 
 const db = getFirestore(app);
 const itemsCollectionRef = collection(db, 'ImobiliariaitemsCatalago');
@@ -81,7 +42,6 @@ interface ItemListProps {
 }
 
 const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
-  const classes = useStyles();
   const [updatedItems, setUpdatedItems] = useState<Item[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
@@ -147,18 +107,17 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
   };
 
   const handleViewDetails = (itemId: string) => {
-
     window.location.href = `/item-details?id=${itemId}`;
   };
 
   return (
     <Container>
-      <Paper className={classes.root}>
+      <Paper className={styles.root}>
       <Typography variant="h5" align="center" gutterBottom style={{ color: '#ffffff', fontFamily: 'Roboto' }}>
       Lista de Imóveis
     </Typography>
         <TextField
-  label="Buscar Item"
+  label="Buscar"
   value={searchText}
   onChange={handleSearchInputChange}
   variant="outlined"
@@ -173,14 +132,14 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
 <Grid container spacing={2}>
   {updatedItems.map((item, index) => (
     <Grid item xs={12} sm={6} md={4} key={item.id}>
-      <Paper className={classes.item}>
-        <div className={classes.imageContainer}>
+      <Paper className={styles.item}>
+        <div className={styles.imageContainer}>
           <AnimatePresence initial={false}>
             {item.imagemUrls && item.imagemUrls.length > 0 && (
               <motion.img
                 src={item.imagemUrls[currentImageIndex % item.imagemUrls.length]}
                 alt={`Thumbnail-${item.id}`}
-                className={classes.image}
+                className={styles.image}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, scale: 1.1, rotate: [0, 360], ease: "easeInOut" }}
@@ -224,16 +183,16 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
         style={{ fontFamily: 'Roboto' }}
       />
       <div style={{ display: 'flex', alignItems: 'center', fontFamily: 'Roboto' }}>
-        <FontAwesomeIcon icon={faCar} className={classes.icon} /> 
-        <Typography className={classes.text}>{item.garagem}</Typography> 
-        <FontAwesomeIcon icon={faUtensils} className={classes.icon} /> 
-        <Typography className={classes.text}>{item.cozinha}</Typography> 
-        <FontAwesomeIcon icon={faBath} className={classes.icon} />
-        <Typography className={classes.text}>{item.banheiro}</Typography> 
-        <FontAwesomeIcon icon={faBed} className={classes.icon} /> 
-        <Typography className={classes.text}>{item.dormitorio}</Typography> 
-        <FontAwesomeIcon icon={faCouch} className={classes.icon} /> 
-        <Typography className={classes.text}>{item.sala}</Typography> 
+        <FontAwesomeIcon icon={faCar} className={styles.icon} /> 
+        <Typography className={styles.text}>{item.garagem}</Typography> 
+        <FontAwesomeIcon icon={faUtensils} className={styles.icon} /> 
+        <Typography className={styles.text}>{item.cozinha}</Typography> 
+        <FontAwesomeIcon icon={faBath} className={styles.icon} />
+        <Typography className={styles.text}>{item.banheiro}</Typography> 
+        <FontAwesomeIcon icon={faBed} className={styles.icon} /> 
+        <Typography className={styles.text}>{item.dormitorio}</Typography> 
+        <FontAwesomeIcon icon={faCouch} className={styles.icon} /> 
+        <Typography className={styles.text}>{item.sala}</Typography> 
       </div>
 <Button
   variant="contained"
