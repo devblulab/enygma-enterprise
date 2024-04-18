@@ -24,7 +24,7 @@ const BotoesNavegacao = () => {
       </Menu.Item>
      
       <Menu.Item icon={<FaStore />} style={menuItemStyle}>
-        <Link href="/enterprises/homelandpage">Catalago</Link>
+        <Link href="/homelandpage">Land Imobiliaria</Link>
       </Menu.Item>
       
       <style jsx>{`
