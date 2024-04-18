@@ -60,7 +60,7 @@ const ItemList: React.FC<ItemListProps> = ({ items }) => {
   }, []);
 
   return (
-    <Container>
+    <Container className={styles.fundo}> 
       <Paper className={styles.root}> 
         <div className={styles.imageContainer}> =
           <motion.img
