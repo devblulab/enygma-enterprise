@@ -4,46 +4,44 @@ import { FaHome, FaShoppingCart, FaUser, FaStore } from 'react-icons/fa';
 
 const BotoesNavegacao = () => {
   const menuStyle = {
-    width: '300px', // Set the desired width here
-    position: 'fixed' as 'fixed', // Defina 'position' como 'fixed' explicitamente
-    top: 0,
-    zIndex: 1000, // Ensure menu stays on top of other content
+    width: '100%', // Alterado para ocupar toda a largura
+    display: 'flex',
+    justifyContent: 'space-around', // Alterado para distribuir igualmente os itens
+   
+    top: 0, // Posiciona o menu no topo
+    zIndex: 1000, // Ajusta a ordem de empilhamento para ficar acima de outros elementos
+    backgroundColor: '#fff', // Adiciona cor de fundo para melhorar a visibilidade
   };
 
   const menuItemStyle = {
     borderRadius: '50px',
-    border: '15px', // Corrigido de 'borde' para 'border'
     marginBottom: '3px'
   };
 
   return (
-    <Menu mode="horizontal" style={{ ...menuStyle, ...menuItemStyle }}>
-      
+    <Menu mode="horizontal" style={{ ...menuStyle }}>
       <Menu.Item icon={<FaHome />} style={menuItemStyle}>
-        <Link href="/enterprises/imobiliaria/">Início</Link>
-      </Menu.Item>
-      <Menu.Item icon={<FaShoppingCart />} style={menuItemStyle}>
-        <Link href="/enterprises/imobiliaria/dashboard">DashBoard</Link>
+        <Link href="/homelandpage">Início</Link>
       </Menu.Item>
       <Menu.Item icon={<FaUser />} style={menuItemStyle}>
-        <Link href="/enterprises/imobiliaria/agenda">Agenda</Link>
+        <Link href="/contatos">Contatos</Link>
+      </Menu.Item>
+      <Menu.Item icon={<FaShoppingCart />} style={menuItemStyle}>
+        <Link href="/enterprises/imobiliaria/agenda">Catalago</Link>
       </Menu.Item>
       <Menu.Item icon={<FaStore />} style={menuItemStyle}>
-        <Link href="/enterprises/imobiliaria/catalago">Catalago</Link>
+        <Link href="/enterprises/imobiliaria/catalago">Quem Sou</Link>
       </Menu.Item>
-      <Menu.Item icon={<FaStore />} style={menuItemStyle}>
-        <Link href="/enterprises/imobiliaria/visor">Visor</Link>
-      </Menu.Item>
+
       <style jsx>{`
         @media (max-width: 767px) {
           .ant-menu-horizontal {
-            display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            align-items: center;
           }
           .ant-menu-item {
-            flex: 1;
+            width: 100%;
             text-align: center;
-            padding: 0;
           }
         }
       `}</style>

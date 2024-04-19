@@ -5,6 +5,10 @@ import ItemList from './ItemList';
 import CatalagoList from './catalagoList';
 import Botaonv from './BotoesNavegacao';
 
+import Faixaa from './faixademo';
+import Historiaa from './historia';
+import Rodape from './rodape/index';
+
 
 interface Item {
   id: string;
@@ -40,10 +44,15 @@ const Produtoset: React.FC = () => {
 
   return (
     <>
-   
-    
+   <Botaonv />
       <ItemList items={items} />
+      
+      <Faixaa  />
+      <Historiaa />
+
       <CatalagoList items={items} />
+      
+      <Rodape />
     </>
   );
 };

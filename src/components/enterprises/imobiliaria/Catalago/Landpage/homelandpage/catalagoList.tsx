@@ -113,7 +113,7 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
   return (
     <Container>
       <Paper className={styles.root}>
-      <Typography variant="h5" align="center" gutterBottom style={{ color: '#ffffff', fontFamily: 'Roboto' }}>
+      <Typography variant="h5" align="center" gutterBottom style={{ color: '#000', fontFamily: 'Roboto' }}>
       Lista de Imóveis
     </Typography>
         <TextField
@@ -132,7 +132,8 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
 <Grid container spacing={2}>
   {updatedItems.map((item, index) => (
     <Grid item xs={12} sm={6} md={4} key={item.id}>
-      <Paper className={styles.item}>
+      <Paper className={`${styles.root} ${styles.customPaperr}`}>
+
         <div className={styles.imageContainer}>
           <AnimatePresence initial={false}>
             {item.imagemUrls && item.imagemUrls.length > 0 && (

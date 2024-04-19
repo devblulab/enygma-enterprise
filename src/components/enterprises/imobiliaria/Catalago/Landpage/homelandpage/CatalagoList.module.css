@@ -3,8 +3,7 @@
     border-radius: 16px;
     margin: 16px auto;
     max-width: 100%;
-    background-color: rgba(127, 127, 127, 0.7); /* Cinza com transparência */
-    
+    background-color: rgb(49, 48, 48); /* Alterado para transparente */
   }
   
   .item {
@@ -14,10 +13,15 @@
     border-radius: 8px;
     
   }
+  .customPaperr {
+    background-color: rgba(0, 0, 0, 0.9);/* Alterado para transparente */
+  }
+
   
   .imageContainer {
     display: flex;
     justify-content: center;
+    background-color: rgba(127, 127, 127, 0.9);
   }
   
   .image {
@@ -26,6 +30,7 @@
     max-width: 100%;
     max-height: 200px; /* Altura máxima desejada para a imagem */
     border-radius: 0 100px 0 100px;
+    
   }
   
   .icon {
@@ -39,6 +44,6 @@
     font-weight: bold; /* Negrito no texto */
     text-transform: uppercase; /* Transformação de texto em caixa alta */
     font-family: Arial, sans-serif; /* Fonte do texto */
-    color: #4287f0; /* Cor do texto */
+    color: gray; /* Cor do texto cinza */
   }
   
