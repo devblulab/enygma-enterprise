@@ -183,18 +183,19 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
         }}
         style={{ fontFamily: 'Roboto' }}
       />
-      <div style={{ display: 'flex', alignItems: 'center', fontFamily: 'Roboto' }}>
-        <FontAwesomeIcon icon={faCar} className={styles.icon} /> 
-        <Typography className={styles.text}>{item.garagem}</Typography> 
-        <FontAwesomeIcon icon={faUtensils} className={styles.icon} /> 
-        <Typography className={styles.text}>{item.cozinha}</Typography> 
-        <FontAwesomeIcon icon={faBath} className={styles.icon} />
-        <Typography className={styles.text}>{item.banheiro}</Typography> 
-        <FontAwesomeIcon icon={faBed} className={styles.icon} /> 
-        <Typography className={styles.text}>{item.dormitorio}</Typography> 
-        <FontAwesomeIcon icon={faCouch} className={styles.icon} /> 
-        <Typography className={styles.text}>{item.sala}</Typography> 
-      </div>
+       <div style={{ marginLeft: 50, display: 'flex', alignItems: 'center', fontFamily: 'Roboto' }}>
+  <FontAwesomeIcon icon={faCar} className={styles.icon} /> 
+  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.garagem}</Typography> {/* Ajuste de margem esquerda */}
+  <FontAwesomeIcon icon={faUtensils} className={styles.icon} /> 
+  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.cozinha}</Typography> {/* Ajuste de margem esquerda */}
+  <FontAwesomeIcon icon={faBath} className={styles.icon} />
+  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.banheiro}</Typography> {/* Ajuste de margem esquerda */}
+  <FontAwesomeIcon icon={faBed} className={styles.icon} /> 
+  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.dormitorio}</Typography> {/* Ajuste de margem esquerda */}
+  <FontAwesomeIcon icon={faCouch} className={styles.icon} /> 
+  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.sala}</Typography> {/* Ajuste de margem esquerda */}
+</div>
+
 <Button
   variant="contained"
   color="primary"
@@ -208,7 +209,7 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
                   <Button
                     variant="contained"
                     color="primary"
-                    style={{ marginTop: 8, backgroundColor: '#f5f5f5', color: '#000000', marginLeft: 8 }} // Cinza claro
+                    style={{ marginTop: 8, backgroundColor: '#f5f5f5', color: '#00000w', marginLeft: 8 }} // Cinza claro
                   >
                     <FontAwesomeIcon icon={faPlus} style={{ fontSize: '1.5rem', color: '#FFA500' }} />
                   </Button>
