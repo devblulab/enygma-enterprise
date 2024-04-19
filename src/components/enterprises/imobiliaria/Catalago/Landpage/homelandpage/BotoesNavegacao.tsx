@@ -24,13 +24,13 @@ const BotoesNavegacao = () => {
         <Link href="/homelandpage">Início</Link>
       </Menu.Item>
       <Menu.Item icon={<FaUser />} style={menuItemStyle}>
-        <Link href="/contatos">Contatos</Link>
+        <Link href="/homelandpage/contatos">Contatos</Link>
       </Menu.Item>
       <Menu.Item icon={<FaShoppingCart />} style={menuItemStyle}>
-        <Link href="/enterprises/imobiliaria/agenda">Catalago</Link>
+        <Link href="/homelandpage/catalago">Catalago</Link>
       </Menu.Item>
       <Menu.Item icon={<FaStore />} style={menuItemStyle}>
-        <Link href="/enterprises/imobiliaria/catalago">Quem Sou</Link>
+        <Link href="/homelandpage/quemsou">Quem Sou</Link>
       </Menu.Item>
 
       <style jsx>{`
