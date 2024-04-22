@@ -21,10 +21,10 @@ const BotoesNavegacao = () => {
   return (
     <Menu mode="horizontal" style={{ ...menuStyle }}>
       <Menu.Item icon={<FaHome />} style={menuItemStyle}>
-        <Link href="/homelandpage">Início</Link>
+        <Link href="/gmimobiliaria">Início</Link>
       </Menu.Item>
       <Menu.Item icon={<FaUser />} style={menuItemStyle}>
-        <Link href="/homelandpage/contatos">Contatos</Link>
+        <Link href="/gmimobiliaria/contatos">Contatos</Link>
       </Menu.Item>
      <Menu.Item icon={<FaShoppingCart />} style={menuItemStyle}>
         <a href="#catalago">Catálogo</a>
