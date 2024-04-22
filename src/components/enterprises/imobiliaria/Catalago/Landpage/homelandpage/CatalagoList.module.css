@@ -44,6 +44,6 @@
     font-weight: bold; /* Negrito no texto */
     text-transform: uppercase; /* Transformação de texto em caixa alta */
     font-family: Arial, sans-serif; /* Fonte do texto */
-    color: gray; /* Cor do texto cinza */
+    color: rgb(0, 140, 165);
   }
   
