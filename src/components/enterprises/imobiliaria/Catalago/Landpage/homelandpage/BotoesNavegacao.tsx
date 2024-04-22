@@ -26,11 +26,11 @@ const BotoesNavegacao = () => {
       <Menu.Item icon={<FaUser />} style={menuItemStyle}>
         <Link href="/homelandpage/contatos">Contatos</Link>
       </Menu.Item>
-      <Menu.Item icon={<FaShoppingCart />} style={menuItemStyle}>
-        <Link href="/homelandpage/catalago">Catalago</Link>
+     <Menu.Item icon={<FaShoppingCart />} style={menuItemStyle}>
+        <a href="#catalago">Catálogo</a>
       </Menu.Item>
-      <Menu.Item icon={<FaStore />} style={menuItemStyle}>
-        <Link href="/homelandpage/quemsou">Quem Sou</Link>
+     <Menu.Item icon={<FaStore />} style={menuItemStyle}>
+        <a href="#quem-sou">Quem Sou</a>
       </Menu.Item>
 
       <style jsx>{`
