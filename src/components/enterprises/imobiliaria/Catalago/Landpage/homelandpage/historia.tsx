@@ -4,6 +4,7 @@ import styles from './Historia.module.css';
 
 const ConsultorImobiliario: React.FC = () => {
   return (
+<section id="quem-sou">
     <div className={styles.consultorContainer}>
       <div className={styles.imageContainer}>
         <motion.img
@@ -43,6 +44,7 @@ const ConsultorImobiliario: React.FC = () => {
         </div>
       </motion.div>
     </div>
+</section>
   );
 };
 
