@@ -4,11 +4,9 @@ import { useRouter } from 'next/router';
 import ItemList from './ItemList';
 import CatalagoList from './catalagoList';
 import Botaonv from './BotoesNavegacao';
-
 import Faixaa from './faixademo';
 import Historiaa from './historia';
 import Rodape from './rodape/index';
-
 
 interface Item {
   id: string;
@@ -24,13 +22,12 @@ interface Item {
   userId: string;
   selected: boolean;
   imagemUrls: string[];
-  garagem: string,
-    cozinha: string,
-    banheiro: string,
-    dormitorio: string,
-    sala: string,
+  garagem: string;
+  cozinha: string;
+  banheiro: string;
+  dormitorio: string;
+  sala: string;
 }
-
 
 const Produtoset: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
@@ -40,11 +37,9 @@ const Produtoset: React.FC = () => {
     setItems([...items, newItem]);
   };
 
- 
-
   return (
     <>
-      <div style={{ backgroundColor: '#f2f2f7' }}> 
+      <div style={{ backgroundColor: '#f2f2f7', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Botaonv />
         <ItemList items={items} />
         <Faixaa />
