@@ -44,15 +44,14 @@ const Produtoset: React.FC = () => {
 
   return (
     <>
-   <Botaonv />
-      <ItemList items={items} />
-      
-      <Faixaa  />
-      <Historiaa />
-
-      <CatalagoList items={items} />
-      
-      <Rodape />
+      <div style={{ backgroundColor: '#f2f2f7' }}> 
+        <Botaonv />
+        <ItemList items={items} />
+        <Faixaa />
+        <Historiaa />
+        <CatalagoList items={items} />
+        <Rodape />
+      </div>
     </>
   );
 };
