@@ -27,7 +27,7 @@ const FichaIndicacao = () => {
           display: flex;
           justify-content: center;
           align-items: center;
-          height: 30vh;
+          height: 40vh;
         }
 
         .ficha-indicacao {
