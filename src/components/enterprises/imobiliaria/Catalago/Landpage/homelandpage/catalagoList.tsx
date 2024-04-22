@@ -111,8 +111,11 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
   };
 
   return (
-<section id="catalago">
-    <Container>
+<Container>
+  <div className={styles.catalagoContainer}> 
+    <section id="catalago" className={styles.catalagoSection}> 
+      
+   
       <Paper className={styles.root}>
       <Typography variant="h5" align="center" gutterBottom style={{ color: '#000', fontFamily: 'Roboto' }}>
       Lista de Imóveis
@@ -221,8 +224,10 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
   ))}
 </Grid>
       </Paper>
-    </Container>
+   
 </section>
+      </div>
+    </Container>
   );
 };
 
