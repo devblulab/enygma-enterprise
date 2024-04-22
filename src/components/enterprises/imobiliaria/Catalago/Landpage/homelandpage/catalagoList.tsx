@@ -183,7 +183,7 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
         }}
         style={{ fontFamily: 'Roboto' }}
       />
-       <div style={{ marginLeft: 50, display: 'flex', alignItems: 'center', fontFamily: 'Roboto' }}>
+       <div style={{ marginLeft: 10, display: 'flex', alignItems: 'center', fontFamily: 'Roboto' }}>
   <FontAwesomeIcon icon={faCar} className={styles.icon} /> 
   <Typography className={styles.text} style={{ marginRight: 20 }}>{item.garagem}</Typography> {/* Ajuste de margem esquerda */}
   <FontAwesomeIcon icon={faUtensils} className={styles.icon} /> 
