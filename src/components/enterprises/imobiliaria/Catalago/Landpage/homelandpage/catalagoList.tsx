@@ -111,6 +111,7 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
   };
 
   return (
+<section id="catalago">
     <Container>
       <Paper className={styles.root}>
       <Typography variant="h5" align="center" gutterBottom style={{ color: '#000', fontFamily: 'Roboto' }}>
@@ -185,15 +186,15 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
       />
        <div style={{ marginLeft: 10, display: 'flex', alignItems: 'center', fontFamily: 'Roboto' }}>
   <FontAwesomeIcon icon={faCar} className={styles.icon} /> 
-  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.garagem}</Typography> {/* Ajuste de margem esquerda */}
+  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.garagem}</Typography> 
   <FontAwesomeIcon icon={faUtensils} className={styles.icon} /> 
-  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.cozinha}</Typography> {/* Ajuste de margem esquerda */}
+  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.cozinha}</Typography> 
   <FontAwesomeIcon icon={faBath} className={styles.icon} />
-  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.banheiro}</Typography> {/* Ajuste de margem esquerda */}
+  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.banheiro}</Typography> 
   <FontAwesomeIcon icon={faBed} className={styles.icon} /> 
-  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.dormitorio}</Typography> {/* Ajuste de margem esquerda */}
+  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.dormitorio}</Typography> 
   <FontAwesomeIcon icon={faCouch} className={styles.icon} /> 
-  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.sala}</Typography> {/* Ajuste de margem esquerda */}
+  <Typography className={styles.text} style={{ marginRight: 20 }}>{item.sala}</Typography> 
 </div>
 
 <Button
@@ -221,6 +222,7 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
 </Grid>
       </Paper>
     </Container>
+</section>
   );
 };
 
