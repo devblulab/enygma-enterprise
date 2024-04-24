@@ -2,30 +2,20 @@ interface Item {
   id: string;
   cliente: string;
   total: number;
-  
-  nome: string;
-  mesa: string;
   status: string;
-  unidadevalor: number;
+  nome: string;
+  quantidade: number;
+  mesa: string;
+  tipo: string;
   concluido: boolean;
-    
-  tipo: string,
-    
-    quantidade: number;
-  
-    
-    userId: string;
-   
-    
-    selected: boolean;
-    imagemUrls: string[];
-
-
-    garagem: string,
-    cozinha: string,
-    banheiro: string,
-    dormitorio: string,
-    sala: string,
+  userId: string;
+  unidadevalor: number;
+  imagemUrl: string;
+  garagem: string,
+  cozinha: string,
+  banheiro: string,
+  dormitorio: string,
+  sala: string,
 
 
 }
