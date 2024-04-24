@@ -51,7 +51,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     concluido: false,
     userId: '',
     unidadevalor: 0,
-    selected: false,
+   
     imagemUrls: [],
     garagem: '',
     cozinha: '',
@@ -77,7 +77,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         unidadevalor: itemSalvo.unidadevalor,
         concluido: itemSalvo.concluido,
         userId: itemSalvo.userId,
-        selected: itemSalvo.selected,
+      
         imagemUrls: newItem.imagemUrls,
         garagem: itemSalvo.garagem,
         cozinha: itemSalvo.cozinha,
@@ -103,7 +103,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         dormitorio: '',
         sala: '',
         unidadevalor: 0,
-        selected: false,
+
         imagemUrls: ['', '', '', ''],
       });
 
