@@ -18,7 +18,7 @@ interface Item {
   tipo: string;
   quantidade: number;
   userId: string;
-  selected: boolean;
+ 
   imagemUrls: string[];
   garagem: string;
   cozinha: string;
