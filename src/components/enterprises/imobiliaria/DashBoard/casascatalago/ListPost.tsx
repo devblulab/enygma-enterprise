@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Paper, Typography } from '@material-ui/core';
+import { TextField, Button, Grid, Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import ImageUploader from './imagen'; // Importa o novo componente
+import ImageUploader from './imagen';
 import Colecao from '../../../../../logic/firebase/db/Colecao';
 import Item from './Item';
 import styles from './ListPost.module.css';
@@ -11,14 +11,30 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     padding: theme.spacing(2),
   },
-  card: {
+  paper: {
     padding: theme.spacing(2),
     marginBottom: theme.spacing(2),
+  },
+  button: {
+    marginTop: theme.spacing(2),
+  },
+  uploaderContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '50vh',
+  },
+  grayInput: {
+    backgroundColor: '#f5f5f5', 
+    borderRadius: theme.shape.borderRadius, 
+    '&:hover': {
+      backgroundColor: '#eeeeee', 
+    },
   },
 }));
 
 interface ListPostProps {
-  setItems: React.Dispatch<React.SetStateAction<Item[]>>; // Correção na tipagem
+  setItems: React.Dispatch<React.SetStateAction<Item[]>>;
 }
 
 const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
@@ -33,15 +49,15 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     mesa: '',
     tipo: '',
     concluido: false,
-    userId: '', // Removido o userId relacionado ao usuário logado
+    userId: '',
     unidadevalor: 0,
     selected: false,
-    imagemUrls: [], // Adiciona um array de 4 strings para os URLs das imagens
+    imagemUrls: [],
     garagem: '',
-        cozinha: '',
-        banheiro: '',
-        dormitorio: '',
-        sala: '',
+    cozinha: '',
+    banheiro: '',
+    dormitorio: '',
+    sala: '',
   });
 
   const handleAddItem = async () => {
@@ -62,7 +78,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         concluido: itemSalvo.concluido,
         userId: itemSalvo.userId,
         selected: itemSalvo.selected,
-        imagemUrls: newItem.imagemUrls, // Mantém os URLs das imagens
+        imagemUrls: newItem.imagemUrls,
         garagem: itemSalvo.garagem,
         cozinha: itemSalvo.cozinha,
         banheiro: itemSalvo.banheiro,
@@ -80,16 +96,15 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         mesa: '',
         tipo: '',
         concluido: false,
-        userId: '', // Removido o userId relacionado ao usuário logado
+        userId: '',
         garagem: '',
         cozinha: '',
         banheiro: '',
         dormitorio: '',
-        
         sala: '',
         unidadevalor: 0,
         selected: false,
-        imagemUrls: ['', '', '', ''], // Limpa os URLs das imagens
+        imagemUrls: ['', '', '', ''],
       });
 
       setItems((prevItems) => [...prevItems, adaptedItemSalvo]);
@@ -98,31 +113,38 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     }
   };
 
+  const handleImageUpload = (imageUrl: string, index: number) => {
+    const updatedUrls = [...newItem.imagemUrls];
+    updatedUrls[index] = imageUrl;
+    setNewItem({ ...newItem, imagemUrls: updatedUrls });
+  };
+
+  const shouldShowImageUploader = newItem.imagemUrls.length < 4;
+  const shouldShowAddItemButton = newItem.imagemUrls.length === 4;
+
   return (
-    <div className={`${styles.container} ${classes.form} `}>
-      <Paper className={classes.form}>
-        <Grid container spacing={2}>
-       
-          {[...Array(4)].map((_, index) => (
-            <Grid item xs={12} sm={3} key={index}>
-              <ImageUploader
-                item={newItem}
-                onImageUpload={(imageUrl) => {
-                  const updatedUrls = [...newItem.imagemUrls];
-                  updatedUrls[index] = imageUrl;
-                  setNewItem({ ...newItem, imagemUrls: updatedUrls });
-                }}
-              />
-            </Grid>
-          ))}
-         
-          <Grid item xs={12} sm={4}>
+    <div>
+      <Paper className={classes.paper}>
+      <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
               label="ID do Imovel"
               value={newItem.id}
               onChange={(e) => setNewItem({ ...newItem, id: e.target.value })}
               fullWidth
               variant="outlined"
+              InputProps={{ className: classes.grayInput }} 
+              />
+          
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Nome"
+              value={newItem.nome}
+              onChange={(e) => setNewItem({ ...newItem, nome: e.target.value })}
+              fullWidth
+              variant="outlined"
+              InputProps={{ className: classes.grayInput }} 
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -132,6 +154,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
               onChange={(e) => setNewItem({ ...newItem, dormitorio: e.target.value })}
               fullWidth
               variant="outlined"
+              InputProps={{ className: classes.grayInput }} 
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -141,6 +164,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
               onChange={(e) => setNewItem({ ...newItem, banheiro: e.target.value })}
               fullWidth
               variant="outlined"
+              InputProps={{ className: classes.grayInput }} 
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -150,6 +174,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
               onChange={(e) => setNewItem({ ...newItem, sala: e.target.value })}
               fullWidth
               variant="outlined"
+              InputProps={{ className: classes.grayInput }} 
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -159,6 +184,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
               onChange={(e) => setNewItem({ ...newItem, cozinha: e.target.value })}
               fullWidth
               variant="outlined"
+              InputProps={{ className: classes.grayInput }} 
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -168,16 +194,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
               onChange={(e) => setNewItem({ ...newItem, garagem: e.target.value })}
               fullWidth
               variant="outlined"
-            />
-          </Grid>
-          
-          <Grid item xs={12} sm={4}>
-            <TextField
-              label="Nome"
-              value={newItem.nome}
-              onChange={(e) => setNewItem({ ...newItem, nome: e.target.value })}
-              fullWidth
-              variant="outlined"
+              InputProps={{ className: classes.grayInput }} 
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -186,6 +203,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
               value={newItem.tipo}
               onChange={(e) => setNewItem({ ...newItem, tipo: e.target.value })}
               variant="outlined"
+              InputProps={{ className: classes.grayInput }} 
               size="small"
               fullWidth
             />
@@ -198,14 +216,33 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
               onChange={(e) => setNewItem({ ...newItem, unidadevalor: parseFloat(e.target.value) })}
               fullWidth
               variant="outlined"
+              InputProps={{ className: classes.grayInput }} 
             />
           </Grid>
+          {shouldShowAddItemButton && (
+            <Grid item xs={12} sm={6}>
+              <Button
+                onClick={handleAddItem}
+                variant="contained"
+                color="primary"
+                size="large"
+                fullWidth
+                className={classes.button}
+              >
+                Adicionar o Imovel
+              </Button>
+            </Grid>
+          )}
         </Grid>
-
-        <Button onClick={handleAddItem} variant="contained" color="primary" size="large" fullWidth>
-          Adicionar o Imovel
-        </Button>
       </Paper>
+      <div className={classes.uploaderContainer}>
+        {shouldShowImageUploader && (
+          <ImageUploader
+            item={newItem}
+            onImageUpload={(imageUrl) => handleImageUpload(imageUrl, newItem.imagemUrls.length)}
+          />
+        )}
+      </div>
     </div>
   );
 };
