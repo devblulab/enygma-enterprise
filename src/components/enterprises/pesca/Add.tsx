@@ -7,7 +7,6 @@ import {
   Typography,
   makeStyles,
 } from '@material-ui/core';
-import ImageUploader from './ImageUploader'; // Componente para upload de imagem
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -226,10 +225,7 @@ const addPage: React.FC = () => {
             <Typography variant="body2">{item.descricao}</Typography>
             <Typography variant="subtitle1">
               Tipo: {item.tipo} | Valor: R$ {item.valor.toFixed(2)}
-            </Typography>
-            {item.imagemUrl && (
-              <img src={item.imagemUrl} alt={item.nome} className={classes.imagemItem} />
-            )}
+           
           </Paper>
         ))}
       </div>
