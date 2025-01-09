@@ -17,6 +17,10 @@ interface Item {
   banheiro: string;
   dormitorio: string;
   sala: string;
+  localizacao: string;
+  metros: string,
+    terreno: string,
+    bairo: string,
 
 
 }

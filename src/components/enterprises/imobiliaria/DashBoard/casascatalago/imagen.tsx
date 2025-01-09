@@ -56,7 +56,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ item, onImageUpload }) =>
   return (
     <Paper style={{}}>
       <Typography variant="h6" gutterBottom>
-        Enviar Imagem
+        Escolha até 4 imagens
       </Typography>
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12} sm={8}>

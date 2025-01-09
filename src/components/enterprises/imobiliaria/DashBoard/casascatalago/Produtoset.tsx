@@ -18,13 +18,16 @@ interface Item {
   tipo: string;
   quantidade: number;
   userId: string;
- 
+  localizacao: string;
+  metros: string;
+  terreno: string;
   imagemUrls: string[];
   garagem: string;
   cozinha: string;
   banheiro: string;
   dormitorio: string;
   sala: string;
+  bairo:string;
   
  
   

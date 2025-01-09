@@ -1,0 +1,66 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f9f9f9; /* Fundo claro para profissionalismo */
+  padding: 20px 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 20px auto;
+}
+
+.photoContainer {
+  flex: 1;
+  max-width: 200px;
+  margin-right: 20px;
+}
+
+.photo {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.infoContainer {
+  flex: 2;
+  text-align: left;
+}
+
+.name {
+  font-family: 'Cinzel', serif;
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+.role {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.2rem;
+  color: #0077b5; /* Azul para destacar o papel */
+  margin: 10px 0;
+}
+
+.description {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 15px;
+}
+
+.icon {
+  font-size: 1.8rem;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.icon:hover {
+  color: #0077b5; /* Destaque ao passar o mouse */
+}

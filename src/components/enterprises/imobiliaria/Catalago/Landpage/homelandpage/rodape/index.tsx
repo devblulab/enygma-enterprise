@@ -1,104 +1,100 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import Area from '../comum/Area';
-import Logoo from '../comum/Inicio';
-import RedesSociais from './RedeSociais';
+import { FaInstagram, FaWhatsapp, FaLinkedin } from 'react-icons/fa';
 
 export default function Rodape() {
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      // Define a threshold value for when to add the class
-      const scrollThreshold = 100;
-      setIsScrolled(scrollPosition > scrollThreshold);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const containerVariants = {
-    initial: {
-      opacity: 0,
-    },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 5.5,
-        delay: 0.2,
-      },
-    },
-  };
-
-  const textVariants = {
-    initial: {
-      y: 20,
-      opacity: 0,
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 5.5,
-        delay: 0.4,
-      },
-    },
-  };
-
-  const LogooVariants = {
-    initial: {
-      scale: 0.8,
-    },
-    visible: {
-      scale: 1,
-      transition: {
-        type: 'spring',
-        stiffness: 300,
-        duration: 5.5,
-        damping: 20,
-      },
-    },
-  };
-
   return (
-    <Area className={`bg-gradient-to-r from-black via-slate-900 py-20 ${isScrolled ? 'scrolled' : ''}`}>
-      <motion.div
-        className="flex flex-col items-center md:items-start"
-        initial="initial"
-        animate="visible"
-        variants={containerVariants}
-      >
-        <motion.div variants={LogooVariants}>
-          <Logoo />
-        </motion.div>
-        <motion.div className="mt-3 text-zinc-400 text-center md:text-left" variants={textVariants}>
-          <div>Plataforma financeira</div>
-          <div className="flex gap-1.5">
-            que{' '}
-            <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-400">
-              simplifica
-            </span>{' '}
-            sua vida
-          </div>
-        </motion.div>
-      </motion.div>
-      <motion.div
-        className="flex flex-col md:flex-row md:justify-between items-center mt-14"
-        initial="initial"
-        animate="visible"
-        variants={containerVariants}
-      >
-        <RedesSociais />
-        <motion.p className="text-zinc-100 mt-7 md:mt-0 text-center" variants={textVariants}>
-          <span className="font-bold">
-            Enygma<span className="text-red-500">Dev.</span>Lab.
-          </span>{' '}
-          ® {new Date().getFullYear()} - Todos os direitos reservados
-        </motion.p>
-      </motion.div>
-    </Area>
+    <footer className="bg-black text-white py-10">
+      <div className="container mx-auto px-5 flex flex-col lg:flex-row justify-between items-center">
+        {/* Coluna 1: Logo e descrição */}
+        <div className="mb-8 lg:mb-0 lg:w-1/3 text-center lg:text-left">
+          <motion.div
+            className="text-2xl font-bold uppercase tracking-widest"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            Luxo Realty
+          </motion.div>
+          <motion.p
+            className="mt-3 text-gray-400"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+          >
+            A sua solução completa para imóveis de alto padrão. Transformando sonhos em realidade com
+            elegância e exclusividade.
+          </motion.p>
+        </div>
+
+        {/* Coluna 2: Links úteis */}
+        <div className="mb-8 lg:mb-0 lg:w-1/3 text-center">
+          <motion.ul
+            className="space-y-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+          >
+            <li>
+              <a href="#sobre-nos" className="text-gray-400 hover:text-gray-100 transition duration-200">
+                Sobre Nós
+              </a>
+            </li>
+            <li>
+              <a href="#servicos" className="text-gray-400 hover:text-gray-100 transition duration-200">
+                Serviços
+              </a>
+            </li>
+            <li>
+              <a href="#contato" className="text-gray-400 hover:text-gray-100 transition duration-200">
+                Contato
+              </a>
+            </li>
+          </motion.ul>
+        </div>
+
+        {/* Coluna 3: Redes sociais */}
+        <div className="lg:w-1/3 text-center lg:text-right">
+          <motion.div
+            className="flex justify-center lg:justify-end gap-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+          >
+            <a
+              href="https://www.instagram.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition duration-200 text-xl"
+            >
+              <FaInstagram />
+            </a>
+            <a
+              href="https://wa.me/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition duration-200 text-xl"
+            >
+              <FaWhatsapp />
+            </a>
+            <a
+              href="https://www.linkedin.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition duration-200 text-xl"
+            >
+              <FaLinkedin />
+            </a>
+          </motion.div>
+          <motion.p
+            className="mt-3 text-gray-400 text-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+          >
+            © {new Date().getFullYear()} Luxo Realty. Todos os direitos reservados.
+          </motion.p>
+        </div>
+      </div>
+    </footer>
   );
 }
-

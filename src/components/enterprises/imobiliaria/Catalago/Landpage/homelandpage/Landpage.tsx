@@ -27,6 +27,10 @@ interface Item {
   banheiro: string;
   dormitorio: string;
   sala: string;
+  localizacao: string;
+  bairo: string;
+  metros: string;
+  terreno: string;
 }
 
 const Produtoset: React.FC = () => {
@@ -39,12 +43,14 @@ const Produtoset: React.FC = () => {
 
   return (
     <>
-      <div style={{ backgroundColor: '#f2f2f7', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ backgroundColor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Botaonv />
-        <ItemList items={items} />
-        <Faixaa />
-        <Historiaa />
         <CatalagoList items={items} />
+        <Historiaa />
+        <Faixaa />
+        <ItemList items={items} />
+        
+        
         <Rodape />
       </div>
     </>

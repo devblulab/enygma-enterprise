@@ -26,6 +26,16 @@ interface Item {
   userId: string;
   selected: boolean;
   imagemUrls: string[];
+  garagem: string;
+  cozinha: string;
+  banheiro: string;
+  dormitorio: string;
+  sala: string;
+  localizacao: string;
+  bairo: string;
+  metros: string;
+  terreno: string;
+  
 }
 
 interface ItemListProps {
