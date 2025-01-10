@@ -1,13 +1,17 @@
+
 import React, { useEffect, useState } from 'react';
-import { Typography, TextField, Button, Grid, Paper, Container } from '@material-ui/core';
+import { Typography, TextField, Button, Grid, Paper, Container, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { collection, getFirestore, getDocs } from 'firebase/firestore';
+import { collection, getFirestore, getDocs, deleteDoc , doc } from 'firebase/firestore';
 import { app } from '../../../../../../logic/firebase/config/app';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon  } from '@fortawesome/react-fontawesome';
 import { AiOutlineWhatsApp, AiOutlinePlus } from 'react-icons/ai';
 
+
 import { faCar, faUtensils, faRulerCombined, faDraftingCompass, faBath, faBed, faMap, faCouch, faMapMarkerAlt, faHouse, faBuilding, faStore } from '@fortawesome/free-solid-svg-icons'; // Importando faHouse
+
+
 
 // Configuração do Firestore
 const db = getFirestore(app);
@@ -26,7 +30,7 @@ interface Item {
   tipo: string;
   quantidade: number;
   userId: string;
-  selected: boolean;
+  bairo: string;
   imagemUrls: string[];
   garagem: string;
   cozinha: string;
@@ -34,9 +38,8 @@ interface Item {
   dormitorio: string;
   sala: string;
   localizacao: string;
-  bairo: string;
-  metros: string;
-  terreno: string;
+  metros: string,
+    terreno: string,
 }
 
 // Definindo os estilos utilizando makeStyles
@@ -241,6 +244,11 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
   const [itemsPerPage] = useState<number>(6); // Itens por página
   const [showMoreImages, setShowMoreImages] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>('Todos');
+  const [isHydrated, setIsHydrated] = useState(false);
+  
+    useEffect(() => {
+      setIsHydrated(true);
+    }, []);
   
   useEffect(() => {
     const fetchItems = async () => {
@@ -269,7 +277,6 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
       item.nome.toLowerCase().includes(searchLower) ||
       item.tipo.toLowerCase().includes(searchLower) ||
       item.localizacao.toLowerCase().includes(searchLower)
-     
     );
   });
 
@@ -308,7 +315,13 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
       setCurrentPage(currentPage - 1);
     }
   };
+
   
+  
+  if (!isHydrated) {
+    return null;
+  }
+
   return (
     <Container>
       <div className={classes.catalagoContainer}>
@@ -432,12 +445,16 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
                         >
                           <FontAwesomeIcon icon={faMapMarkerAlt} />
                         </Button>
+                        
                       </div>
                     </Paper>
                   </Grid>
                 ))
               ) : (
-                <Typography variant="body1">Nenhum item encontrado.</Typography>
+                <Typography variant="body1" style={{ display: 'flex', alignItems: 'center' }}>
+      <CircularProgress size={24} style={{ marginRight: '10px' }} />
+      Carregando...
+    </Typography>
               )}
             </Grid>
             {filteredItems.length > itemsPerPage && (
