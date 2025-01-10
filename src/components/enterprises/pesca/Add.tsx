@@ -201,10 +201,7 @@ const addPage: React.FC = () => {
           </Grid>
         </Grid>
 
-        <ImageUploader
-          item={pescaItem}
-          onImageUpload={(imageUrl) => setPescaItem({ ...pescaItem, imagemUrl: imageUrl })}
-        />
+        
 
         <Button
           onClick={handleAddItem}
