@@ -1,13 +1,17 @@
+
 import React, { useEffect, useState } from 'react';
-import { Typography, TextField, Button, Grid, Paper, Container } from '@material-ui/core';
+import { Typography, TextField, Button, Grid, Paper, Container, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { collection, getFirestore, getDocs , deleteDoc , doc } from 'firebase/firestore';
+import { collection, getFirestore, getDocs, deleteDoc , doc } from 'firebase/firestore';
 import { app } from '../../../../../logic/firebase/config/app';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon  } from '@fortawesome/react-fontawesome';
 import { AiOutlineWhatsApp, AiOutlinePlus, AiOutlineDelete } from 'react-icons/ai';
 
-import { faCar, faUtensils, faBath, faBed, faCouch, faMapMarkerAlt, faHouse, faBuilding, faStore } from '@fortawesome/free-solid-svg-icons'; // Importando faHouse
+
+import { faCar, faUtensils, faRulerCombined, faDraftingCompass, faBath, faBed, faMap, faCouch, faMapMarkerAlt, faHouse, faBuilding, faStore } from '@fortawesome/free-solid-svg-icons'; // Importando faHouse
+
+
 
 // Configuração do Firestore
 const db = getFirestore(app);
@@ -26,7 +30,7 @@ interface Item {
   tipo: string;
   quantidade: number;
   userId: string;
-  
+  bairo: string;
   imagemUrls: string[];
   garagem: string;
   cozinha: string;
@@ -143,16 +147,17 @@ const useStyles = makeStyles({
   },
   cardTitle: {
     fontFamily: 'Cinzel, serif',
+    fontSize: '25px',
     fontWeight: 'bold',
     color: '#333',
-    marginTop: '15px',
+    marginTop: '-10px',
     textAlign: 'center',
   },
   cardText: {
     fontFamily: 'Cinzel, serif',
     color: '#000',
     textAlign: 'center',
-    margin: '5px 0',
+    margin: '10px 0',
   },
   featuresContainer: {
     display: 'flex',
@@ -176,6 +181,28 @@ const useStyles = makeStyles({
     marginTop: '15px',
     gap: '10px',
   },
+  cardRow: {
+    display: 'flex',         // Flexbox para alinhar na mesma linha
+    justifyContent: 'space-between', // Espaço entre os elementos (esquerda e direita)
+    alignItems: 'center',    // Alinha os itens verticalmente
+    width: '100%',           // Garante que o contêiner ocupe toda a largura disponível
+  },
+  
+  leftAligned: {
+    display: 'flex',
+    fontFamily: 'Cinzel, serif',       
+    alignItems: 'center',    // Centraliza verticalmente
+    gap: '8px',              // Espaçamento entre o ícone e o texto
+  },
+  
+  rightAligned: {
+    display: 'flex',  
+    fontFamily: 'Cinzel, serif',       
+    alignItems: 'center',    // Centraliza verticalmente
+    gap: '8px',              // Espaçamento entre o ícone e o texto
+  },
+  
+
   button: {
     backgroundColor: 'transparent',
     color: '#555',
@@ -217,6 +244,13 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
   const [itemsPerPage] = useState<number>(6); // Itens por página
   const [showMoreImages, setShowMoreImages] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>('Todos');
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  
   
   useEffect(() => {
     const fetchItems = async () => {
@@ -293,6 +327,10 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
       console.error(`Erro ao excluir o item com ID ${itemId}:`, error);
     }
   };
+
+  if (!isHydrated) {
+    return null;
+  }
   
   return (
     <Container>
@@ -340,6 +378,7 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
                   <Grid item xs={12} sm={6} md={4} key={item.id}>
                     <Paper className={classes.cardRoot}>
                       <div className={classes.imageContainer}>
+                        
                         <AnimatePresence>
                           {item.imagemUrls && item.imagemUrls.length > 0 && (
                             <motion.img
@@ -352,26 +391,36 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
                               transition={{ duration: 0.5, ease: 'easeInOut' }}
                             />
                           )}
+                          
                         </AnimatePresence>
                       </div>
+                      <div className={classes.cardRow}>
+  <Typography variant="body1" className={classes.leftAligned}>
+    <FontAwesomeIcon icon={faDraftingCompass} className={classes.icon} />
+    {item.metros} M.
+  </Typography>
+  <Typography variant="body1" className={classes.rightAligned}>
+   
+    Lote   {item.terreno}.m
+    <FontAwesomeIcon icon={faRulerCombined} className={classes.icon} />
+  </Typography>
+</div>
+
                       <Typography variant="h6" className={classes.cardTitle}>
                         {item.nome}
                       </Typography>
                       <Typography variant="body1" className={classes.cardText}>
-                        Local: {item.localizacao}
+                        Bairo: {item.bairo}
                       </Typography>
+                      
+                      
                       <Typography variant="body1" className={classes.cardText}>
-                        Metragem: {item.metros}
-                      </Typography>
-                      <Typography variant="body1" className={classes.cardText}>
-                        Terreno: {item.terreno}
-                      </Typography>
-                      <Typography variant="body1" className={classes.cardText}>
-                        Tipo: {item.tipo}
+                        Ressidencia: {item.tipo}
                       </Typography>
                       <Typography variant="body1" className={classes.cardText}>
                         Valor: R$ {item.unidadevalor.toFixed(2)}
                       </Typography>
+                      
                       <div className={classes.featuresContainer}>
                         <FontAwesomeIcon icon={faCar} className={classes.icon} />
                         <Typography className={classes.cardFeature}>{item.garagem}</Typography>
@@ -407,18 +456,21 @@ const CatalagoList: React.FC<ItemListProps> = ({ items }) => {
                           <FontAwesomeIcon icon={faMapMarkerAlt} />
                         </Button>
                         <Button
-                          variant="outlined"
-                          className={`${classes.button} ${classes.whatsappButton}`}
-                          onClick={() => handleDeleteItem(item.id)}
-                        >
-                          <AiOutlineDelete />
-                        </Button>
+                                                  variant="outlined"
+                                                  className={`${classes.button} ${classes.whatsappButton}`}
+                                                  onClick={() => handleDeleteItem(item.id)}
+                                                >
+                                                  <AiOutlineDelete />
+                                                </Button>
                       </div>
                     </Paper>
                   </Grid>
                 ))
               ) : (
-                <Typography variant="body1">Nenhum item encontrado.</Typography>
+                <Typography variant="body1" style={{ display: 'flex', alignItems: 'center' }}>
+      <CircularProgress size={24} style={{ marginRight: '10px' }} />
+      Carregando...
+    </Typography>
               )}
             </Grid>
             {filteredItems.length > itemsPerPage && (
