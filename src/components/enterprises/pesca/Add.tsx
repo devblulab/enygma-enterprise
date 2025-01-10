@@ -216,16 +216,16 @@ const addPage: React.FC = () => {
 
       {/* Lista de Itens */}
       <div>
-        {items.map((item, index) => (
-          <Paper key={index} className={classes.card}>
-            <Typography variant="h6">{item.nome}</Typography>
-            <Typography variant="body2">{item.descricao}</Typography>
-            <Typography variant="subtitle1">
-              Tipo: {item.tipo} | Valor: R$ {item.valor.toFixed(2)}
-           
-          </Paper>
-        ))}
-      </div>
+  {items.map((item, index) => (
+    <Paper key={index} className={classes.card}>
+      <Typography variant="h6">{item.nome}</Typography>
+      <Typography variant="body2">{item.descricao}</Typography>
+      <Typography variant="subtitle1">
+        Tipo: {item.tipo} | Valor: R$ {item.valor.toFixed(2)}
+      </Typography>
+    </Paper>
+  ))}
+</div>
 
       {/* Formulário de Contato */}
       <Paper className={classes.contactForm}>
