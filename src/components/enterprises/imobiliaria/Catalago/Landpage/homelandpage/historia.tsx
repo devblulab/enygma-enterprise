@@ -41,6 +41,8 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '20px',
     color: '#fff',
     textAlign: 'left',
+    position: 'relative',
+    zIndex: 1, // Garante que o texto fique acima da logo
   },
   name: {
     fontSize: '1.8rem',
@@ -54,9 +56,10 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '10px',
   },
   description: {
-    fontSize: '1rem',
+    fontSize: '0.8rem',
     color: '#B0B0B0',
     marginBottom: '15px',
+    zIndex: 1,
   },
   socialIcons: {
     display: 'flex',
@@ -74,6 +77,19 @@ const useStyles = makeStyles((theme) => ({
   },
   whatsappIcon: {
     color: '#25D366',
+  },
+  logoContainer: {
+    position: 'absolute',
+    top: '-70px',
+    left: '400px',
+    width: '550px',
+    height: '350px',
+    
+    backgroundImage: 'url("/logo.webp")', // A logo agora está na pasta 'public'
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat',
+    opacity: 0.5, // Ajusta a opacidade para tornar a logo transparente
+    zIndex: 0, // Coloca a logo atrás do texto
   },
 
   // Estilos para telas maiores (PC)
@@ -137,6 +153,9 @@ const ConsultorImobiliario: React.FC = () => {
 
       {/* Informações do Consultor */}
       <div className={classes.infoContainer}>
+        {/* Logo como background */}
+        <div className={classes.logoContainer}></div>
+
         <motion.h1
           className={classes.name}
           initial={{ opacity: 0, x: -20 }}
@@ -159,8 +178,20 @@ const ConsultorImobiliario: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 1 }}
         >
-          Especialista em encontrar o imóvel perfeito para você. Atuando em Tubarão, Santa Catarina.
+          Especialista em encontrar o imóvel perfeito para você. 
+         
         </motion.p>
+        
+        <motion.p
+          className={classes.description}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 1 }}
+        >
+          Atuando em Tubarão, Santa Catarina.
+         
+        </motion.p>
+        
         <div className={classes.socialIcons}>
           <motion.a
             href="https://www.instagram.com/guilherme_amartins/"
