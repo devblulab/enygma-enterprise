@@ -7,6 +7,7 @@ import Botaonv from './BotoesNavegacao';
 import Faixaa from './faixademo';
 import Historiaa from './historia';
 import Rodape from './rodape/index';
+import Financiamento from './Financiamento';
 
 interface Item {
   id: string;
@@ -49,7 +50,7 @@ const Produtoset: React.FC = () => {
         <Historiaa />
         <Faixaa />
         <ItemList items={items} />
-        
+        <Financiamento />
         
         <Rodape />
       </div>
