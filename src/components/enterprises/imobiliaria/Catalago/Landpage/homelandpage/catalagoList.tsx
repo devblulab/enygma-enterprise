@@ -129,7 +129,7 @@ const useStyles = makeStyles({
       marginBottom: '20px', // Espaço entre os cards em telas médias
     },
     '@media (min-width: 1200px)': {
-      maxWidth: '300px', // No desktop, os cards têm no máximo 350px de largura
+      maxWidth: '250px', // No desktop, os cards têm no máximo 350px de largura
       marginBottom: '2px', // Espaço entre os cards em telas grandes
     },
   },
