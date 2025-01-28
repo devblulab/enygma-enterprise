@@ -197,7 +197,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
       <Paper className={classes.paper}>
         <Typography className={classes.title}>Criar Requerimento de Intenção de Venda</Typography>
         
-        <Typography className={classes.title}>Identificação Do Vendedor</Typography>
+        <Typography className={classes.title}>Identificação Do Veiculo</Typography>
         <Grid container spacing={3}>
           {[{ label: 'Placa', value: 'id' }, { label: 'Renavam', value: 'renavam' }, { label: 'CRV', value: 'crv' }, { label: 'Valor de Venda', value: 'valordevenda', type: 'number' },].map((field) => (
             <Grid item xs={12} sm={6} key={field.value}>
