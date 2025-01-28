@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Button, Paper, TextField } from '@material-ui/core'; // Importando TextField
 import { makeStyles } from '@material-ui/core/styles';
 import { collection, getFirestore, getDocs } from 'firebase/firestore';
-import { app } from '../../../logic/firebase/config/app';
+import { app } from '../../../../logic/firebase/config/app';
 
 const db = getFirestore(app);
 
