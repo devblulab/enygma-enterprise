@@ -2,7 +2,7 @@
 
 
 import React from 'react';
-import Produto from '@/components/enterprises/betodespa/DashBoard/casascatalago/Produtoset';
+import Produto from '@/components/enterprises/betodespa/requerimento/Produtoset';
 
 
 
