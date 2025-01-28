@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import ItemList from '@/components/enterprises/betodespa/requerimento/ItemList';
+import ItemList from '../../../components/enterprises/betodespa/requerimento/ItemList';
 
 
 
