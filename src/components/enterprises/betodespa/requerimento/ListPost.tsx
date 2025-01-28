@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Grid, Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-import Colecao from '../../../logic/firebase/db/Colecao'; // Lógica do Firebase
+import Colecao from '../../../../logic/firebase/db/Colecao'; // Lógica do Firebase
 import Item from './Item'; // Interface Item
 
 const useStyles = makeStyles((theme) => ({
