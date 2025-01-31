@@ -35,6 +35,14 @@ interface Item {
     municipiocomprador: string,
     emailcomprador: string,
    celtelcomprador: string,
+   celtelvendedor: string,
+   cepvendedor: string;
+    cepcomprador: string;
+    tipo: string;
+    cnpjempresa: string;
+    nomeempresa: string;
+    dataCriacao: string;
+    
  
   
 
