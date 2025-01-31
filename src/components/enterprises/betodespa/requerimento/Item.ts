@@ -1,7 +1,5 @@
 interface Item {
-  
-
-    id:string,
+  id:string,
     cliente: string,
     total: number;
     status: string,
@@ -12,8 +10,8 @@ interface Item {
     renavam: string,
     crv: string,
     valordevenda: number;
-
-    
+   
+  
 
     nomevendedor: string,
     cpfvendedor: string,
@@ -28,7 +26,17 @@ interface Item {
     complementocomprador: string,
     municipiocomprador: string,
     emailcomprador: string,
-    celtelcomprador: string;
+   celtelcomprador: string,
+   celtelvendedor: string,
+   cepvendedor: string;
+    cepcomprador: string;
+    tipo: string;
+    cnpjempresa: string;
+    nomeempresa: string;
+    dataCriacao: string;
+    
+ 
+  
 
 }
 
