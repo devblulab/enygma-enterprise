@@ -19,7 +19,7 @@ interface Item {
     crv: string,
     valordevenda: number;
    
-    localizacao: string,
+  
 
     nomevendedor: string,
     cpfvendedor: string,
