@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Paper, TextField } from '@material-ui/core'; // Importando TextField
+import { Typography, Button, Paper, TextField } from '@material-ui/core'; 
 import { makeStyles } from '@material-ui/core/styles';
 import { collection, getFirestore, getDocs } from 'firebase/firestore';
 import { app } from '../../../../logic/firebase/config/app';
@@ -145,24 +145,45 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Item {
-  id: string;
-  placa: string;
-  renavam: string;
-  crv: string;
-  valordevenda: number;
-  nomevendedor: string;
-  cpfvendedor: string;
-  enderecovendedor: string;
-  complementovendedor: string;
-  municipiovendedor: string;
-  emailvendedor: string;
-  nomecomprador: string;
-  cpfcomprador: string;
-  enderecocomprador: string;
-  complementocomprador: string;
-  municipiocomprador: string;
-  emailcomprador: string;
-  celtelcomprador: string;
+  id:string,
+    cliente: string,
+    total: number;
+    status: string,
+    quantidade: number;
+    imagemUrls: string[],
+    concluido: false,
+    placa: string,
+    renavam: string,
+    crv: string,
+    valordevenda: number;
+   
+    localizacao: string,
+
+    nomevendedor: string,
+    cpfvendedor: string,
+    enderecovendedor: string,
+    complementovendedor: string,
+    municipiovendedor: string,
+    emailvendedor: string,
+
+    nomecomprador: string,
+    cpfcomprador: string,
+    enderecocomprador: string,
+    complementocomprador: string,
+    municipiocomprador: string,
+    emailcomprador: string,
+   celtelcomprador: string,
+   cepvendedor: string;
+    cepcomprador: string;
+    tipo: string;
+    cnpjempresa: string;
+    nomeempresa: string;
+    dataCriacao: string;
+    celtelvendedor: string,
+    
+ 
+  
+
 }
 
 interface ItemListProps {
