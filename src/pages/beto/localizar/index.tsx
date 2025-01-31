@@ -19,7 +19,7 @@ interface Item {
     crv: string,
     valordevenda: number;
    
-    localizacao: string,
+  
 
     nomevendedor: string,
     cpfvendedor: string,
@@ -35,10 +35,19 @@ interface Item {
     municipiocomprador: string,
     emailcomprador: string,
    celtelcomprador: string,
+   celtelvendedor: string,
+   cepvendedor: string;
+    cepcomprador: string;
+    tipo: string;
+    cnpjempresa: string;
+    nomeempresa: string;
+    dataCriacao: string;
+    
  
   
 
 }
+
 
 const Produtoset: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
