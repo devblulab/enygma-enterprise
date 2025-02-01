@@ -1,6 +1,6 @@
 
 
-import Colecao from '../../../../logic/firebase/db/Colecao'; //
+import Colecao from '../../../../logic/firebase/db/Colecao';
 
 
 import React, { useState } from 'react';
