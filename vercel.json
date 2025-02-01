@@ -1,3 +1,13 @@
 {
     "rewrites": [{ "source": "/(.*)", "destination": "/"}]
 }
+
+{
+  "redirects": [
+    {
+      "source": "/beto/requerimento",
+      "destination": "https://enygma-enterprise.vercel.app/beto/requerimento",
+      "permanent": true
+    }
+  ]
+}
