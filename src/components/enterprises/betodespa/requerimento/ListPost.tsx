@@ -1,15 +1,10 @@
-
-
-import Colecao from '../../../../logic/firebase/db/Colecao';
-
-
 import React, { useState } from 'react';
 import { TextField, Button, Grid, Paper, Typography, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { motion } from 'framer-motion';
-import SaveIcon from '@material-ui/icons/Save'; // Importação do ícone Save
+import { motion } from 'framer-motion';  // Importe o motion do framer-motion
 
-import Item from './Item';
+import Colecao from '../../../../logic/firebase/db/Colecao';
+import Item from './Item'; // Interface Item
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -58,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     marginBottom: theme.spacing(1),
+  
     fontSize: '1.5rem',
     fontWeight: 'bold',
     fontFamily: 'Playfair Display, serif',
@@ -72,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   textField: {
+    marginBottom: theme.spacing(-1),
     padding: '0px',
     backgroundColor: '#fafafa',
     borderRadius: '8px',
@@ -89,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   button: {
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(-1),
     padding: theme.spacing(1.5),
     background: 'linear-gradient(135deg,rgba(27, 27, 27, 0.8),rgba(102, 102, 102, 0.34))',
     color: '#fff',
@@ -129,38 +126,44 @@ interface ListPostProps {
 const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   const classes = useStyles();
   const [newItem, setNewItem] = useState<Item>({
-    id: '',
+   
+
+    id:'',
     cliente: '',
-    total: 0,
+    
     status: '',
     quantidade: 0,
-    concluido: false,
     imagemUrls: ['', '', '', ''],
+    concluido: false,
     placa: '',
     renavam: '',
     crv: '',
     valordevenda: 0,
-    localizacao: '',
-    nomevendedor: '',
+   
+    
+
+    nomevendedor:'',
     cpfvendedor: '',
     enderecovendedor: '',
     complementovendedor: '',
     municipiovendedor: '',
-    emailvendedor: '',
+    emailvendedor:'',
+
     nomecomprador: '',
     cpfcomprador: '',
     enderecocomprador: '',
     complementocomprador: '',
     municipiocomprador: '',
     emailcomprador: '',
-    celtelcomprador: '',
-    celtelvendedor: '',
-    cepvendedor: '',
+   celtelcomprador: '',
+   cepvendedor: '',
     cepcomprador: '',
     tipo: '',
     cnpjempresa: '',
     nomeempresa: '',
-    dataCriacao: '',
+    
+    celtelvendedor: '',
+   
   });
 
   const handleAddItem = async () => {
@@ -174,49 +177,48 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
       };
 
       setNewItem({
-        imagemUrls: ['', '', '', ''],
-        id: '',
+        id:'',
         cliente: '',
-        total: 0,
+        
         status: '',
         quantidade: 0,
+        imagemUrls: ['', '', '', ''],
         concluido: false,
-        localizacao: '',
         placa: '',
         renavam: '',
         crv: '',
         valordevenda: 0,
-        nomevendedor: '',
-        celtelvendedor: '',
+       
+        
+    
+        nomevendedor:'',
         cpfvendedor: '',
         enderecovendedor: '',
         complementovendedor: '',
         municipiovendedor: '',
-        emailvendedor: '',
+        emailvendedor:'',
+    
         nomecomprador: '',
         cpfcomprador: '',
         enderecocomprador: '',
         complementocomprador: '',
         municipiocomprador: '',
         emailcomprador: '',
-        celtelcomprador: '',
-        cepvendedor: '',
+       celtelcomprador: '',
+       cepvendedor: '',
         cepcomprador: '',
         tipo: '',
         cnpjempresa: '',
         nomeempresa: '',
-        dataCriacao: '',
+        
+        celtelvendedor: '',
+ 
       });
 
       setItems((prevItems) => [...prevItems, adaptedItemSalvo]);
     } catch (error) {
       console.error('Erro ao adicionar o item:', error);
     }
-  };
-
-  const handleSaveEdit = () => {
-    // Lógica para salvar a edição
-    console.log('Edição salva com sucesso!');
   };
 
   const shouldShowImageUploader = newItem.imagemUrls.length < 4;
@@ -232,121 +234,112 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 3 }}
         >
-          {/* Logo no topo, centralizado e com estilo luxuoso */}
           <div className={classes.logoContainer}>
             <img src="/betodespa.webp" alt="Logo Betodespachante" />
           </div>
-
           <Typography className={classes.title}>Criar Requerimento de Intenção de Venda</Typography>
-
-          {/* Todos os 4 grupos lado a lado no computador, um embaixo do outro no mobile */}
+  
+          {/* Seções lado a lado */}
           <Grid container spacing={3}>
-            {/* Identificação Do Veículo */}
-            <Grid item xs={12} md={3}>
-              <Typography className={classes.title}>Identificação Do Veículo</Typography>
-              <Grid container spacing={1}>
-                {[
-                  { label: 'Placa', value: 'placa' },
-                  { label: 'Renavam', value: 'renavam' },
-                  { label: 'CRV', value: 'crv' },
-                  { label: 'Valor de Venda', value: 'valordevenda', type: 'number' },
-                ].map((field) => (
-                  <Grid item xs={12} key={field.value}>
-                    <TextField
-                      label={field.label}
-                      value={newItem[field.value as keyof Item] || ''}
-                      onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
-                      fullWidth
-                      variant="outlined"
-                      InputProps={{ className: classes.textField }}
-                      type={field.type || 'text'}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
+  {/* Identificação Do Veículo */}
+  <Grid item xs={3}>
+    <Typography className={classes.title}>Identificação Do Veículo</Typography>
+    {[
+      { label: 'Placa', value: 'id' },
+      { label: 'Renavam', value: 'renavam' },
+      { label: 'CRV', value: 'crv' },
+      { label: 'Valor de Venda', value: 'valordevenda', type: 'number' }
+    ].map((field) => (
+      <TextField
+        key={field.value}
+        label={field.label}
+        value={newItem[field.value as keyof Item] || ''}
+        onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
+        fullWidth
+        variant="outlined"
+        InputProps={{ className: classes.textField }}
+        style={{ marginBottom: '16px' }}
+      />
+    ))}
+  </Grid>
 
-            {/* Identificação Do Vendedor */}
-            <Grid item xs={12} md={3}>
-              <Typography className={classes.title}>Identificação Do</Typography>
-              <Typography className={classes.title}>Vendedor</Typography>
-              <Grid container spacing={1}>
-                {[
-                  { label: 'Nome', value: 'nomevendedor' },
-                  { label: 'CPF', value: 'cpfvendedor' },
-                  { label: 'ENDEREÇO', value: 'enderecovendedor' },
-                  { label: 'COMPLEMENTO', value: 'complementovendedor' },
-                  { label: 'MUNICIPÍO', value: 'municipiovendedor' },
-                  { label: 'E-MAIL', value: 'emailvendedor' },
-                  { label: 'CEL/TEL', value: 'celtelvendedor' },
-                  { label: 'CEP', value: 'cepvendedor' },
-                ].map((field) => (
-                  <Grid item xs={12} key={field.value}>
-                    <TextField
-                      label={field.label}
-                      value={newItem[field.value as keyof Item] || ''}
-                      onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
-                      fullWidth
-                      variant="outlined"
-                      InputProps={{ className: classes.textField }}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
+  {/* Identificação Do Vendedor */}
+  <Grid item xs={3}>
+    <Typography className={classes.title}>Identificação Do Vendedor</Typography>
+    {[
+      { label: 'Nome', value: 'nomevendedor' },
+      { label: 'CPF', value: 'cpfvendedor' },
+      { label: 'ENDEREÇO', value: 'enderecovendedor' },
+      { label: 'COMPLEMENTO', value: 'complementovendedor' },
+      { label: 'MUNICÍPIO', value: 'municipiovendedor' },
+      { label: 'E-MAIL', value: 'emailvendedor' },
+      { label: 'CEL/TEL', value: 'celtelvendedor' },
+      { label: 'CEP', value: 'cepvendedor' }
+    ].map((field) => (
+      <TextField
+        key={field.value}
+        label={field.label}
+        value={newItem[field.value as keyof Item] || ''}
+        onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
+        fullWidth
+        variant="outlined"
+        InputProps={{ className: classes.textField }}
+        style={{ marginBottom: '16px' }}
+      />
+    ))}
+  </Grid>
 
-            {/* Identificação Do Comprador */}
-            <Grid item xs={12} md={3}>
-              <Typography className={classes.title}>Identificação Do</Typography>
-              <Typography className={classes.title}>Comprador</Typography>
-              <Grid container spacing={1}>
-                {[
-                  { label: 'Nome', value: 'nomecomprador' },
-                  { label: 'CPF', value: 'cpfcomprador' },
-                  { label: 'ENDEREÇO', value: 'enderecocomprador' },
-                  { label: 'COMPLEMENTO', value: 'complementocomprador' },
-                  { label: 'MUNICIPÍO', value: 'municipiocomprador' },
-                  { label: 'E-MAIL', value: 'emailcomprador' },
-                  { label: 'CEL/TEL', value: 'celtelcomprador' },
-                  { label: 'CEP', value: 'cepcomprador' },
-                ].map((field) => (
-                  <Grid item xs={12} key={field.value}>
-                    <TextField
-                      label={field.label}
-                      value={newItem[field.value as keyof Item] || ''}
-                      onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
-                      fullWidth
-                      variant="outlined"
-                      InputProps={{ className: classes.textField }}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
+  {/* Identificação Do Comprador */}
+  <Grid item xs={3}>
+    <Typography className={classes.title}>Identificação Do Comprador</Typography>
+    {[
+      { label: 'Nome', value: 'nomecomprador' },
+      { label: 'CPF', value: 'cpfcomprador' },
+      { label: 'ENDEREÇO', value: 'enderecocomprador' },
+      { label: 'COMPLEMENTO', value: 'complementocomprador' },
+      { label: 'MUNICÍPIO', value: 'municipiocomprador' },
+      { label: 'E-MAIL', value: 'emailcomprador' },
+      { label: 'CEL/TEL', value: 'celtelcomprador' },
+      { label: 'CEP', value: 'cepcomprador' }
+    ].map((field) => (
+      <TextField
+        key={field.value}
+        label={field.label}
+        value={newItem[field.value as keyof Item] || ''}
+        onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
+        fullWidth
+        variant="outlined"
+        InputProps={{ className: classes.textField }}
+        style={{ marginBottom: '16px' }}
+      />
+    ))}
+  </Grid>
 
-            {/* Identificação Da Empresa */}
-            <Grid item xs={12} md={3}>
-              <Typography className={classes.title}>Identificação Da Empresa</Typography>
-              <Grid container spacing={1}>
-                {[
-                  { label: 'Nome Empresa', value: 'nomeempresa' },
-                  { label: 'CNPJ', value: 'cnpjempresa' },
-                ].map((field) => (
-                  <Grid item xs={12} key={field.value}>
-                    <TextField
-                      label={field.label}
-                      value={newItem[field.value as keyof Item] || ''}
-                      onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
-                      fullWidth
-                      variant="outlined"
-                      InputProps={{ className: classes.textField }}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
-          </Grid>
+  
+  {/* Identificação Da Empresa */}
+  <Grid item xs={3}>
+    <Typography className={classes.title}>Identificação Da Empresa</Typography>
+    {[
+      { label: 'Nome Empresa', value: 'nomeempresa' },
+      { label: 'CNPJ', value: 'cnpjempresa' },
+      
+      
+    ].map((field) => (
+      <TextField
+        key={field.value}
+        label={field.label}
+        value={newItem[field.value as keyof Item] || ''}
+        onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
+        fullWidth
+        variant="outlined"
+        InputProps={{ className: classes.textField }}
+        style={{ marginBottom: '16px' }}
+      />
+    ))}
+  </Grid>
+</Grid>
 
+  
           {shouldShowAddItemButton && (
             <Grid container justifyContent="center" alignItems="center" spacing={3}>
               <Grid item>
@@ -361,8 +354,6 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
               </Grid>
             </Grid>
           )}
-
-          
         </motion.div>
       </Paper>
     </div>
