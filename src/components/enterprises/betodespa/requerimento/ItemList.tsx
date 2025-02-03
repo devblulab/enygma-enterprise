@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Paper, TextField } from '@material-ui/core'; 
+import { Typography, Button, Paper, TextField } from '@material-ui/core'; // Importando TextField
 import { makeStyles } from '@material-ui/core/styles';
 import { collection, getFirestore, getDocs } from 'firebase/firestore';
-import { app } from '../../../../logic/firebase/config/app';
+import { app } from '@/logic/firebase/config/app';
 
 const db = getFirestore(app);
 
@@ -147,7 +147,7 @@ const useStyles = makeStyles((theme) => ({
 interface Item {
   id:string,
     cliente: string,
-    total: number;
+   
     status: string,
     quantidade: number;
     imagemUrls: string[],
@@ -157,7 +157,7 @@ interface Item {
     crv: string,
     valordevenda: number;
    
-  
+    
 
     nomevendedor: string,
     cpfvendedor: string,
@@ -178,7 +178,7 @@ interface Item {
     tipo: string;
     cnpjempresa: string;
     nomeempresa: string;
-    dataCriacao: string;
+    
     celtelvendedor: string,
     
  
@@ -282,7 +282,9 @@ const CatalagoList: React.FC<ItemListProps> = ({}) => {
                 <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecovendedor}</Typography>
                 <Typography className={classes.field}><strong>Complemento:</strong> {item.complementovendedor}</Typography>
                 <Typography className={classes.field}><strong>Município:</strong> {item.municipiovendedor}</Typography>
+                <Typography className={classes.field}><strong>CEP:</strong> {item.cepvendedor}</Typography>
                 <Typography className={classes.field}><strong>E-mail:</strong> {item.emailvendedor}</Typography>
+                <Typography className={classes.field}><strong>CEL/TEL:</strong> {item.celtelvendedor}</Typography>
 
                 <Typography className={classes.sectionTitle}>Identificação do Comprador</Typography>
                 <Typography className={classes.field}><strong>Nome:</strong> {item.nomecomprador}</Typography>
@@ -290,12 +292,13 @@ const CatalagoList: React.FC<ItemListProps> = ({}) => {
                 <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecocomprador}</Typography>
                 <Typography className={classes.field}><strong>Complemento:</strong> {item.complementocomprador}</Typography>
                 <Typography className={classes.field}><strong>Município:</strong> {item.municipiocomprador}</Typography>
+                <Typography className={classes.field}><strong>CEP:</strong> {item.cepcomprador}</Typography>
                 <Typography className={classes.field}><strong>E-mail:</strong> {item.emailcomprador}</Typography>
                 <Typography className={classes.field}><strong>CEL/TEL:</strong> {item.celtelcomprador}</Typography>
 
                 <Typography className={classes.sectionTitle}></Typography>
                 <Typography className={classes.field2} style={{ marginTop: '20px' }}>
-                  Eu <strong>VENDEDOR</strong>, com base na Resolução do CONTRAN nº 809, de ____________________________________,
+                  Eu <strong>VENDEDOR</strong>, com base na Resolução do CONTRAN nº 809, de 15 de dezembro 2020,
                   informo ao Departamento Estadual de Trânsito de Santa Catarina (DETRAN-SC) a, 
                   <strong>INTENÇÃO DE VENDA</strong> em ___________________, para o <strong>COMPRADOR</strong> conforme indicado acima.
                 </Typography>
