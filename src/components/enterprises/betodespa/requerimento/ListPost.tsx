@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   title: {
-    marginBottom: theme.spacing(4),
+    marginBottom: theme.spacing(1),
     fontSize: '1.5rem',
     fontWeight: 'bold',
     fontFamily: 'Playfair Display, serif',
@@ -140,7 +140,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     renavam: '',
     crv: '',
     valordevenda: 0,
-   
+    localizacao: '',
     nomevendedor: '',
     cpfvendedor: '',
     enderecovendedor: '',
@@ -181,7 +181,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         status: '',
         quantidade: 0,
         concluido: false,
-      
+        localizacao: '',
         placa: '',
         renavam: '',
         crv: '',
@@ -244,7 +244,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
             {/* Identificação Do Veículo */}
             <Grid item xs={12} md={3}>
               <Typography className={classes.title}>Identificação Do Veículo</Typography>
-              <Grid container spacing={2}>
+              <Grid container spacing={1}>
                 {[
                   { label: 'Placa', value: 'placa' },
                   { label: 'Renavam', value: 'renavam' },
@@ -268,8 +268,9 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
 
             {/* Identificação Do Vendedor */}
             <Grid item xs={12} md={3}>
-              <Typography className={classes.title}>Identificação Do Vendedor</Typography>
-              <Grid container spacing={2}>
+              <Typography className={classes.title}>Identificação Do</Typography>
+              <Typography className={classes.title}>Vendedor</Typography>
+              <Grid container spacing={1}>
                 {[
                   { label: 'Nome', value: 'nomevendedor' },
                   { label: 'CPF', value: 'cpfvendedor' },
@@ -296,8 +297,9 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
 
             {/* Identificação Do Comprador */}
             <Grid item xs={12} md={3}>
-              <Typography className={classes.title}>Identificação Do Comprador</Typography>
-              <Grid container spacing={2}>
+              <Typography className={classes.title}>Identificação Do</Typography>
+              <Typography className={classes.title}>Comprador</Typography>
+              <Grid container spacing={1}>
                 {[
                   { label: 'Nome', value: 'nomecomprador' },
                   { label: 'CPF', value: 'cpfcomprador' },
@@ -325,7 +327,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
             {/* Identificação Da Empresa */}
             <Grid item xs={12} md={3}>
               <Typography className={classes.title}>Identificação Da Empresa</Typography>
-              <Grid container spacing={2}>
+              <Grid container spacing={1}>
                 {[
                   { label: 'Nome Empresa', value: 'nomeempresa' },
                   { label: 'CNPJ', value: 'cnpjempresa' },
