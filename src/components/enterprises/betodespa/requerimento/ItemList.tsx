@@ -181,6 +181,8 @@ interface Item {
     nomeempresa: string;
     
     celtelvendedor: string,
+  total: number;
+  dataCriacao: Date;
     
  
   
