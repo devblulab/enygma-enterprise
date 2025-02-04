@@ -140,7 +140,8 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     crv: '',
     valordevenda: 0,
    
-    
+    total: 0, // Ensure this is included
+      dataCriacao: new Date(),
 
     nomevendedor:'',
     cpfvendedor: '',
@@ -179,7 +180,8 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
       setNewItem({
         id:'',
         cliente: '',
-        
+        total: 0, // Ensure this is included
+      dataCriacao: new Date(),
         status: '',
         quantidade: 0,
         imagemUrls: ['', '', '', ''],
