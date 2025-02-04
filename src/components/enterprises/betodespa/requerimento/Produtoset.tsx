@@ -9,7 +9,7 @@ import ItemList from './ItemList';
 interface Item {
   id:string,
     cliente: string,
-    total: number;
+  
     status: string,
     quantidade: number;
     imagemUrls: string[],
@@ -41,7 +41,8 @@ interface Item {
     tipo: string;
     cnpjempresa: string;
     nomeempresa: string;
-    dataCriacao: string;
+    total: number;
+  dataCriacao: Date;
     
  
   
