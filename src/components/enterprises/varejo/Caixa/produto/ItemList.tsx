@@ -80,6 +80,10 @@ interface Item {
 interface ItemListProps {
   items: Item[];
 }
+interface CardProps {
+  children: ReactNode;
+}
+
 
 const Card: React.FC<PropsWithChildren> = ({ children }: PropsWithChildren) => {
 
