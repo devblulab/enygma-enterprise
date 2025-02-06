@@ -232,16 +232,20 @@ const CatalagoList: React.FC<ItemListProps> = ({}) => {
     );
   });
 
-  const formatDate = (date: string | Timestamp) => {
+  const formatDate = (date: string | Timestamp | undefined | null) => {
+    if (!date) return 'Data inválida'; // Retorna um valor padrão caso a data seja inválida
+  
     let localDate;
-    
+  
     if (date instanceof Timestamp) {
       // Se for um Timestamp do Firebase, converte para Date
       localDate = date.toDate();
     } else {
-      // Se for uma string de data, converte diretamente
+      // Se for uma string de data, tenta converter
       localDate = new Date(date);
     }
+  
+    if (isNaN(localDate.getTime())) return 'Data inválida'; // Verifica se a data é válida
   
     // Ajusta para o fuso horário do Brasil (UTC-3)
     const offsetMs = localDate.getTimezoneOffset() * 60000; // Converte para milissegundos
@@ -249,6 +253,7 @@ const CatalagoList: React.FC<ItemListProps> = ({}) => {
   
     return format(adjustedDate, 'dd/MM/yyyy');
   };
+  
   
 
   const handlePrint = () => {
