@@ -232,9 +232,24 @@ const CatalagoList: React.FC<ItemListProps> = ({}) => {
     );
   });
 
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'dd/MM/yyyy');
+  const formatDate = (date: string | Timestamp) => {
+    let localDate;
+    
+    if (date instanceof Timestamp) {
+      // Se for um Timestamp do Firebase, converte para Date
+      localDate = date.toDate();
+    } else {
+      // Se for uma string de data, converte diretamente
+      localDate = new Date(date);
+    }
+  
+    // Ajusta para o fuso horário do Brasil (UTC-3)
+    const offsetMs = localDate.getTimezoneOffset() * 60000; // Converte para milissegundos
+    const adjustedDate = new Date(localDate.getTime() - offsetMs - (3 * 3600000)); // Subtrai 3 horas
+  
+    return format(adjustedDate, 'dd/MM/yyyy');
   };
+  
 
   const handlePrint = () => {
     window.print();
@@ -327,7 +342,7 @@ const CatalagoList: React.FC<ItemListProps> = ({}) => {
                   <Typography className={classes.field2} style={{ marginTop: '20px' }}>
       Eu <strong>VENDEDOR</strong>, com base na Resolução do CONTRAN nº 809, de 15 de dezembro 2020,
       informo ao Departamento Estadual de Trânsito de Santa Catarina (DETRAN-SC) a,
-      <strong>INTENÇÃO DE VENDA</strong> em {formatDate('2025-02-06')}, para o <strong>COMPRADOR</strong> conforme indicado acima.
+      <strong>INTENÇÃO DE VENDA</strong> em {formatDate(item.dataCriacao)}, para o <strong>COMPRADOR</strong> conforme indicado acima.
     </Typography>
                   {item.signature && (
                     <div className={classes.signatureSection}>
