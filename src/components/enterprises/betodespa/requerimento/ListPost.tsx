@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import { TextField, Button, Grid, Paper, Typography, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { motion } from 'framer-motion';  // Importe o motion do framer-motion
+import SignaturePad from './SingnaturePad';
 
-import Colecao from '../../../../logic/firebase/db/Colecao';
+import Colecao from '@/logic/firebase/db/Colecao'; // Lógica do Firebase
 import Item from './Item'; // Interface Item
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { Timestamp } from 'firebase/firestore';
+
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -119,12 +124,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
 interface ListPostProps {
   setItems: React.Dispatch<React.SetStateAction<Item[]>>;
 }
 
 const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   const classes = useStyles();
+  const [signature, setSignature] = useState<string>('');
   const [newItem, setNewItem] = useState<Item>({
    
 
@@ -140,8 +148,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     crv: '',
     valordevenda: 0,
    
-    total: 0, // Ensure this is included
-      dataCriacao: new Date(),
+    
 
     nomevendedor:'',
     cpfvendedor: '',
@@ -162,26 +169,71 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     tipo: '',
     cnpjempresa: '',
     nomeempresa: '',
-    
+    dataCriacao: Timestamp.fromDate(new Date()),
     celtelvendedor: '',
+    signature: '',
    
   });
 
+  const sendWhatsApp = async (pdfURL: string) => {
+    let telefone = newItem.celtelcomprador.replace(/\D/g, ''); // Remove caracteres não numéricos
+
+    // Se o telefone do comprador não estiver preenchido, usa o WhatsApp fixo
+    if (!telefone) {
+      telefone = '5548988449379'; // WhatsApp padrão
+    }
+
+    const mensagemWhatsApp = `Olá, ${newItem.nomecomprador || 'cliente'}! Seu documento foi gerado e está pronto. Você pode baixá-lo aqui: ${pdfURL}`;
+    const linkWhatsApp = `https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagemWhatsApp)}`;
+
+    window.open(linkWhatsApp, '_blank'); // Abre o WhatsApp automaticamente
+  };
+
+  const generatePDF = async () => {
+    const input = document.getElementById('pdf-content'); // Captura o formulário
+    if (!input) return;
+
+    const canvas = await html2canvas(input);
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = 210;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+    // Converter para Blob e gerar URL
+    const pdfBlob = pdf.output('blob');
+    const pdfURL = URL.createObjectURL(pdfBlob);
+
+    // Salvar PDF localmente
+    pdf.save(`Requerimento_${newItem.nomecomprador || 'documento'}.pdf`);
+
+    // Enviar para o WhatsApp
+    await sendWhatsApp(pdfURL);
+  };
+  
   const handleAddItem = async () => {
     try {
       const colecao = new Colecao();
-      const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevenda', newItem);
-
+      const itemParaSalvar = {
+        ...newItem,
+        dataCriacao: new Date().toISOString().split('T')[0], // Ou Timestamp.fromDate(new Date())
+      };const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevenda', newItem);
+  
       const adaptedItemSalvo: Item = {
         ...newItem,
         id: itemSalvo.id,
       };
-
+  
+      setItems((prevItems) => [...prevItems, adaptedItemSalvo]);
+  
+      await generatePDF(); // Gera o PDF após salvar
+  
       setNewItem({
         id:'',
         cliente: '',
-        total: 0, // Ensure this is included
-      dataCriacao: new Date(),
+        
         status: '',
         quantidade: 0,
         imagemUrls: ['', '', '', ''],
@@ -192,14 +244,14 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         valordevenda: 0,
        
         
-    
+        
         nomevendedor:'',
         cpfvendedor: '',
         enderecovendedor: '',
         complementovendedor: '',
         municipiovendedor: '',
         emailvendedor:'',
-    
+        dataCriacao: Timestamp.fromDate(new Date()),
         nomecomprador: '',
         cpfcomprador: '',
         enderecocomprador: '',
@@ -212,10 +264,13 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         tipo: '',
         cnpjempresa: '',
         nomeempresa: '',
-        
+        signature: '',
         celtelvendedor: '',
+
+        
  
       });
+      
 
       setItems((prevItems) => [...prevItems, adaptedItemSalvo]);
     } catch (error) {
@@ -341,18 +396,25 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   </Grid>
 </Grid>
 
-  
+<Typography className={classes.title}>Assinatura do Cliente</Typography>
+<SignaturePad onSave={(signature: string) => setNewItem(prev => ({ ...prev, signature }))} />
+
+
           {shouldShowAddItemButton && (
             <Grid container justifyContent="center" alignItems="center" spacing={3}>
               <Grid item>
-                <Button
-                  onClick={handleAddItem}
-                  variant="contained"
-                  size="large"
-                  className={classes.button}
-                >
-                  Adicionar Requerimento
-                </Button>
+              <Button
+  onClick={async () => {
+    await handleAddItem(); // Salva no Firebase
+    await generatePDF(); // Gera PDF e envia para o WhatsApp
+  }}
+  variant="contained"
+  size="large"
+  className={classes.button}
+>
+  Enviar para o WhatsApp
+</Button>
+
               </Grid>
             </Grid>
           )}
