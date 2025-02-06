@@ -326,12 +326,13 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     {[
       { label: 'Nome', value: 'nomevendedor' },
       { label: 'CPF', value: 'cpfvendedor' },
+          { label: 'CEP', value: 'cepvendedor' },
       { label: 'ENDEREÇO', value: 'enderecovendedor' },
       { label: 'COMPLEMENTO', value: 'complementovendedor' },
       { label: 'MUNICÍPIO', value: 'municipiovendedor' },
       { label: 'E-MAIL', value: 'emailvendedor' },
-      { label: 'CEL/TEL', value: 'celtelvendedor' },
-      { label: 'CEP', value: 'cepvendedor' }
+      { label: 'CEL/TEL', value: 'celtelvendedor' }
+      
     ].map((field) => (
       <TextField
         key={field.value}
@@ -352,12 +353,13 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     {[
       { label: 'Nome', value: 'nomecomprador' },
       { label: 'CPF', value: 'cpfcomprador' },
+          { label: 'CEP', value: 'cepcomprador' },
       { label: 'ENDEREÇO', value: 'enderecocomprador' },
       { label: 'COMPLEMENTO', value: 'complementocomprador' },
       { label: 'MUNICÍPIO', value: 'municipiocomprador' },
       { label: 'E-MAIL', value: 'emailcomprador' },
-      { label: 'CEL/TEL', value: 'celtelcomprador' },
-      { label: 'CEP', value: 'cepcomprador' }
+      { label: 'CEL/TEL', value: 'celtelcomprador' }
+      
     ].map((field) => (
       <TextField
         key={field.value}
