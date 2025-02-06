@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ListPost from './ListPost';
 import ItemList from './ItemList';
-
+import { Timestamp } from 'firebase/firestore'; 
 
 
 
@@ -19,7 +19,7 @@ interface Item {
     crv: string,
     valordevenda: number;
    
-  
+    dataCriacao: string | Timestamp;
 
     nomevendedor: string,
     cpfvendedor: string,
@@ -27,7 +27,7 @@ interface Item {
     complementovendedor: string,
     municipiovendedor: string,
     emailvendedor: string,
-
+    
     nomecomprador: string,
     cpfcomprador: string,
     enderecocomprador: string,
@@ -41,9 +41,9 @@ interface Item {
     tipo: string;
     cnpjempresa: string;
     nomeempresa: string;
-    total: number;
-  dataCriacao: Date;
-    
+    signature?: string; 
+ 
+  
  
   
 
