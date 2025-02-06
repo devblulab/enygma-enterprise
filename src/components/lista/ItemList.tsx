@@ -1,4 +1,4 @@
-import React, { useEffect, useState, PropsWithChildren } from 'react';
+import React, { useEffect, useState, ReactNode } from 'react';
 import { Typography, TextField, Button, Grid, Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { collection, getFirestore, onSnapshot, deleteDoc, doc, updateDoc, getDocs, where, query } from 'firebase/firestore';
@@ -9,17 +9,8 @@ import Autenticacao from '../../logic/firebase/auth/Autenticacao';
 import { motion, useMotionTemplate, useSpring } from 'framer-motion';
 import Usuario from '../../logic/core/usuario/Usuario';
 
-
-
-
-
-
-
-
-
 const useStyles = makeStyles((theme) => ({
   root: {
-
     padding: theme.spacing(2),
     borderRadius: theme.spacing(2),
     display: 'flex',
@@ -30,7 +21,6 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '500px',
   },
   item: {
-
     marginBottom: theme.spacing(2),
     padding: theme.spacing(2),
     display: 'flex',
@@ -38,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   concluido: {
-
     backgroundColor: '#D1FFD0',
   },
   pendente: {
@@ -46,25 +35,17 @@ const useStyles = makeStyles((theme) => ({
     animation: 'pulse 1s infinite',
   },
   button: {
-
     backgroundColor: '#00FF00',
     color: 'black',
   },
-
   buttonPendente: {
     backgroundColor: '#FF0000',
     color: 'black',
   },
   '@keyframes pulse': {
-    '0%': {
-      opacity: 1,
-    },
-    '50%': {
-      opacity: 0.5,
-    },
-    '100%': {
-      opacity: 1,
-    },
+    '0%': { opacity: 1 },
+    '50%': { opacity: 0.5 },
+    '100%': { opacity: 1 },
   },
 }));
 
@@ -84,8 +65,11 @@ interface ItemListProps {
   items: Item[];
 }
 
-const Card: React.FC<PropsWithChildren> = ({ children }: PropsWithChildren) => {
+interface CardProps {
+  children: ReactNode;
+}
 
+const Card: React.FC<CardProps> = ({ children }) => {
   const mouseX = useSpring(0, { stiffness: 500, damping: 100 });
   const mouseY = useSpring(0, { stiffness: 500, damping: 100 });
 
@@ -122,202 +106,6 @@ const Card: React.FC<PropsWithChildren> = ({ children }: PropsWithChildren) => {
 const ItemList: React.FC<ItemListProps> = ({ items }) => {
   const classes = useStyles();
   const [updatedItems, setUpdatedItems] = useState<Item[]>(items);
-  const [searchText, setSearchText] = useState<string>('');
-  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
-  const colecao = new Colecao();
-  const autenticacao = new Autenticacao();
-  const [user, setUser] = useState<Usuario | null>(null);
-
-
-  useEffect(() => {
-    const cancelarMonitoramento = autenticacao.monitorar((usuario) => {
-      setUser(usuario);
-    });
-
-    return () => {
-      cancelarMonitoramento();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      const userItemsQuery = query(itemsCollectionRef, where('userId', '==', user.id));
-      const unsubscribe = onSnapshot(userItemsQuery, (querySnapshot) => {
-        const fetchedItems: Item[] = [];
-        querySnapshot.forEach((doc) => {
-          fetchedItems.push({
-            id: doc.id,
-            nome: doc.data().nome,
-            quantidade: doc.data().quantidade,
-            localCompra: doc.data().localCompra,
-            concluido: doc.data().concluido,
-            userId: doc.data().userId,
-          });
-        });
-
-        setUpdatedItems(fetchedItems);
-      });
-
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [user]);
-
-  const handleSearchOpen = () => {
-    setIsSearchOpen(true);
-  };
-
-  const handleSearchClose = () => {
-    setIsSearchOpen(false);
-    setSearchText('');
-    const fetchedItems: Item[] = [];
-
-    if (user) {
-      const userItemsQuery = query(
-        itemsCollectionRef,
-        where('userId', '==', user.id),
-        where('nome', '>=', searchText.toLowerCase()),
-        where('nome', '<=', searchText.toLowerCase() + '\uf8ff')
-      );
-
-      getDocs(userItemsQuery).then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          fetchedItems.push({
-            id: doc.id,
-            nome: doc.data().nome,
-            quantidade: doc.data().quantidade,
-            localCompra: doc.data().localCompra,
-            concluido: doc.data().concluido,
-            userId: doc.data().userId,
-          });
-        });
-        setUpdatedItems(fetchedItems);
-      });
-    } else {
-      getDocs(itemsCollectionRef).then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          fetchedItems.push({
-            id: doc.id,
-            nome: doc.data().nome,
-            quantidade: doc.data().quantidade,
-            localCompra: doc.data().localCompra,
-            concluido: doc.data().concluido,
-            userId: doc.data().userId,
-          });
-        });
-        setUpdatedItems(fetchedItems);
-      });
-    }
-  };
-
-  const handleSearch = async () => {
-    try {
-      const fetchedItems: Item[] = [];
-
-      if (user) {
-        const userItemsQuery = query(
-          itemsCollectionRef,
-          where('userId', '==', user.id),
-          where('nome', '>=', searchText.toLowerCase()),
-          where('nome', '<=', searchText.toLowerCase() + '\uf8ff')
-        );
-
-        const querySnapshot = await getDocs(userItemsQuery);
-        querySnapshot.forEach((doc) => {
-          fetchedItems.push({
-            id: doc.id,
-            nome: doc.data().nome,
-            quantidade: doc.data().quantidade,
-            localCompra: doc.data().localCompra,
-            concluido: doc.data().concluido,
-            userId: doc.data().userId,
-          });
-        });
-        setUpdatedItems(fetchedItems);
-      } else {
-        const querySnapshot = await getDocs(itemsCollectionRef);
-        querySnapshot.forEach((doc) => {
-          fetchedItems.push({
-            id: doc.id,
-            nome: doc.data().nome,
-            quantidade: doc.data().quantidade,
-            localCompra: doc.data().localCompra,
-            concluido: doc.data().concluido,
-            userId: doc.data().userId,
-          });
-        });
-
-        const filteredItems = fetchedItems.filter(
-          (item) =>
-            item.nome.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.localCompra.toLowerCase().includes(searchText.toLowerCase())
-        );
-        setUpdatedItems(filteredItems);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar os itens:', error);
-    }
-  };
-
-  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
-
-  const editNome = async (itemId: string, newNome: string) => {
-    try {
-      await updateDoc(doc(itemsCollectionRef, itemId), { nome: newNome });
-    } catch (error) {
-      console.error('Erro ao editar o nome do item:', error);
-    }
-  };
-
-  const removeItem = async (itemId: string) => {
-    try {
-      await deleteDoc(doc(itemsCollectionRef, itemId));
-    } catch (error) {
-      console.error('Erro ao remover o produto:', error);
-    }
-  };
-
-  const editQuantity = async (itemId: string, newQuantity: number) => {
-    try {
-      await updateDoc(doc(itemsCollectionRef, itemId), { quantidade: newQuantity });
-    } catch (error) {
-      console.error('Erro ao editar a quantidade do item:', error);
-    }
-  };
-
-  const editLocalCompra = async (itemId: string, newLocalCompra: string) => {
-    try {
-      await updateDoc(doc(itemsCollectionRef, itemId), { localCompra: newLocalCompra });
-    } catch (error) {
-      console.error('Erro ao editar o local de compra do item:', error);
-    }
-  };
-
-  const toggleConcluido = async (itemId: string) => {
-    try {
-      const itemToUpdate = updatedItems.find((item) => item.id === itemId);
-      if (itemToUpdate) {
-        const newConcluidoState = !itemToUpdate.concluido;
-        await updateDoc(doc(itemsCollectionRef, itemId), { concluido: newConcluidoState });
-      }
-    } catch (error) {
-      console.error('Erro ao alternar o estado de conclusão do item:', error);
-    }
-  };
-
-  const salvarItems = async (itemId: string) => {
-    try {
-      const itemToSave = updatedItems.find((item) => item.id === itemId);
-      if (itemToSave) {
-        await colecao.salvar('inventory', itemToSave, itemId);
-      }
-    } catch (error) {
-      console.error('Erro ao salvar o produto:', error);
-    }
-  };
 
   return (
     <div className="justify-center container mx-auto p-15">
@@ -325,30 +113,6 @@ const ItemList: React.FC<ItemListProps> = ({ items }) => {
         <Typography variant="h5" align="center" gutterBottom>
           Lista
         </Typography>
-        {!isSearchOpen ? (
-          <Button onClick={handleSearchOpen} variant="outlined" color="primary" className="mb-4">
-            Busca
-          </Button>
-        ) : (
-          <div className="flex mb-4">
-            <TextField
-              label="Buscar por nome ou local"
-              value={searchText}
-              onChange={handleSearchInputChange}
-              variant="outlined"
-              size="small"
-              fullWidth
-              className="mr-2"
-            />
-            <Button onClick={handleSearch} variant="contained" color="primary">
-              Buscar
-            </Button>
-            <Button onClick={handleSearchClose} variant="outlined" color="secondary" className="ml-2">
-              Fechar
-            </Button>
-          </div>
-        )}
-
         {updatedItems.map((item) => (
           <Card key={item.id}>
             <Grid container spacing={4} className={`${classes.item} ${item.concluido ? classes.concluido : classes.pendente}`}>
@@ -356,7 +120,6 @@ const ItemList: React.FC<ItemListProps> = ({ items }) => {
                 <TextField
                   label="Nome"
                   value={item.nome}
-                  onChange={(e) => editNome(item.id, e.target.value)}
                   variant="outlined"
                   size="small"
                   fullWidth
@@ -367,7 +130,6 @@ const ItemList: React.FC<ItemListProps> = ({ items }) => {
                   type="number"
                   label="Quantidade"
                   value={item.quantidade}
-                  onChange={(e) => editQuantity(item.id, parseInt(e.target.value, 10) || 0)}
                   variant="outlined"
                   size="small"
                   fullWidth
@@ -377,24 +139,10 @@ const ItemList: React.FC<ItemListProps> = ({ items }) => {
                 <TextField
                   label="Local"
                   value={item.localCompra}
-                  onChange={(e) => editLocalCompra(item.id, e.target.value)}
                   variant="outlined"
                   size="small"
                   fullWidth
                 />
-              </Grid>
-              <Grid item xs={11} className="flex justify-end">
-                <Button onClick={() => removeItem(item.id)} variant="contained" color="secondary" size="small" className="mr-2">
-                  Remover
-                </Button>
-                <Button
-                  onClick={() => toggleConcluido(item.id)}
-                  variant="contained"
-                  className={item.concluido ? classes.button : classes.buttonPendente}
-                  size="small"
-                >
-                  {item.concluido ? 'Concluído' : 'Pendente'}
-                </Button>
               </Grid>
             </Grid>
           </Card>
