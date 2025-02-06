@@ -299,7 +299,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
           {/* Seções lado a lado */}
           <Grid container spacing={3}>
   {/* Identificação Do Veículo */}
-  <Grid item xs={3}>
+  <Grid item xs={12} md={3}>
     <Typography className={classes.title}>Identificação Do Veículo</Typography>
     {[
       { label: 'Placa', value: 'id' },
@@ -321,12 +321,12 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   </Grid>
 
   {/* Identificação Do Vendedor */}
-  <Grid item xs={3}>
+  <Grid item xs={12} md={3}>
     <Typography className={classes.title}>Identificação Do Vendedor</Typography>
     {[
       { label: 'Nome', value: 'nomevendedor' },
       { label: 'CPF', value: 'cpfvendedor' },
-          { label: 'CEP', value: 'cepvendedor' },
+      {label: 'CEP', value: 'cepvendedor' },
       { label: 'ENDEREÇO', value: 'enderecovendedor' },
       { label: 'COMPLEMENTO', value: 'complementovendedor' },
       { label: 'MUNICÍPIO', value: 'municipiovendedor' },
@@ -348,12 +348,12 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   </Grid>
 
   {/* Identificação Do Comprador */}
-  <Grid item xs={3}>
+  <Grid item xs={12} md={3}>
     <Typography className={classes.title}>Identificação Do Comprador</Typography>
     {[
       { label: 'Nome', value: 'nomecomprador' },
       { label: 'CPF', value: 'cpfcomprador' },
-          { label: 'CEP', value: 'cepcomprador' },
+      { label: 'CEP', value: 'cepcomprador' },
       { label: 'ENDEREÇO', value: 'enderecocomprador' },
       { label: 'COMPLEMENTO', value: 'complementocomprador' },
       { label: 'MUNICÍPIO', value: 'municipiocomprador' },
@@ -376,7 +376,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
 
   
   {/* Identificação Da Empresa */}
-  <Grid item xs={3}>
+  <Grid item xs={12} md={3}>
     <Typography className={classes.title}>Identificação Da Empresa</Typography>
     {[
       { label: 'Nome Empresa', value: 'nomeempresa' },
@@ -397,29 +397,40 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     ))}
   </Grid>
 </Grid>
+<Grid container justifyContent="center"  spacing={2}>
+  <Grid item xs={12}>
+    <Typography className={classes.title}>Assinatura do Cliente</Typography>
+  </Grid>
 
-<Typography className={classes.title}>Assinatura do Cliente</Typography>
-<SignaturePad onSave={(signature: string) => setNewItem(prev => ({ ...prev, signature }))} />
+  <Grid item xs={12} md={8}>
+    <SignaturePad
+      onSave={(signature: string) => 
+        setNewItem((prev) => ({ ...prev, signature }))
+      }
+      // Defina largura 100% para o componente se ajustar
+      
+    />
+  </Grid>
+</Grid>
 
-
-          {shouldShowAddItemButton && (
-            <Grid container justifyContent="center" alignItems="center" spacing={3}>
-              <Grid item>
-              <Button
-  onClick={async () => {
-    await handleAddItem(); // Salva no Firebase
-    await generatePDF(); // Gera PDF e envia para o WhatsApp
-  }}
-  variant="contained"
-  size="large"
-  className={classes.button}
->
-  Enviar para o WhatsApp
-</Button>
-
-              </Grid>
-            </Grid>
-          )}
+{/* Botão condicional (pode estar no mesmo container ou fora dele) */}
+{shouldShowAddItemButton && (
+  <Grid container justifyContent="center" alignItems="center" spacing={3}>
+    <Grid item>
+      <Button
+        onClick={async () => {
+          await handleAddItem(); 
+          await generatePDF();
+        }}
+        variant="contained"
+        size="large"
+        className={classes.button}
+      >
+        Enviar para o WhatsApp
+      </Button>
+    </Grid>
+  </Grid>
+)}
         </motion.div>
       </Paper>
     </div>
