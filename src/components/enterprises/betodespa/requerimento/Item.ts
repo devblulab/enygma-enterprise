@@ -1,7 +1,9 @@
+import { Timestamp } from 'firebase/firestore';
+
 interface Item {
   id:string,
     cliente: string,
-  
+    
     status: string,
     quantidade: number;
     imagemUrls: string[],
@@ -11,7 +13,7 @@ interface Item {
     crv: string,
     valordevenda: number;
    
-  
+    
 
     nomevendedor: string,
     cpfvendedor: string,
@@ -19,7 +21,7 @@ interface Item {
     complementovendedor: string,
     municipiovendedor: string,
     emailvendedor: string,
-
+    dataCriacao: string | Timestamp;
     nomecomprador: string,
     cpfcomprador: string,
     enderecocomprador: string,
@@ -27,18 +29,19 @@ interface Item {
     municipiocomprador: string,
     emailcomprador: string,
    celtelcomprador: string,
-   celtelvendedor: string,
    cepvendedor: string;
     cepcomprador: string;
     tipo: string;
     cnpjempresa: string;
     nomeempresa: string;
-    
-    total: number;
-  dataCriacao: Date;
+
+    celtelvendedor: string,
+    signature?: string; 
  
   
 
 }
+    
+
 
 export default Item;
