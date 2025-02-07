@@ -426,7 +426,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         size="large"
         className={classes.button}
       >
-        Enviar para o WhatsApp
+        Adicione Requerimento
       </Button>
     </Grid>
   </Grid>
