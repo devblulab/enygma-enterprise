@@ -100,8 +100,8 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.2rem',
     fontWeight: 'bold',
     background: 'rgba(124, 124, 124, 0.58)',
-    marginTop: theme.spacing(0),
-    marginBottom: theme.spacing(0),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
     textAlign: 'center',
     borderBottom: '2px solid #000',
     paddingBottom: theme.spacing(1),
@@ -123,7 +123,8 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(0),
   },
   field: {
-    fontSize: '1.3rem',
+    fontSize: '1.1rem',
+    
     marginBottom: theme.spacing(0),
     paddingLeft: '10px',
     background: 'rgba(201, 201, 201, 0.58)',
@@ -209,6 +210,7 @@ const CatalagoList: React.FC<ItemListProps> = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [newItem, setNewItem] = useState<Item[]>([]);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -234,6 +236,7 @@ const CatalagoList: React.FC<ItemListProps> = () => {
 
   const filteredItems = items.filter((item) => {
     const searchLower = searchText.toLowerCase();
+    
     return (
       item.nomevendedor.toLowerCase().includes(searchLower) ||
       item.nomecomprador.toLowerCase().includes(searchLower) ||
@@ -265,8 +268,21 @@ const CatalagoList: React.FC<ItemListProps> = () => {
     window.print();
   };
 
+ 
+
+
+  const sendWhatsApp = async (pdfURL: string) => { 
+    const telefone = '5548988449379'; // WhatsApp fixo
+
+    const mensagemWhatsApp = `Olá! Seu documento foi gerado e está pronto. Você pode baixá-lo aqui: ${pdfURL}`;
+    const linkWhatsApp = `https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagemWhatsApp)}`;
+
+    window.open(linkWhatsApp, '_blank'); // Abre o WhatsApp automaticamente
+};
+
+
   const generatePDF = async () => {
-    const input = document.getElementById('pdf-content');
+    const input = document.getElementById('pdf-content'); // Captura o formulário
     if (!input) return;
 
     const canvas = await html2canvas(input);
@@ -278,9 +294,16 @@ const CatalagoList: React.FC<ItemListProps> = () => {
 
     pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
 
+    // Converter para Blob e gerar URL
     const pdfBlob = pdf.output('blob');
     const pdfURL = URL.createObjectURL(pdfBlob);
-    setPdfUrl(pdfURL);
+
+    // Salvar PDF localmente
+    pdf.save(`Requerimento_${newItem.length > 0 ? newItem[0].id : 'documento'}.pdf`);
+
+
+    // Enviar para o WhatsApp
+    await sendWhatsApp(pdfURL);
   };
 
   return (
@@ -380,18 +403,18 @@ const CatalagoList: React.FC<ItemListProps> = () => {
           <Button onClick={handlePrint} className={`${classes.downloadButton} ${classes.noPrint}`}>
             Imprimir Documento
           </Button>
-          <Button onClick={generatePDF} className={`${classes.downloadButton} ${classes.noPrint}`}>
-            Gerar PDF
-          </Button>
-          {pdfUrl && (
-            <Button
-              href={pdfUrl}
-              download="Requerimento_Intencao_Venda.pdf"
-              className={`${classes.downloadButton} ${classes.noPrint}`}
-            >
-              Baixar PDF
-            </Button>
-          )}
+         
+          <Button
+                  onClick={async () => {
+                    
+                    await generatePDF();
+                  }}
+                  variant="contained"
+                  size="large"
+                  className={classes.downloadButton}
+                >
+                  Enviar para o WhatsApp
+                </Button>
         </Paper>
       )}
     </div>
