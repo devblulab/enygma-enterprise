@@ -420,7 +420,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
       <Button
         onClick={async () => {
           await handleAddItem(); 
-          await generatePDF();
+         
         }}
         variant="contained"
         size="large"
