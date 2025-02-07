@@ -326,20 +326,20 @@ const CatalagoList: React.FC<ItemListProps> = ({}) => {
                   <Typography className={classes.sectionTitle}>Identificação do Vendedor</Typography>
                   <Typography className={classes.field}><strong>Nome:</strong> {item.nomevendedor}</Typography>
                   <Typography className={classes.field}><strong>CPF/CNPJ:</strong> {item.cpfvendedor}</Typography>
-                  <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecovendedor}</Typography>
-                  <Typography className={classes.field}><strong>Complemento:</strong> {item.complementovendedor}</Typography>
-                  <Typography className={classes.field}><strong>Município:</strong> {item.municipiovendedor}</Typography>
                   <Typography className={classes.field}><strong>CEP:</strong> {item.cepvendedor}</Typography>
+                  <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecovendedor}</Typography> 
+                  <Typography className={classes.field}><strong>Município:</strong> {item.municipiovendedor}</Typography>
+                  <Typography className={classes.field}><strong>Estado:</strong> {item.complementovendedor}</Typography>
                   <Typography className={classes.field}><strong>E-mail:</strong> {item.emailvendedor}</Typography>
                   <Typography className={classes.field}><strong>CEL/TEL:</strong> {item.celtelvendedor}</Typography>
 
                   <Typography className={classes.sectionTitle}>Identificação do Comprador</Typography>
                   <Typography className={classes.field}><strong>Nome:</strong> {item.nomecomprador}</Typography>
                   <Typography className={classes.field}><strong>CPF/CNPJ:</strong> {item.cpfcomprador}</Typography>
-                  <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecocomprador}</Typography>
-                  <Typography className={classes.field}><strong>Complemento:</strong> {item.complementocomprador}</Typography>
-                  <Typography className={classes.field}><strong>Município:</strong> {item.municipiocomprador}</Typography>
                   <Typography className={classes.field}><strong>CEP:</strong> {item.cepcomprador}</Typography>
+                  <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecocomprador}</Typography>
+                   <Typography className={classes.field}><strong>Município:</strong> {item.municipiocomprador}</Typography>
+                  <Typography className={classes.field}><strong>Estado:</strong> {item.complementocomprador}</Typography>
                   <Typography className={classes.field}><strong>E-mail:</strong> {item.emailcomprador}</Typography>
                   <Typography className={classes.field}><strong>CEL/TEL:</strong> {item.celtelcomprador}</Typography>
 
