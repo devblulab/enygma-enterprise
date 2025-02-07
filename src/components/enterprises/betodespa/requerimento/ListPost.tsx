@@ -146,7 +146,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     placa: '',
     renavam: '',
     crv: '',
-    valordevenda: 0,
+    valordevenda: '',
    
     
 
@@ -241,7 +241,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         placa: '',
         renavam: '',
         crv: '',
-        valordevenda: 0,
+        valordevenda: '',
        
         
         
