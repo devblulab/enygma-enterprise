@@ -5,15 +5,16 @@ import { collection, getFirestore, getDocs } from 'firebase/firestore';
 import { app } from '@/logic/firebase/config/app';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { Timestamp } from 'firebase/firestore'; // Importe Timestamp se necessário
+import { Timestamp } from 'firebase/firestore';
 import { format } from 'date-fns';
 
 const db = getFirestore(app);
 
 const useStyles = makeStyles((theme) => ({
   paper: {
+    // Estilos gerais
     padding: theme.spacing(4),
-    margin: '20px auto',
+    margin: 'auto',
     maxWidth: '1077px',
     backgroundColor: '#fff',
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
@@ -25,12 +26,13 @@ const useStyles = makeStyles((theme) => ({
       margin: '0',
       padding: '10px',
       width: '100%',
-      pageBreakBefore: 'always',
       fontSize: '20pt',
       boxSizing: 'border-box',
+      pageBreakBefore: 'auto',
     },
   },
   '@global': {
+    // Regras globais de impressão
     '@page': {
       margin: '20mm',
       size: 'A4',
@@ -39,21 +41,38 @@ const useStyles = makeStyles((theme) => ({
       body: {
         margin: 0,
         padding: 0,
+        width: '100%',
+        overflow: 'visible',
       },
-      header: {
-        display: 'none',
+      '*': {
+        boxShadow: 'none !important',
+        background: 'transparent !important',
       },
-      footer: {
-        display: 'none',
+      '.no-print': {
+        display: 'none !important',
       },
-      '.printButton': {
-        display: 'none',
+      '#pdf-content': {
+        display: 'block',
+        pageBreakBefore: 'auto',
+        pageBreakInside: 'avoid',
+      },
+    },
+    // Quando a tela for menor que "sm" (ex.: celular), mudar algumas regras
+    [theme.breakpoints.down('sm')]: {
+      '@media print': {
+       '@page': {
+  margin: '20mm',
+  size: 'auto',
+},
+
+
       },
     },
   },
-  printButton: {
+
+  noPrint: {
     '@media print': {
-      display: 'none',
+      display: 'none !important',
     },
   },
   header: {
@@ -108,7 +127,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(0),
     paddingLeft: '10px',
     background: 'rgba(201, 201, 201, 0.58)',
-    backgroundsize: '150%',
   },
   field3: {
     fontSize: '0.7rem',
@@ -138,14 +156,8 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: '8px',
     },
   },
-  printButtonn: {
-    backgroundColor: 'green',
-    color: '#fff',
-    background: '#fff',
-  },
   downloadButton: {
     marginTop: theme.spacing(1),
-    
     backgroundColor: '#4CAF50',
     color: '#fff',
     '&:hover': {
@@ -165,8 +177,7 @@ interface Item {
   renavam: string;
   crv: string;
   dataCriacao: string | Timestamp;
-  valordevenda: number;
- 
+  valordevenda: string;
   nomevendedor: string;
   cpfvendedor: string;
   enderecovendedor: string;
@@ -185,7 +196,6 @@ interface Item {
   tipo: string;
   cnpjempresa: string;
   nomeempresa: string;
-  
   celtelvendedor: string;
   signature?: string;
 }
@@ -194,7 +204,7 @@ interface ItemListProps {
   items: Item[];
 }
 
-const CatalagoList: React.FC<ItemListProps> = ({}) => {
+const CatalagoList: React.FC<ItemListProps> = () => {
   const classes = useStyles();
   const [items, setItems] = useState<Item[]>([]);
   const [searchText, setSearchText] = useState<string>('');
@@ -233,28 +243,23 @@ const CatalagoList: React.FC<ItemListProps> = ({}) => {
   });
 
   const formatDate = (date: string | Timestamp | undefined | null) => {
-    if (!date) return 'Data inválida'; // Retorna um valor padrão caso a data seja inválida
-  
+    if (!date) return 'Data inválida';
+
     let localDate;
-  
+
     if (date instanceof Timestamp) {
-      // Se for um Timestamp do Firebase, converte para Date
       localDate = date.toDate();
     } else {
-      // Se for uma string de data, tenta converter
       localDate = new Date(date);
     }
-  
-    if (isNaN(localDate.getTime())) return 'Data inválida'; // Verifica se a data é válida
-  
-    // Ajusta para o fuso horário do Brasil (UTC-3)
-    const offsetMs = localDate.getTimezoneOffset() * 60000; // Converte para milissegundos
-    const adjustedDate = new Date(localDate.getTime() - offsetMs - (3 * 3600000)); // Subtrai 3 horas
-  
+
+    if (isNaN(localDate.getTime())) return 'Data inválida';
+
+    const offsetMs = localDate.getTimezoneOffset() * 60000;
+    const adjustedDate = new Date(localDate.getTime() - offsetMs - 3 * 3600000);
+
     return format(adjustedDate, 'dd/MM/yyyy');
   };
-  
-  
 
   const handlePrint = () => {
     window.print();
@@ -275,12 +280,12 @@ const CatalagoList: React.FC<ItemListProps> = ({}) => {
 
     const pdfBlob = pdf.output('blob');
     const pdfURL = URL.createObjectURL(pdfBlob);
-    setPdfUrl(pdfURL); // Armazena o URL do PDF no estado
+    setPdfUrl(pdfURL);
   };
 
   return (
     <div>
-      <div className="no-print" style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+      <div className={classes.noPrint} style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
         <TextField
           label="Buscar por PLACA RENAVAM VENDEDOR COMPRADOR"
           value={searchText}
@@ -321,34 +326,36 @@ const CatalagoList: React.FC<ItemListProps> = ({}) => {
                   <Typography className={classes.field}><strong>Renavam:</strong> {item.renavam}</Typography>
                   <Typography className={classes.field}><strong>CRV:</strong> {item.crv}</Typography>
                   <Typography className={classes.field}>
-                    <strong>Valor de Venda:</strong> R$ {isNaN(Number(item.valordevenda)) ? '0.00' : Number(item.valordevenda).toFixed(2)}
-                  </Typography>
+  <strong>Valor de Venda:</strong> R$ {item.valordevenda}
+</Typography>
+
+
                   <Typography className={classes.sectionTitle}>Identificação do Vendedor</Typography>
                   <Typography className={classes.field}><strong>Nome:</strong> {item.nomevendedor}</Typography>
                   <Typography className={classes.field}><strong>CPF/CNPJ:</strong> {item.cpfvendedor}</Typography>
-                  <Typography className={classes.field}><strong>CEP:</strong> {item.cepvendedor}</Typography>
-                  <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecovendedor}</Typography> 
+                  <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecovendedor}</Typography>
+                  <Typography className={classes.field}><strong>Complemento:</strong> {item.complementovendedor}</Typography>
                   <Typography className={classes.field}><strong>Município:</strong> {item.municipiovendedor}</Typography>
-                  <Typography className={classes.field}><strong>Estado:</strong> {item.complementovendedor}</Typography>
+                  <Typography className={classes.field}><strong>CEP:</strong> {item.cepvendedor}</Typography>
                   <Typography className={classes.field}><strong>E-mail:</strong> {item.emailvendedor}</Typography>
                   <Typography className={classes.field}><strong>CEL/TEL:</strong> {item.celtelvendedor}</Typography>
 
                   <Typography className={classes.sectionTitle}>Identificação do Comprador</Typography>
                   <Typography className={classes.field}><strong>Nome:</strong> {item.nomecomprador}</Typography>
                   <Typography className={classes.field}><strong>CPF/CNPJ:</strong> {item.cpfcomprador}</Typography>
-                  <Typography className={classes.field}><strong>CEP:</strong> {item.cepcomprador}</Typography>
                   <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecocomprador}</Typography>
-                   <Typography className={classes.field}><strong>Município:</strong> {item.municipiocomprador}</Typography>
-                  <Typography className={classes.field}><strong>Estado:</strong> {item.complementocomprador}</Typography>
+                  <Typography className={classes.field}><strong>Complemento:</strong> {item.complementocomprador}</Typography>
+                  <Typography className={classes.field}><strong>Município:</strong> {item.municipiocomprador}</Typography>
+                  <Typography className={classes.field}><strong>CEP:</strong> {item.cepcomprador}</Typography>
                   <Typography className={classes.field}><strong>E-mail:</strong> {item.emailcomprador}</Typography>
                   <Typography className={classes.field}><strong>CEL/TEL:</strong> {item.celtelcomprador}</Typography>
 
                   <Typography className={classes.sectionTitle}></Typography>
                   <Typography className={classes.field2} style={{ marginTop: '20px' }}>
-      Eu <strong>VENDEDOR</strong>, com base na Resolução do CONTRAN nº 809, de 15 de dezembro 2020,
-      informo ao Departamento Estadual de Trânsito de Santa Catarina (DETRAN-SC) a,
-      <strong>INTENÇÃO DE VENDA</strong> em {formatDate(item.dataCriacao)}, para o <strong>COMPRADOR</strong> conforme indicado acima.
-    </Typography>
+                    Eu <strong>VENDEDOR</strong>, com base na Resolução do CONTRAN nº 809, de 15 de dezembro 2020,
+                    informo ao Departamento Estadual de Trânsito de Santa Catarina (DETRAN-SC) a,
+                    <strong>INTENÇÃO DE VENDA</strong> em {formatDate(item.dataCriacao)}, para o <strong>COMPRADOR</strong> conforme indicado acima.
+                  </Typography>
                   {item.signature && (
                     <div className={classes.signatureSection}>
                       <img src={item.signature} alt="Assinatura do Cliente" style={{ maxWidth: '100%' }} />
@@ -370,17 +377,17 @@ const CatalagoList: React.FC<ItemListProps> = ({}) => {
               ))
             )}
           </div>
-          <Button onClick={handlePrint} className={classes.downloadButton}>
+          <Button onClick={handlePrint} className={`${classes.downloadButton} ${classes.noPrint}`}>
             Imprimir Documento
           </Button>
-          <Button onClick={generatePDF} className={classes.downloadButton}>
+          <Button onClick={generatePDF} className={`${classes.downloadButton} ${classes.noPrint}`}>
             Gerar PDF
           </Button>
           {pdfUrl && (
             <Button
               href={pdfUrl}
               download="Requerimento_Intencao_Venda.pdf"
-              className={classes.downloadButton}
+              className={`${classes.downloadButton} ${classes.noPrint}`}
             >
               Baixar PDF
             </Button>
