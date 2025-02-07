@@ -11,7 +11,7 @@ interface Item {
     placa: string,
     renavam: string,
     crv: string,
-    valordevenda: number;
+    valordevenda:  string;
    
     
 
