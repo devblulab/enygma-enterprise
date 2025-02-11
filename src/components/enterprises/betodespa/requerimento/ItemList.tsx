@@ -415,6 +415,23 @@ const CatalagoList: React.FC<ItemListProps> = () => {
                 >
                   Enviar para o WhatsApp
                 </Button>
+                 <Button
+  onClick={() => {
+    if (filteredItems.length > 0) {
+      const item = filteredItems[0]; // Pega o primeiro item encontrado
+      const telefone = '5548988449379';
+      const mensagem = `Olá tudo bem, meu nome é ${item.nomevendedor}. Preenchi meu documento e a placa é ${item.id}. Qual é o próximo passo?`;
+      const linkWhatsApp = `https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagem)}`;
+      
+      window.open(linkWhatsApp, '_blank'); // Abre o WhatsApp automaticamente
+    }
+  }}
+  variant="contained"
+  size="large"
+  className={classes.downloadButton}
+>
+  Enviar Mensagem para a Loja
+</Button>
         </Paper>
       )}
     </div>
