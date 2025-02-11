@@ -405,17 +405,7 @@ const CatalagoList: React.FC<ItemListProps> = () => {
             Imprimir Documento
           </Button>
          
-          <Button
-                  onClick={async () => {
-                    
-                    await generatePDF();
-                  }}
-                  variant="contained"
-                  size="large"
-                  className={classes.downloadButton}
-                >
-                  Enviar para o WhatsApp
-                </Button>
+     
                   <Button
   onClick={() => {
     if (filteredItems.length > 0) {
