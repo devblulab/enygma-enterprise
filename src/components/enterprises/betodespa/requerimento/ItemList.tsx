@@ -416,7 +416,7 @@ const CatalagoList: React.FC<ItemListProps> = () => {
                 >
                   Enviar para o WhatsApp
                 </Button>
-                  <Button
+                 <Button
   onClick={async () => {
     try {
       if (filteredItems.length > 0) {
@@ -432,23 +432,27 @@ const CatalagoList: React.FC<ItemListProps> = () => {
         // Converte para imagem com html2canvas
         const canvas = await html2canvas(input, {
           scale: 2,
-          useCORS: true, // Permite imagens externas
+          useCORS: true,
           scrollX: 0,
           scrollY: 0,
           windowWidth: document.documentElement.offsetWidth,
           windowHeight: document.documentElement.offsetHeight,
         });
 
-        // Criar PDF em formato A4
+        // Criar PDF A4
         const pdf = new jsPDF('p', 'mm', 'a4');
         const imgWidth = 210;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
         pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
 
-        // Converte o PDF para Blob e faz upload para Firebase Storage
+        // Converte o PDF para Blob
         const pdfBlob = pdf.output('blob');
+
+        // 🔹 Garante que o Firebase Storage está inicializado dentro da função
+        const storage = getStorage(); 
         const storageRef = ref(storage, `pdfs/documento_${item.id}.pdf`);
+        
         await uploadBytes(storageRef, pdfBlob);
         const pdfURL = await getDownloadURL(storageRef);
 
