@@ -416,63 +416,22 @@ const CatalagoList: React.FC<ItemListProps> = () => {
                 >
                   Enviar para o WhatsApp
                 </Button>
-                 <Button
-  onClick={async () => {
-    try {
-      if (filteredItems.length > 0) {
-        const item = filteredItems[0];
-
-        // Seleciona a área a ser convertida em PDF
-        const input = document.getElementById('pdf-content');
-        if (!input) {
-          console.error('Elemento #pdf-content não encontrado');
-          return;
-        }
-
-        // Converte para imagem com html2canvas
-        const canvas = await html2canvas(input, {
-          scale: 2,
-          useCORS: true,
-          scrollX: 0,
-          scrollY: 0,
-          windowWidth: document.documentElement.offsetWidth,
-          windowHeight: document.documentElement.offsetHeight,
-        });
-
-        // Criar PDF A4
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
-
-        // Converte o PDF para Blob
-        const pdfBlob = pdf.output('blob');
-
-        // 🔹 Garante que o Firebase Storage está inicializado dentro da função
-        const storage = getStorage(); 
-        const storageRef = ref(storage, `pdfs/documento_${item.id}.pdf`);
-        
-        await uploadBytes(storageRef, pdfBlob);
-        const pdfURL = await getDownloadURL(storageRef);
-
-        // Mensagem com o link do PDF
-        const telefone = '5548988449379';
-        const mensagem = `Olá tudo bem, meu nome é ${item.nomevendedor}. Preenchi meu documento e a placa é ${item.id}. Qual é o próximo passo?\n\nVocê pode baixar o documento aqui: ${pdfURL}`;
-        const linkWhatsApp = `https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagem)}`;
-
-        // Abre o WhatsApp
-        window.open(linkWhatsApp, '_blank');
-      }
-    } catch (error) {
-      console.error('Erro ao gerar o PDF e enviar WhatsApp:', error);
+                  <Button
+  onClick={() => {
+    if (filteredItems.length > 0) {
+      const item = filteredItems[0]; // Pega o primeiro item encontrado
+      const telefone = '5548988449379';
+      const mensagem = `Olá tudo bem, meu nome é ${item.nomevendedor}. Preenchi meu documento e a placa é ${item.id}. Qual é o próximo passo?`;
+      const linkWhatsApp = `https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagem)}`;
+      
+      window.open(linkWhatsApp, '_blank'); // Abre o WhatsApp automaticamente
     }
   }}
   variant="contained"
   size="large"
   className={classes.downloadButton}
 >
-  Enviar Documento para a Loja
+  Enviar Mensagem para a Loja
 </Button>
 
         </Paper>
