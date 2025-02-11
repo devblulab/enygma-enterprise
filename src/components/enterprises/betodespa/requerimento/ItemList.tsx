@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Button, Paper, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { collection, getFirestore, getDocs } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { app } from '@/logic/firebase/config/app';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
