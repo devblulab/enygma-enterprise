@@ -373,7 +373,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   
   {/* Solicitante */}
   <Grid item xs={12} md={3}>
-    <Typography className={classes.title}>Identificação Da Empresa</Typography>
+    <Typography className={classes.title}>Solicitante</Typography>
     {[
       { label: 'Nome', value: 'nomeempresa' },
       { label: 'CPF/CNPJ', value: 'cnpjempresa' }
