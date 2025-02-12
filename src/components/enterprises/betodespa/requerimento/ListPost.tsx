@@ -351,7 +351,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
       { label: 'CPF', value: 'cpfcomprador' },
       { label: 'CEP', value: 'cepcomprador' },
       { label: 'ENDEREÇO', value: 'enderecocomprador' },
-      { label: 'COMPLEMENTO', value: 'complementocomprador' },
+      { label: 'ESTADO', value: 'complementocomprador' },
       { label: 'MUNICÍPIO', value: 'municipiocomprador' },
       { label: 'E-MAIL', value: 'emailcomprador' },
       { label: 'CEL/TEL', value: 'celtelcomprador' }
