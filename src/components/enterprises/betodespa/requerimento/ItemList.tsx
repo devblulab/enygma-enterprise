@@ -427,7 +427,7 @@ const CatalagoList: React.FC<ItemListProps> = () => {
   onClick={() => {
     if (filteredItems.length > 0) {
       const item = filteredItems[0]; // Pega o primeiro item encontrado
-      const telefone = '5548988449379';
+      const telefone = '5548988749403';
       const mensagem = `Olá tudo bem, meu nome é ${item.nomevendedor}. Preenchi a Intenção de Venda e a placa é ${item.id}.`;
       const linkWhatsApp = `https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagem)}`;
       
