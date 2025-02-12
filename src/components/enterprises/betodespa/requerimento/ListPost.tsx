@@ -292,7 +292,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
           transition={{ duration: 3 }}
         >
           <div className={classes.logoContainer}>
-            <img src="/betodespa.webp" alt="Logo Betodespachante" />
+            <img src="/betologo.jpeg" alt="Logo Betodespachante" />
           </div>
           <Typography className={classes.title}>Criar Requerimento de Intenção de Venda</Typography>
   
