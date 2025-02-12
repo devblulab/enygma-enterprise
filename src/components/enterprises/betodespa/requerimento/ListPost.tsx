@@ -326,12 +326,8 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     {[
       { label: 'Nome', value: 'nomevendedor' },
       { label: 'CPF', value: 'cpfvendedor' },
-      {label: 'CEP', value: 'cepvendedor' },
-      { label: 'ENDEREÇO', value: 'enderecovendedor' },
-      { label: 'COMPLEMENTO', value: 'complementovendedor' },
-      { label: 'MUNICÍPIO', value: 'municipiovendedor' },
-      { label: 'E-MAIL', value: 'emailvendedor' },
-      { label: 'CEL/TEL', value: 'celtelvendedor' }
+      { label: 'E-MAIL', value: 'emailvendedor' }
+   
       
     ].map((field) => (
       <TextField
@@ -375,12 +371,12 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   </Grid>
 
   
-  {/* Identificação Da Empresa */}
+  {/* Solicitante */}
   <Grid item xs={12} md={3}>
     <Typography className={classes.title}>Identificação Da Empresa</Typography>
     {[
-      { label: 'Nome Empresa', value: 'nomeempresa' },
-      { label: 'CNPJ', value: 'cnpjempresa' },
+      { label: 'Nome', value: 'nomeempresa' },
+      { label: 'CPF/CNPJ', value: 'cnpjempresa' }
       
       
     ].map((field) => (
