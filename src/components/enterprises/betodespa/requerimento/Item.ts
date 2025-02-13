@@ -12,7 +12,7 @@ interface Item {
     renavam: string,
     crv: string,
     valordevenda:  string;
-   
+   bairrocomprador: string,
     
 
     nomevendedor: string,
