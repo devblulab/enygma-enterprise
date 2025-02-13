@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
-import { Button, Box, Typography, Paper, useTheme } from '@material-ui/core';
+import { Button, Box, Typography, Paper, useTheme, useMediaQuery } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 // Estilos personalizados
@@ -19,10 +19,15 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
     backgroundColor: 'rgba(255, 255, 255, 0.64)',
     boxShadow: theme.shadows[2],
+    
+    
+    height: 'auto',
   },
   buttonGroup: {
     display: 'flex',
     gap: theme.spacing(2),
+      width: '100%',
+    height: 'auto',
   },
   errorMessage: {
     color: theme.palette.error.main,
@@ -30,15 +35,40 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
+
+
+
 interface SignaturePadProps {
-  onSave: (signature: string) => void; // Callback para salvar a assinatura
+  onSave: (signature: string) => void; // Callback para salvar a assinatura automaticamente
 }
+
+
 
 const SignaturePad: React.FC<SignaturePadProps> = ({ onSave }) => {
   const classes = useStyles();
   const theme = useTheme();
   const sigCanvas = useRef<SignatureCanvas | null>(null);
   const [error, setError] = useState<string | null>(null); // Estado para mensagens de erro
+  useEffect(() => {
+    const handleSaveSignature = () => {
+      if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
+        const signature = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png');
+        onSave(signature);
+      }
+    };
+  
+    const interval = setInterval(handleSaveSignature, 2000); // Salva a cada 2 segundos
+    
+    return () => clearInterval(interval);
+  }, [onSave]);
+
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+  // Define largura e altura diferentes dependendo do tamanho da tela
+  const canvasWidth = isSmallScreen ? 300 : 500;
+  const canvasHeight = isSmallScreen ? 150 : 200;
 
   // Limpa o canvas de assinatura
   const handleClear = () => {
@@ -48,18 +78,20 @@ const SignaturePad: React.FC<SignaturePadProps> = ({ onSave }) => {
     }
   };
 
+  
   // Salva a assinatura
   const handleSave = () => {
     if (sigCanvas.current) {
       if (sigCanvas.current.isEmpty()) {
-        setError('Por favor, assine antes de salvar.'); // Mensagem de erro se o canvas estiver vazio
+        setError('Por favor, assine antes de salvar.'); 
         return;
       }
-      const signature = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png'); // Converte a assinatura para base64
-      onSave(signature); // Passa a assinatura para o callback
-      setError(null); // Limpa o erro após salvar
+      const signature = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png');
+      onSave(signature);
+      setError(null); 
     }
   };
+  
 
   return (
     <Paper elevation={3} className={classes.signatureContainer}>
@@ -69,7 +101,7 @@ const SignaturePad: React.FC<SignaturePadProps> = ({ onSave }) => {
       <SignatureCanvas
         ref={(ref) => (sigCanvas.current = ref)}
         canvasProps={{
-          width: 500,
+          width: 300,
           height: 200,
           className: classes.signatureCanvas,
         }}
@@ -88,14 +120,7 @@ const SignaturePad: React.FC<SignaturePadProps> = ({ onSave }) => {
         >
           Limpar
         </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSave}
-          aria-label="Salvar assinatura"
-        >
-          Salvar Assinatura
-        </Button>
+        
       </Box>
     </Paper>
   );
