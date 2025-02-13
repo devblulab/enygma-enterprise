@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Button, Paper, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { collection, getFirestore, getDocs } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { collection, getFirestore, getDocs, onSnapshot } from 'firebase/firestore';
+
 import { app } from '@/logic/firebase/config/app';
 import jsPDF from 'jspdf';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import html2canvas from 'html2canvas';
 import { Timestamp } from 'firebase/firestore';
 import { format } from 'date-fns';
 
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -185,6 +187,8 @@ interface Item {
   enderecovendedor: string;
   complementovendedor: string;
   municipiovendedor: string;
+  bairrocomprador: string,
+  
   emailvendedor: string;
   nomecomprador: string;
   cpfcomprador: string;
@@ -214,37 +218,35 @@ const CatalagoList: React.FC<ItemListProps> = () => {
   const [newItem, setNewItem] = useState<Item[]>([]);
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const itemsCollectionRef = collection(db, 'Betodespachanteintrncaodevenda');
+    const itemsCollectionRef = collection(db, 'Betodespachanteintrncaodevenda');
+    
+    const unsubscribe = onSnapshot(itemsCollectionRef, (querySnapshot) => {
         const fetchedItems: Item[] = [];
-        const querySnapshot = await getDocs(itemsCollectionRef);
         querySnapshot.forEach((doc) => {
-          fetchedItems.push({ id: doc.id, ...doc.data() } as Item);
+            fetchedItems.push({ id: doc.id, ...doc.data() } as Item);
         });
         setItems(fetchedItems);
-      } catch (error) {
-        console.error('Erro ao buscar os itens:', error);
-      }
-    };
+    });
 
-    fetchItems();
-  }, []);
+    return () => unsubscribe(); // Cleanup ao desmontar o componente
+}, []);
+
 
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
   };
 
-  const filteredItems = items.filter((item) => {
-    const searchLower = searchText.toLowerCase();
-    
-    return (
-      item.nomevendedor.toLowerCase().includes(searchLower) ||
-      item.nomecomprador.toLowerCase().includes(searchLower) ||
-      item.id.toLowerCase().includes(searchLower) ||
-      item.renavam.toLowerCase().includes(searchLower)
-    );
-  });
+  const filteredItems = searchText.length >= 4
+  ? items.filter((item) => {
+      const searchLower = searchText.toLowerCase();
+      return (
+        item.nomevendedor.toLowerCase().includes(searchLower) ||
+        item.nomecomprador.toLowerCase().includes(searchLower) ||
+        item.id.toLowerCase().includes(searchLower) ||
+        item.renavam.toLowerCase().includes(searchLower)
+      );
+    })
+  : [];
 
   const formatDate = (date: string | Timestamp | undefined | null) => {
     if (!date) return 'Data inválida';
@@ -286,7 +288,8 @@ const CatalagoList: React.FC<ItemListProps> = () => {
     const input = document.getElementById('pdf-content'); // Captura o formulário
     if (!input) return;
 
-    const canvas = await html2canvas(input);
+    const canvas = await html2canvas(input, { scale: 2 });
+
     const imgData = canvas.toDataURL('image/png');
 
     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -297,7 +300,12 @@ const CatalagoList: React.FC<ItemListProps> = () => {
 
     // Converter para Blob e gerar URL
     const pdfBlob = pdf.output('blob');
-    const pdfURL = URL.createObjectURL(pdfBlob);
+const storageRef = ref(storage, `pdfs/documento_${Date.now()}.pdf`);
+await uploadBytes(storageRef, pdfBlob);
+const pdfURL = await getDownloadURL(storageRef);
+sendWhatsApp(pdfURL);
+
+    
 
     // Salvar PDF localmente
     pdf.save(`Requerimento_${newItem.length > 0 ? newItem[0].id : 'documento'}.pdf`);
@@ -349,23 +357,20 @@ const CatalagoList: React.FC<ItemListProps> = () => {
                   <Typography className={classes.field}><strong>Placa:</strong> {item.id}</Typography>
                   <Typography className={classes.field}><strong>Renavam:</strong> {item.renavam}</Typography>
                   <Typography className={classes.field}><strong>CRV:</strong> {item.crv}</Typography>
-                  <Typography className={classes.field}>
-  <strong>Valor de Venda:</strong> R$ {item.valordevenda}
-</Typography>
+                  <Typography className={classes.field}><strong>Valor de Venda:</strong> R$ {item.valordevenda}</Typography>
 
 
-                  <Typography className={classes.sectionTitle}>Identificação do Vendedor</Typography>
+                 <Typography className={classes.sectionTitle}>Identificação do Vendedor</Typography>
                   <Typography className={classes.field}><strong>Nome:</strong> {item.nomevendedor}</Typography>
                   <Typography className={classes.field}><strong>CPF/CNPJ:</strong> {item.cpfvendedor}</Typography>
                   <Typography className={classes.field}><strong>E-mail:</strong> {item.emailvendedor}</Typography>
-                  
 
                   <Typography className={classes.sectionTitle}>Identificação do Comprador</Typography>
                   <Typography className={classes.field}><strong>Nome:</strong> {item.nomecomprador}</Typography>
                   <Typography className={classes.field}><strong>CPF/CNPJ:</strong> {item.cpfcomprador}</Typography>
                   <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecocomprador}</Typography>
+                  <Typography className={classes.field}><strong>Complemento:</strong> {item.complementocomprador}</Typography>
                   <Typography className={classes.field}><strong>Município:</strong> {item.municipiocomprador}</Typography>
-                  <Typography className={classes.field}><strong>Estado:</strong> {item.complementocomprador}</Typography>
                   <Typography className={classes.field}><strong>CEP:</strong> {item.cepcomprador}</Typography>
                   <Typography className={classes.field}><strong>E-mail:</strong> {item.emailcomprador}</Typography>
                   <Typography className={classes.field}><strong>CEL/TEL:</strong> {item.celtelcomprador}</Typography>
@@ -402,7 +407,8 @@ const CatalagoList: React.FC<ItemListProps> = () => {
           </Button>
          
      
-                  <Button
+          
+          <Button
   onClick={() => {
     if (filteredItems.length > 0) {
       const item = filteredItems[0]; // Pega o primeiro item encontrado
