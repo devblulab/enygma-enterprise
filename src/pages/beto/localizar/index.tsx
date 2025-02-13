@@ -20,7 +20,7 @@ interface Item {
     crv: string,
     valordevenda: string,
    
-    
+    bairrocomprador: string,
 
     nomevendedor: string,
     cpfvendedor: string,
