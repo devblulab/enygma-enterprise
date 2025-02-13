@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     gap: "16px",
-    padding: "20px",
+    padding: "3px",
     maxWidth: "1600px",
     margin: "auto",
     background: "linear-gradient(135deg,rgb(202, 202, 202) 0%,rgb(250, 250, 250) 100%)",
@@ -43,9 +43,9 @@ const useStyles = makeStyles((theme) => ({
   logoContainer: {
     display: 'flex',
     justifyContent: 'center',
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(0),
     '& img': {
-      width: '150px', // Tamanho do logo
+      width: '100px', // Tamanho do logo
       height: 'auto',
       borderRadius: '50%', // Formato circular
       boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.3)', // Sombra luxuosa
@@ -57,9 +57,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   title: {
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(0),
   
-    fontSize: '1.5rem',
+    fontSize: '1.3rem',
     fontWeight: 'bold',
     fontFamily: 'Playfair Display, serif',
     textAlign: 'center',
@@ -83,8 +83,8 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#f0f0f0',
     },
     '& input': {
-      fontSize: '14px',
-      fontWeight: 500,
+      fontSize: '12px',
+      fontWeight: 400,
     },
     [theme.breakpoints.down('sm')]: {
       width: '100%',
@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     marginTop: theme.spacing(-1),
-    padding: theme.spacing(1.5),
+    padding: theme.spacing(1),
     background: 'linear-gradient(135deg,rgba(27, 27, 27, 0.8),rgba(102, 102, 102, 0.34))',
     color: '#fff',
     fontWeight: 'bold',
@@ -115,7 +115,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     height: '20vh',
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(0),
   },
   noPrint: {
     '@media print': {
@@ -156,6 +156,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     complementovendedor: '',
     municipiovendedor: '',
     emailvendedor:'',
+    bairrocomprador: '',
 
     nomecomprador: '',
     cpfcomprador: '',
@@ -225,8 +226,8 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         ...newItem,
         id: itemSalvo.id,
       };
-  
       setItems((prevItems) => [...prevItems, adaptedItemSalvo]);
+    
   
       await generatePDF(); // Gera o PDF após salvar
   
@@ -242,7 +243,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         renavam: '',
         crv: '',
         valordevenda: '',
-       
+        bairrocomprador: '',
         
         
         nomevendedor:'',
@@ -292,7 +293,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
           transition={{ duration: 3 }}
         >
           <div className={classes.logoContainer}>
-            <img src="/betologo.jpeg" alt="Logo Betodespachante" />
+            <img src="/betodespa.webp" alt="Logo Betodespachante" />
           </div>
           <Typography className={classes.title}>Criar Requerimento de Intenção de Venda</Typography>
   
@@ -324,10 +325,9 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   <Grid item xs={12} md={3}>
     <Typography className={classes.title}>Identificação Do Vendedor</Typography>
     {[
-      { label: 'Nome', value: 'nomevendedor' },
-      { label: 'CPF', value: 'cpfvendedor' },
-      { label: 'E-MAIL', value: 'emailvendedor' }
-   
+       { label: 'NOME', value: 'nomevendedor' },
+       { label: 'CPF', value: 'cpfvendedor' },
+       { label: 'E-MAIL', value: 'emailvendedor' }
       
     ].map((field) => (
       <TextField
@@ -347,12 +347,13 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   <Grid item xs={12} md={3}>
     <Typography className={classes.title}>Identificação Do Comprador</Typography>
     {[
-      { label: 'Nome', value: 'nomecomprador' },
+       { label: 'NOME', value: 'nomecomprador' },
       { label: 'CPF', value: 'cpfcomprador' },
       { label: 'CEP', value: 'cepcomprador' },
       { label: 'ENDEREÇO', value: 'enderecocomprador' },
       { label: 'ESTADO', value: 'complementocomprador' },
       { label: 'MUNICÍPIO', value: 'municipiocomprador' },
+      { label: 'BAIRRO', value: 'bairrocomprador' },
       { label: 'E-MAIL', value: 'emailcomprador' },
       { label: 'CEL/TEL', value: 'celtelcomprador' }
       
@@ -371,9 +372,9 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   </Grid>
 
   
-  {/* Solicitante */}
+  {/* Identificação Da Empresa */}
   <Grid item xs={12} md={3}>
-    <Typography className={classes.title}>Solicitante</Typography>
+  <Typography className={classes.title}>Solicitante</Typography>
     {[
       { label: 'Nome', value: 'nomeempresa' },
       { label: 'CPF/CNPJ', value: 'cnpjempresa' }
@@ -399,14 +400,12 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   </Grid>
 
   <Grid item xs={12} md={8}>
-    <SignaturePad
-      onSave={(signature: string) => 
-        setNewItem((prev) => ({ ...prev, signature }))
-      }
-      // Defina largura 100% para o componente se ajustar
-      
-    />
-  </Grid>
+  <SignaturePad
+    onSave={(signature: string) => 
+      setNewItem((prev) => ({ ...prev, signature }))
+    }
+  />
+</Grid>
 </Grid>
 
 {/* Botão condicional (pode estar no mesmo container ou fora dele) */}
@@ -416,13 +415,13 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
       <Button
         onClick={async () => {
           await handleAddItem(); 
-         
+          
         }}
         variant="contained"
         size="large"
         className={classes.button}
       >
-        Adicione Requerimento
+        Adiciona Requerimento
       </Button>
     </Grid>
   </Grid>
