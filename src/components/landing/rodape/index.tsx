@@ -95,7 +95,7 @@ export default function Rodape() {
           <span className="font-bold">
             Enygma<span className="text-red-500">Dev.</span>Lab.
           </span>{' '}
-          ® {new Date().getFullYear()} - Todos os direitos reservados
+          ® {new Date().getFullYear()} - Todos os direitos reservados ENY - GNA (Global Network Architecture)
         </motion.p>
       </motion.div>
     </Area>
