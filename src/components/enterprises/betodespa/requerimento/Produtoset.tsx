@@ -18,7 +18,7 @@ interface Item {
     renavam: string,
     crv: string,
     valordevenda:  string;
-   
+   bairrocomprador: string,
     dataCriacao: string | Timestamp;
 
     nomevendedor: string,
