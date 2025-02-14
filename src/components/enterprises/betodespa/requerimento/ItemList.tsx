@@ -370,7 +370,7 @@ sendWhatsApp(pdfURL);
                   <Typography className={classes.field}><strong>CPF/CNPJ:</strong> {item.cpfcomprador}</Typography>
                    <Typography className={classes.field}><strong>CEP:</strong> {item.cepcomprador}</Typography>
                  
-                  <Typography className={classes.field}><strong>Eestado:</strong> {item.complementocomprador}</Typography>
+                  <Typography className={classes.field}><strong>Estado:</strong> {item.complementocomprador}</Typography>
                   <Typography className={classes.field}><strong>Município:</strong> {item.municipiocomprador}</Typography>
                   <Typography className={classes.field}><strong>BAIRRO:</strong> {item.bairrocomprador}</Typography>
                    <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecocomprador}</Typography>
