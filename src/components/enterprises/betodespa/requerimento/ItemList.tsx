@@ -372,7 +372,7 @@ sendWhatsApp(pdfURL);
                  
                   <Typography className={classes.field}><strong>Estado:</strong> {item.complementocomprador}</Typography>
                   <Typography className={classes.field}><strong>Município:</strong> {item.municipiocomprador}</Typography>
-                  <Typography className={classes.field}><strong>BAIRRO:</strong> {item.bairrocomprador}</Typography>
+                  <Typography className={classes.field}><strong>Bairro:</strong> {item.bairrocomprador}</Typography>
                    <Typography className={classes.field}><strong>Endereço:</strong> {item.enderecocomprador}</Typography>
                   <Typography className={classes.field}><strong>E-mail:</strong> {item.emailcomprador}</Typography>
                   <Typography className={classes.field}><strong>CEL/TEL:</strong> {item.celtelcomprador}</Typography>
