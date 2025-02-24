@@ -93,7 +93,7 @@ export default function Rodape() {
         <RedesSociais />
         <motion.p className="text-zinc-100 mt-7 md:mt-0 text-center" variants={textVariants}>
           <span className="font-bold">
-            Enygma<span className="text-red-500">Dev.</span>Lab.
+            Eny-gna<span className="text-red-500">(Global Network Architecture)</span>Lab.
           </span>{' '}
           ® {new Date().getFullYear()} - Todos os direitos reservados ENY - GNA (Global Network Architecture)
         </motion.p>
