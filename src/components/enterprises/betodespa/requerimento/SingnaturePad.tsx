@@ -96,7 +96,7 @@ const SignaturePad: React.FC<SignaturePadProps> = ({ onSave }) => {
   return (
     <Paper elevation={3} className={classes.signatureContainer}>
       <Typography variant="h6" gutterBottom>
-        Assinatura do Cliente
+       
       </Typography>
       <SignatureCanvas
         ref={(ref) => (sigCanvas.current = ref)}
