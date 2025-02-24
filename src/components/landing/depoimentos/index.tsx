@@ -99,6 +99,7 @@ animate={{ opacity: 1, transition: { duration: 10 } }}
 <motion.span variants={textVariants}>i</motion.span>
 <motion.span variants={textVariants}>s</motion.span>
 <motion.span variants={textVariants}>e</motion.span>
+  <motion.span variants={textVariants}>s</motion.span>
 </motion.h1>
 <motion.div
 className="hidden w-screen h-px animate-glow md:block animate-fade-right bg-gradient-to-r from-zinc-300/0 via-zinc-100/50 to-zinc-300/0"
@@ -106,7 +107,7 @@ initial={{ opacity: 0 }}
 animate={{ opacity: 1, transition: { duration: 10 } }}
 />
 <h4 className="text-sm text-zinc-500">
-Desbrave o terreno das suas finanças com confiança e controle!
+ENY-GNA (Global Network Architecture) Lab.
 </h4>
 <motion.div
 className="hidden w-screen h-px animate-glow md:block animate-fade-right bg-gradient-to-r from-zinc-300/0 via-cyan-300/50 to-zinc-300/0"
@@ -135,12 +136,12 @@ animate={{ opacity: 1, transition: { duration: 10 } }}
       </a>{' '}
       where I contribute to the development of cutting-edge technologies. In addition, I also work on personal projects like{' '}
       <a
-        href="https://enygma-enterprise-co.vercel.app/"
+        href="https://enygna-enterprises.com.br/"
         target="_blank"
         rel="noopener noreferrer"
         className="underline duration-500 hover:text-zinc-300"
       >
-        enygmadevlab.com
+        enygna-entreprises.com.br
       </a>{' '}
       during my free time.
     </motion.h2>
