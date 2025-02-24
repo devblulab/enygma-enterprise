@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { TextField, Button, Grid, Paper, Typography, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { motion } from 'framer-motion';  // Importe o motion do framer-motion
+import { motion } from 'framer-motion';
 import SignaturePad from './SingnaturePad';
-
-import Colecao from '@/logic/firebase/db/Colecao'; // Lógica do Firebase
-import Item from './Item'; // Interface Item
+import Colecao from '@/logic/firebase/db/Colecao';
+import Item from './Item';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Timestamp } from 'firebase/firestore';
-
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -45,20 +43,19 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     marginBottom: theme.spacing(0),
     '& img': {
-      width: '100px', // Tamanho do logo
+      width: '100px',
       height: 'auto',
-      borderRadius: '50%', // Formato circular
-      boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.3)', // Sombra luxuosa
-      border: '4px solid white', // Borda branca
+      borderRadius: '50%',
+      boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.3)',
+      border: '4px solid white',
       transition: 'transform 0.3s ease-in-out',
       '&:hover': {
-        transform: 'scale(1.1)', // Efeito de zoom ao passar o mouse
+        transform: 'scale(1.1)',
       },
     },
   },
   title: {
     marginBottom: theme.spacing(0),
-  
     fontSize: '1.3rem',
     fontWeight: 'bold',
     fontFamily: 'Playfair Display, serif',
@@ -124,8 +121,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
-
 interface ListPostProps {
   setItems: React.Dispatch<React.SetStateAction<Item[]>>;
 }
@@ -134,11 +129,8 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   const classes = useStyles();
   const [signature, setSignature] = useState<string>('');
   const [newItem, setNewItem] = useState<Item>({
-   
-
-    id:'',
+    id: '',
     cliente: '',
-    
     status: '',
     quantidade: 0,
     imagemUrls: ['', '', '', ''],
@@ -147,25 +139,21 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     renavam: '',
     crv: '',
     valordevenda: '',
-   
-    
-
-    nomevendedor:'',
+    nomevendedor: '',
     cpfvendedor: '',
     enderecovendedor: '',
     complementovendedor: '',
     municipiovendedor: '',
-    emailvendedor:'',
+    emailvendedor: '',
     bairrocomprador: '',
-
     nomecomprador: '',
     cpfcomprador: '',
     enderecocomprador: '',
     complementocomprador: '',
     municipiocomprador: '',
     emailcomprador: '',
-   celtelcomprador: '',
-   cepvendedor: '',
+    celtelcomprador: '',
+    cepvendedor: '',
     cepcomprador: '',
     tipo: '',
     cnpjempresa: '',
@@ -173,8 +161,28 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     dataCriacao: Timestamp.fromDate(new Date()),
     celtelvendedor: '',
     signature: '',
-   
   });
+
+  // Função para buscar o endereço a partir do CEP
+  const fetchAddressFromCEP = async (cep: string) => {
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = await response.json();
+      if (!data.erro) {
+        setNewItem((prev) => ({
+          ...prev,
+          enderecocomprador: data.logradouro,
+          municipiocomprador: data.localidade,
+          bairrocomprador: data.bairro,
+          complementocomprador: data.estado,
+        }));
+      } else {
+        console.error('CEP não encontrado');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar CEP:', error);
+    }
+  };
 
   const sendWhatsApp = async (pdfURL: string) => {
     let telefone = newItem.celtelcomprador.replace(/\D/g, ''); // Remove caracteres não numéricos
@@ -213,28 +221,27 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     // Enviar para o WhatsApp
     await sendWhatsApp(pdfURL);
   };
-  
+
   const handleAddItem = async () => {
     try {
       const colecao = new Colecao();
       const itemParaSalvar = {
         ...newItem,
         dataCriacao: new Date().toISOString().split('T')[0], // Ou Timestamp.fromDate(new Date())
-      };const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevenda', newItem);
-  
+      };
+      const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevenda', newItem);
+
       const adaptedItemSalvo: Item = {
         ...newItem,
         id: itemSalvo.id,
       };
       setItems((prevItems) => [...prevItems, adaptedItemSalvo]);
-    
-  
+
       await generatePDF(); // Gera o PDF após salvar
-  
+
       setNewItem({
-        id:'',
+        id: '',
         cliente: '',
-        
         status: '',
         quantidade: 0,
         imagemUrls: ['', '', '', ''],
@@ -244,14 +251,12 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         crv: '',
         valordevenda: '',
         bairrocomprador: '',
-        
-        
-        nomevendedor:'',
+        nomevendedor: '',
         cpfvendedor: '',
         enderecovendedor: '',
         complementovendedor: '',
         municipiovendedor: '',
-        emailvendedor:'',
+        emailvendedor: '',
         dataCriacao: Timestamp.fromDate(new Date()),
         nomecomprador: '',
         cpfcomprador: '',
@@ -259,19 +264,15 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         complementocomprador: '',
         municipiocomprador: '',
         emailcomprador: '',
-       celtelcomprador: '',
-       cepvendedor: '',
+        celtelcomprador: '',
+        cepvendedor: '',
         cepcomprador: '',
         tipo: '',
         cnpjempresa: '',
         nomeempresa: '',
         signature: '',
         celtelvendedor: '',
-
-        
- 
       });
-      
 
       setItems((prevItems) => [...prevItems, adaptedItemSalvo]);
     } catch (error) {
@@ -296,136 +297,134 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
             <img src="/betologo.jpeg" alt="Logo Betodespachante" />
           </div>
           <Typography className={classes.title}>Criar Requerimento de Intenção de Venda</Typography>
-  
+
           {/* Seções lado a lado */}
           <Grid container spacing={3}>
-  {/* Identificação Do Veículo */}
-  <Grid item xs={12} md={3}>
-    <Typography className={classes.title}>Identificação Do Veículo</Typography>
-    {[
-      { label: 'Placa', value: 'id' },
-      { label: 'Renavam', value: 'renavam' },
-      { label: 'CRV', value: 'crv' },
-      { label: 'Valor de Venda', value: 'valordevenda', type: 'number' }
-    ].map((field) => (
-      <TextField
-        key={field.value}
-        label={field.label}
-        value={newItem[field.value as keyof Item] || ''}
-        onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
-        fullWidth
-        variant="outlined"
-        InputProps={{ className: classes.textField }}
-        style={{ marginBottom: '16px' }}
-      />
-    ))}
-  </Grid>
+            {/* Identificação Do Veículo */}
+            <Grid item xs={12} md={3}>
+              <Typography className={classes.title}>Identificação Do Veículo</Typography>
+              {[
+                { label: 'Placa', value: 'id' },
+                { label: 'Renavam', value: 'renavam' },
+                { label: 'CRV', value: 'crv' },
+                { label: 'Valor de Venda', value: 'valordevenda', type: 'number' },
+              ].map((field) => (
+                <TextField
+                  key={field.value}
+                  label={field.label}
+                  value={newItem[field.value as keyof Item] || ''}
+                  onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
+                  fullWidth
+                  variant="outlined"
+                  InputProps={{ className: classes.textField }}
+                  style={{ marginBottom: '16px' }}
+                />
+              ))}
+            </Grid>
 
-  {/* Identificação Do Vendedor */}
-  <Grid item xs={12} md={3}>
-    <Typography className={classes.title}>Identificação Do Vendedor</Typography>
-    {[
-       { label: 'NOME', value: 'nomevendedor' },
-       { label: 'CPF', value: 'cpfvendedor' },
-       { label: 'E-MAIL', value: 'emailvendedor' }
-      
-    ].map((field) => (
-      <TextField
-        key={field.value}
-        label={field.label}
-        value={newItem[field.value as keyof Item] || ''}
-        onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
-        fullWidth
-        variant="outlined"
-        InputProps={{ className: classes.textField }}
-        style={{ marginBottom: '16px' }}
-      />
-    ))}
-  </Grid>
+            {/* Identificação Do Vendedor */}
+            <Grid item xs={12} md={3}>
+              <Typography className={classes.title}>Identificação Do Vendedor</Typography>
+              {[
+                { label: 'NOME', value: 'nomevendedor' },
+                { label: 'CPF', value: 'cpfvendedor' },
+                { label: 'E-MAIL', value: 'emailvendedor' },
+              ].map((field) => (
+                <TextField
+                  key={field.value}
+                  label={field.label}
+                  value={newItem[field.value as keyof Item] || ''}
+                  onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
+                  fullWidth
+                  variant="outlined"
+                  InputProps={{ className: classes.textField }}
+                  style={{ marginBottom: '16px' }}
+                />
+              ))}
+            </Grid>
 
-  {/* Identificação Do Comprador */}
-  <Grid item xs={12} md={3}>
-    <Typography className={classes.title}>Identificação Do Comprador</Typography>
-    {[
-       { label: 'NOME', value: 'nomecomprador' },
-      { label: 'CPF', value: 'cpfcomprador' },
-      { label: 'CEP', value: 'cepcomprador' },
-      { label: 'ENDEREÇO', value: 'enderecocomprador' },
-      { label: 'ESTADO', value: 'complementocomprador' },
-      { label: 'MUNICÍPIO', value: 'municipiocomprador' },
-      { label: 'BAIRRO', value: 'bairrocomprador' },
-      { label: 'E-MAIL', value: 'emailcomprador' },
-      { label: 'CEL/TEL', value: 'celtelcomprador' }
-      
-    ].map((field) => (
-      <TextField
-        key={field.value}
-        label={field.label}
-        value={newItem[field.value as keyof Item] || ''}
-        onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
-        fullWidth
-        variant="outlined"
-        InputProps={{ className: classes.textField }}
-        style={{ marginBottom: '16px' }}
-      />
-    ))}
-  </Grid>
+            {/* Identificação Do Comprador */}
+            <Grid item xs={12} md={3}>
+              <Typography className={classes.title}>Identificação Do Comprador</Typography>
+              {[
+                { label: 'NOME', value: 'nomecomprador' },
+                { label: 'CPF', value: 'cpfcomprador' },
+                { label: 'CEP', value: 'cepcomprador' },
+                { label: 'ENDEREÇO', value: 'enderecocomprador' },
+                { label: 'ESTADO', value: 'complementocomprador' },
+                { label: 'MUNICÍPIO', value: 'municipiocomprador' },
+                { label: 'BAIRRO', value: 'bairrocomprador' },
+                { label: 'E-MAIL', value: 'emailcomprador' },
+                { label: 'CEL/TEL', value: 'celtelcomprador' },
+              ].map((field) => (
+                <TextField
+                  key={field.value}
+                  label={field.label}
+                  value={newItem[field.value as keyof Item] || ''}
+                  onChange={(e) => {
+                    setNewItem({ ...newItem, [field.value]: e.target.value });
+                    if (field.value === 'cepcomprador' && e.target.value.length === 8) {
+                      fetchAddressFromCEP(e.target.value);
+                    }
+                  }}
+                  fullWidth
+                  variant="outlined"
+                  InputProps={{ className: classes.textField }}
+                  style={{ marginBottom: '16px' }}
+                />
+              ))}
+            </Grid>
 
-  
-  {/* Identificação Da Empresa */}
-  <Grid item xs={12} md={3}>
-  <Typography className={classes.title}>Solicitante</Typography>
-    {[
-      { label: 'Nome', value: 'nomeempresa' },
-      { label: 'CPF/CNPJ', value: 'cnpjempresa' }
-      
-      
-    ].map((field) => (
-      <TextField
-        key={field.value}
-        label={field.label}
-        value={newItem[field.value as keyof Item] || ''}
-        onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
-        fullWidth
-        variant="outlined"
-        InputProps={{ className: classes.textField }}
-        style={{ marginBottom: '16px' }}
-      />
-    ))}
-  </Grid>
-</Grid>
-<Grid container justifyContent="center"  spacing={2}>
-  <Grid item xs={12}>
-    <Typography className={classes.title}>Assinatura do Cliente</Typography>
-  </Grid>
+            {/* Identificação Da Empresa */}
+            <Grid item xs={12} md={3}>
+              <Typography className={classes.title}>Solicitante</Typography>
+              {[
+                { label: 'Nome', value: 'nomeempresa' },
+                { label: 'CPF/CNPJ', value: 'cnpjempresa' },
+              ].map((field) => (
+                <TextField
+                  key={field.value}
+                  label={field.label}
+                  value={newItem[field.value as keyof Item] || ''}
+                  onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
+                  fullWidth
+                  variant="outlined"
+                  InputProps={{ className: classes.textField }}
+                  style={{ marginBottom: '16px' }}
+                />
+              ))}
+            </Grid>
+          </Grid>
 
-  <Grid item xs={12} md={8}>
-  <SignaturePad
-    onSave={(signature: string) => 
-      setNewItem((prev) => ({ ...prev, signature }))
-    }
-  />
-</Grid>
-</Grid>
+          <Grid container justifyContent="center" spacing={2}>
+            <Grid item xs={12}>
+              <Typography className={classes.title}>Assinatura do Cliente</Typography>
+            </Grid>
 
-{/* Botão condicional (pode estar no mesmo container ou fora dele) */}
-{shouldShowAddItemButton && (
-  <Grid container justifyContent="center" alignItems="center" spacing={3}>
-    <Grid item>
-      <Button
-        onClick={async () => {
-          await handleAddItem(); 
-          
-        }}
-        variant="contained"
-        size="large"
-        className={classes.button}
-      >
-        Adiciona Requerimento
-      </Button>
-    </Grid>
-  </Grid>
-)}
+            <Grid item xs={12} md={8}>
+              <SignaturePad
+                onSave={(signature: string) => setNewItem((prev) => ({ ...prev, signature }))}
+              />
+            </Grid>
+          </Grid>
+
+          {/* Botão condicional */}
+          {shouldShowAddItemButton && (
+            <Grid container justifyContent="center" alignItems="center" spacing={3}>
+              <Grid item>
+                <Button
+                  onClick={async () => {
+                    await handleAddItem();
+                  }}
+                  variant="contained"
+                  size="large"
+                  className={classes.button}
+                >
+                  Adiciona Requerimento
+                </Button>
+              </Grid>
+            </Grid>
+          )}
         </motion.div>
       </Paper>
     </div>
