@@ -420,7 +420,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
                   size="large"
                   className={classes.button}
                 >
-                  Adiciona Requerimento
+                  Adicionar Requerimento
                 </Button>
               </Grid>
             </Grid>
