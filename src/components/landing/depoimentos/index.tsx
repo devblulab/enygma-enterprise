@@ -71,8 +71,9 @@ const Home = () => {
         <motion.span variants={textVariants}>E</motion.span>
         <motion.span variants={textVariants}>n</motion.span>
         <motion.span variants={textVariants}>y</motion.span>
+         <motion.span variants={textVariants}>-</motion.span>
         <motion.span variants={textVariants}>g</motion.span>
-        <motion.span variants={textVariants}>m</motion.span>
+        <motion.span variants={textVariants}>n</motion.span>
         <motion.span variants={textVariants}>a</motion.span>       
 </motion.h1>
 <motion.div
