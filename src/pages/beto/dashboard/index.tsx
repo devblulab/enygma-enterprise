@@ -396,7 +396,7 @@ const Dashboard = () => {
 
   const handleDeleteDocument = async (id: string) => {
     try {
-      await deleteDoc(doc(db, 'Betodespachanteintrncaodevenda', id)); // Exclui do Firestore
+      await deleteDoc(doc(db, 'Betodespachanteintrncaodevendaoficial', id)); // Exclui do Firestore
       setDocuments((prevDocuments) => prevDocuments.filter(doc => doc.id !== id));
       console.log(`✅ Documento ${id} excluído com sucesso!`);
     } catch (error) {
@@ -408,7 +408,7 @@ const Dashboard = () => {
   const fetchDocuments = async () => {
     setLoading(true);
     try {
-      const itemsCollectionRef = collection(db, 'Betodespachanteintrncaodevenda');
+      const itemsCollectionRef = collection(db, 'Betodespachanteintrncaodevendaoficial');
       const querySnapshot = await getDocs(itemsCollectionRef);
       const fetchedItems: Item[] = [];
       
@@ -476,7 +476,7 @@ const Dashboard = () => {
 
     
 
-    const itemsCollectionRef = collection(db, 'Betodespachanteintrncaodevenda');
+    const itemsCollectionRef = collection(db, 'Betodespachanteintrncaodevendaoficial');
 
     const unsubscribe = onSnapshot(itemsCollectionRef, (snapshot) => {
       const updatedDocuments: Item[] = [];
@@ -595,7 +595,7 @@ const Dashboard = () => {
   const handleSaveEdit = async () => {
     if (editingDoc && editData) {
       try {
-        const docRef = doc(db, 'Betodespachanteintrncaodevenda', editingDoc);
+        const docRef = doc(db, 'Betodespachanteintrncaodevendaoficial', editingDoc);
         await updateDoc(docRef, editData); // Atualiza o documento no Firestore
         setEditingDoc(null); // Reseta o estado de edição
         setEditData({}); // Limpa os dados de edição
