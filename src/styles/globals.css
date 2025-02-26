@@ -8,28 +8,18 @@ html {
   font-family: 'Nunito', sans-serif;
   background-color: #000;
   color: #fff;
-}@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&display=swap');
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-html {
-  font-family: 'Nunito', sans-serif;
-  background-color: #000;
-  color: #fff;
 }
 
 @media print {
   body {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-    font-size: 18px !important; /* Ajusta o tamanho da fonte */
+    font-size: 12px !important; /* Ajusta o tamanho da fonte */
     background-color: white !important;
     margin: 0 !important;
     padding: 0 !important;
   
-    transform: scale(1.2); /* Aumenta um pouco o tamanho do conteúdo */
+    transform: scale(1.0); /* Aumenta um pouco o tamanho do conteúdo */
   }
 
   #pdf-content {
@@ -58,7 +48,7 @@ html {
   /* 📌 Ajuste as margens e o tamanho da página */
   @page {
     size: A4 portrait; /* Define o tamanho como A4 retrato */
-    margin: -4cm; /* Remove todas as margens padrão */
+    margin: -5cm; /* Remove todas as margens padrão */
     
   }
 }
