@@ -121,6 +121,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
 interface ListPostProps {
   setItems: React.Dispatch<React.SetStateAction<Item[]>>;
 }
@@ -131,7 +133,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
   const [newItem, setNewItem] = useState<Item>({
     id: '',
     cliente: '',
-    status: '',
+    status: 'Pendente', // Definindo o status inicial como "Pendente"
     quantidade: 0,
     imagemUrls: ['', '', '', ''],
     concluido: false,
@@ -144,14 +146,14 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     enderecovendedor: '',
     complementovendedor: '',
     municipiovendedor: '',
-    emailvendedor: '',
+    emailvendedor: 'b3certificacao@gmail.com',
     bairrocomprador: '',
     nomecomprador: '',
     cpfcomprador: '',
     enderecocomprador: '',
     complementocomprador: '',
     municipiocomprador: '',
-    emailcomprador: '',
+    emailcomprador: 'b3certificacao@gmail.com',
     celtelcomprador: '',
     cepvendedor: '',
     cepcomprador: '',
@@ -162,6 +164,8 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     celtelvendedor: '',
     signature: '',
   });
+
+  
 
   // Função para buscar o endereço a partir do CEP
   const fetchAddressFromCEP = async (cep: string) => {
@@ -328,7 +332,8 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
               {[
                 { label: 'NOME', value: 'nomevendedor' },
                 { label: 'CPF', value: 'cpfvendedor' },
-                { label: 'E-MAIL', value: 'emailvendedor' },
+               
+
               ].map((field) => (
                 <TextField
                   key={field.value}
@@ -354,7 +359,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
                 { label: 'ESTADO', value: 'complementocomprador' },
                 { label: 'MUNICÍPIO', value: 'municipiocomprador' },
                 { label: 'BAIRRO', value: 'bairrocomprador' },
-                { label: 'E-MAIL', value: 'emailcomprador' },
+               
                 { label: 'CEL/TEL', value: 'celtelcomprador' },
               ].map((field) => (
                 <TextField
@@ -420,7 +425,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
                   size="large"
                   className={classes.button}
                 >
-                  Adicionar Requerimento
+                  Adiciona Requerimento
                 </Button>
               </Grid>
             </Grid>
