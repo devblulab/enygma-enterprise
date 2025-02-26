@@ -298,7 +298,7 @@ interface Item {
   signature?: string;
 }
 
-// Função para formatar a data
+// Função para formatar a data e a hora
 const formatDate = (date: string | Timestamp): string => {
   let dateObj: Date;
 
@@ -309,7 +309,10 @@ const formatDate = (date: string | Timestamp): string => {
   }
 
   // Formata a data para o padrão local (ou qualquer formato desejado)
-  return dateObj.toLocaleDateString('pt-BR'); // Exemplo: "01/01/2023"
+  const formattedDate = dateObj.toLocaleDateString('pt-BR'); // Exemplo: "01/01/2023"
+  const formattedTime = dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); // Exemplo: "13:30"
+
+  return `${formattedDate} | ${formattedTime}`; // Retorna "01/01/2023 | 13:30"
 };
 
 // Função para converter string em número
@@ -753,16 +756,16 @@ const Dashboard = () => {
                           primary={`${doc.nomeempresa} - ${doc.cnpjempresa}`}
                           secondary={
                             <>
-                              <Typography variant="body2">
-                                Placa: {doc.id} | Responsável: {doc.nomevendedor}
-                              </Typography>
-                              <Typography variant="body2">
-                                Data: {formatDate(doc.dataCriacao)} | 
-                                Valor: R$ {String(doc.valordevenda || '0')}
-                              </Typography>
-                            </>
-                          }
-                        />
+                             <Typography variant="body2">
+        Placa: {doc.id} | Responsável: {doc.nomevendedor}
+      </Typography>
+      <Typography variant="body2">
+        Data: {formatDate(doc.dataCriacao)} | 
+        Valor: R$ {String(doc.valordevenda || '0')}
+      </Typography>
+    </>
+  }
+/>
                         
                         <IconButton onClick={() => handleEdit(doc)}>
                           <Edit />
