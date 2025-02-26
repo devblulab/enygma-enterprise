@@ -771,9 +771,7 @@ const Dashboard = () => {
                         <IconButton onClick={() => setExpanded(expanded === doc.id ? null : doc.id)}>
                           {expanded === doc.id ? <ExpandLess /> : <ExpandMore />}
                         </IconButton>
-                        <IconButton onClick={() => handleDeleteDocument(doc.id)} color="secondary">
-                          <Delete />
-                        </IconButton>
+                       
                         
                         {/* Botões de Concluído e Pendente */}
                         <Button 
