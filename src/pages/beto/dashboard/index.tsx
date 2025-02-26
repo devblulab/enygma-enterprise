@@ -620,7 +620,7 @@ const Dashboard = () => {
   // Função para atualizar o status do documento
   const handleStatusUpdate = async (id: string, status: string) => {
     try {
-      const docRef = doc(db, 'Betodespachanteintrncaodevenda', id);
+      const docRef = doc(db, 'Betodespachanteintrncaodevendaoficial', id);
       await updateDoc(docRef, { status });
       fetchDocuments(); // Atualiza a lista de documentos
     } catch (error) {
