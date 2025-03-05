@@ -9,9 +9,9 @@ export default function Logo() {
             transition={{ duration: 2 }}
             className="text-3xl"
         >
-            <span className="font-black">Enygma</span>
+            <span className="font-black">ENY-GNA</span>
             <span className="text-zinc-400 font-thin">Social</span>
-            <span className="font-black">EnterPrise</span>
+            <span className="font-black">EnterPrises</span>
         </motion.div>
     )
 }
