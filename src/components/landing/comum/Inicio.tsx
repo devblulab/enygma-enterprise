@@ -17,10 +17,10 @@ export default function Logo() {
   return (
     <div className={enygmaClasses}>
       <div className="flex items-center gap-1"> {/* Contêiner flexível para alinhar horizontalmente */}
-        <span className="font-black">Enygma</span>
+        <span className="font-black">ENY-GNA</span>
         <span className="text-zinc-400 font-thin">Social</span>
       </div>
-      <span className="font-black">EnterPrise</span>
+      <span className="font-black">EnterPrises</span>
       <MenuItem onClick={loginGoogle} className="bg-gradient-to-r  from-indigo-600 to-cyan-600">
           <div className="flex items-center gap-2">
             <IconBrandGoogle size={12} />
