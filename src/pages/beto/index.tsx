@@ -58,14 +58,15 @@ const BotoesNavegacao = () => {
         <source src="/betovideo.mp4" type="video/mp4" />
       </video>
       <Menu mode="horizontal" className={classes.menuContainer}>
-        <Menu.Item icon={<FaHome />} className={classes.menuItem}>
-          <Link href="/beto/requerimento/digital">Início</Link>
-        </Menu.Item>
+        
         <Menu.Item icon={<FaShoppingCart />} className={classes.menuItem}>
           <Link href="/beto/dashboard">Dashboard</Link>
         </Menu.Item>
         <Menu.Item icon={<FaStore />} className={classes.menuItem}>
-          <Link href="/beto/loja">Loja</Link>
+          <Link href="/beto/requerimento">Loja</Link>
+        </Menu.Item>
+        <Menu.Item icon={<FaHome />} className={classes.menuItem}>
+          <Link href="/beto/requerimento/digital">Início</Link>
         </Menu.Item>
       </Menu>
     </div>
