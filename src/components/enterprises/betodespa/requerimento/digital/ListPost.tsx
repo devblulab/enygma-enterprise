@@ -233,7 +233,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
         ...newItem,
         dataCriacao: new Date().toISOString().split('T')[0], // Ou Timestamp.fromDate(new Date())
       };
-      const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevendaoficial', newItem);
+      const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevendaoficialdigital', newItem);
 
       const adaptedItemSalvo: Item = {
         ...newItem,
