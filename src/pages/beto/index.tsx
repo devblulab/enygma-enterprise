@@ -66,7 +66,7 @@ const BotoesNavegacao = () => {
           <Link href="/beto/requerimento">Loja</Link>
         </Menu.Item>
         <Menu.Item icon={<FaHome />} className={classes.menuItem}>
-          <Link href="/beto/requerimento/digital">Início</Link>
+          <Link href="/beto/requerimento/digital">Digital</Link>
         </Menu.Item>
       </Menu>
     </div>
