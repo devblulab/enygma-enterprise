@@ -218,7 +218,7 @@ const CatalagoList: React.FC<ItemListProps> = () => {
   const [newItem, setNewItem] = useState<Item[]>([]);
 
   useEffect(() => {
-    const itemsCollectionRef = collection(db, 'Betodespachanteintrncaodevendaoficial');
+    const itemsCollectionRef = collection(db, 'Betodespachanteintrncaodevendaoficialdigital');
     
     const unsubscribe = onSnapshot(itemsCollectionRef, (querySnapshot) => {
         const fetchedItems: Item[] = [];
