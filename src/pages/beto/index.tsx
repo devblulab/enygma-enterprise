@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { FaHome, FaShoppingCart, FaStore } from 'react-icons/fa';
+import { FaShoppingCart, FaStore, FaPhone, FaTachometerAlt, FaChartPie } from 'react-icons/fa';
 import { makeStyles } from '@material-ui/core';
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 
 const useStyles = makeStyles({
   menuWrapper: {
@@ -22,88 +22,112 @@ const useStyles = makeStyles({
     width: '100%',
     height: '100%',
     objectFit: 'cover',
-    zIndex: 1
+    zIndex: 0,
+    filter: 'brightness(0.19) blur(10px)',
   },
   menuContainer: {
     width: '90%',
-    maxWidth: '600px',
-    background: 'rgba(255, 255, 255, 0.39)',
+    maxWidth: '500px',
+    background: 'rgba(97, 97, 97, 0.37)',
     borderRadius: '20px',
-    padding: '30px',
+    padding: '25px',
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.25)',
-    backdropFilter: 'blur(10px)',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '15px',
+    boxShadow: '0px 4px 20px rgba(57, 59, 57, 0.5)',
+    backdropFilter: 'blur(15px)',
     position: 'relative',
     zIndex: 1,
-    transition: 'all 0.3s ease'
   },
   menuItem: {
-    color: '#000',
-    fontSize: '24px',
+    color: 'rgb(5, 190, 5)',
+    fontSize: '22px',
     fontWeight: 'bold',
-    transition: 'all 0.3s ease',
-    borderRadius: '12px',
-    padding: '12px',
+    background: 'rgba(0, 0, 0, 0.32)',
+    padding: '15px 25px',
+    borderRadius: '15px',
+    width: '100%',
     textAlign: 'center',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '10px',
+    textDecoration: 'none',
+    textTransform: 'uppercase',
+    letterSpacing: '2px',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  textEffect: {
+    position: 'absolute',
+    top: 0,
+    left: '-100%',
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(90deg, transparent, rgba(247, 247, 247, 0.3), transparent)',
+    animation: '$shineEffect 20s infinite',
+  },
+  '@keyframes shineEffect': {
+    '0%': { left: '-100%' },
+    '100%': { left: '100%' }
   }
 });
 
 const BotoesNavegacao = () => {
   const classes = useStyles();
-  const [isMobile, setIsMobile] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null); // TIPAGEM CORRETA
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+    const video = videoRef.current;
 
-    handleResize(); // Executa ao montar o componente
-    window.addEventListener('resize', handleResize);
+    if (video) {
+      const handleLoadedMetadata = () => {
+        video.playbackRate = 0.4; // Reduz a velocidade para 40%
+      };
 
-    return () => window.removeEventListener('resize', handleResize);
+      video.addEventListener('loadedmetadata', handleLoadedMetadata);
+
+      return () => {
+        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      };
+    }
   }, []);
 
   return (
     <div className={classes.menuWrapper}>
-      <video autoPlay loop muted className={classes.videoBackground}>
+      <video ref={videoRef} autoPlay loop muted className={classes.videoBackground}>
         <source src="/betovideo.mp4" type="video/mp4" />
       </video>
-      <motion.div
+
+      <motion.div 
         className={classes.menuContainer}
-        style={{ flexDirection: isMobile ? 'column' : 'row' }}
-        animate={{ scale: [1, 1.05, 1], rotate: [0, 2, -2, 0] }}
-        transition={{ duration: 5, repeat: Infinity }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
       >
-        <motion.div
-          whileHover={{ scale: 1.2, rotate: 5 }}
-          whileTap={{ scale: 0.9 }}
-          className={classes.menuItem}
-        >
-          <Link href="/beto/dashboard">
-            <FaShoppingCart /> Dashboard
-          </Link>
-        </motion.div>
-        <motion.div
-          whileHover={{ scale: 1.2, rotate: -5 }}
-          whileTap={{ scale: 0.9 }}
-          className={classes.menuItem}
-        >
-          <Link href="/beto/requerimento">
-            <FaStore /> Loja
-          </Link>
-        </motion.div>
-        <motion.div
-          whileHover={{ scale: 1.2, rotate: 5 }}
-          whileTap={{ scale: 0.9 }}
-          className={classes.menuItem}
-        >
-          <Link href="/beto/requerimento/digital">
-            <FaHome /> Digital
-          </Link>
-        </motion.div>
+        {[ 
+          { href: '/beto/dashboard', icon: <FaTachometerAlt />, label: 'Dashboard' },
+          { href: '/beto/requerimento', icon: <FaStore />, label: 'Loja' },
+          { href: '/beto/requerimento/digital', icon: <FaPhone />, label: 'Digital' },
+          { href: '/beto/dashboard/digital', icon: <FaChartPie />, label: 'Dashboard Digital' }
+        ].map((item, index) => (
+          <motion.div 
+            key={index} 
+            whileHover={{ scale: 1.1, rotate: 2, transition: { duration: 0.3 } }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Link href={item.href} className={classes.menuItem}>
+              {item.icon} {item.label}
+              <motion.div 
+                className={classes.textEffect}
+                animate={{ x: ["-100%", "100%"] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+              />
+            </Link>
+          </motion.div>
+        ))}
       </motion.div>
     </div>
   );
