@@ -1,0 +1,136 @@
+import Link from 'next/link';
+import { FaShoppingCart, FaStore, FaPhone, FaTachometerAlt, FaChartPie } from 'react-icons/fa';
+import { makeStyles } from '@material-ui/core';
+import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+
+const useStyles = makeStyles({
+  menuWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    position: 'relative',
+    overflow: 'hidden',
+    background: 'rgb(255, 255, 255)'
+  },
+  videoBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    zIndex: 0,
+    filter: 'brightness(0.19) blur(10px)',
+  },
+  menuContainer: {
+    width: '90%',
+    maxWidth: '500px',
+    background: 'rgba(97, 97, 97, 0.37)',
+    borderRadius: '20px',
+    padding: '25px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '15px',
+    boxShadow: '0px 4px 20px rgba(57, 59, 57, 0.5)',
+    backdropFilter: 'blur(15px)',
+    position: 'relative',
+    zIndex: 1,
+  },
+  menuItem: {
+    color: 'rgb(5, 190, 5)',
+    fontSize: '22px',
+    fontWeight: 'bold',
+    background: 'rgba(0, 0, 0, 0.32)',
+    padding: '15px 25px',
+    borderRadius: '15px',
+    width: '100%',
+    textAlign: 'center',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '10px',
+    textDecoration: 'none',
+    textTransform: 'uppercase',
+    letterSpacing: '2px',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  textEffect: {
+    position: 'absolute',
+    top: 0,
+    left: '-100%',
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(90deg, transparent, rgba(247, 247, 247, 0.3), transparent)',
+    animation: '$shineEffect 20s infinite',
+  },
+  '@keyframes shineEffect': {
+    '0%': { left: '-100%' },
+    '100%': { left: '100%' }
+  }
+});
+
+const BotoesNavegacao = () => {
+  const classes = useStyles();
+  const videoRef = useRef<HTMLVideoElement | null>(null); // TIPAGEM CORRETA
+
+  useEffect(() => {
+    const video = videoRef.current;
+
+    if (video) {
+      const handleLoadedMetadata = () => {
+        video.playbackRate = 0.4; // Reduz a velocidade para 40%
+      };
+
+      video.addEventListener('loadedmetadata', handleLoadedMetadata);
+
+      return () => {
+        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      };
+    }
+  }, []);
+
+  return (
+    <div className={classes.menuWrapper}>
+      <video ref={videoRef} autoPlay loop muted className={classes.videoBackground}>
+        <source src="/betovideo.mp4" type="video/mp4" />
+      </video>
+
+      <motion.div 
+        className={classes.menuContainer}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
+        {[ 
+        
+          { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda' },
+          
+          { href: '/beto/dashboard/empresas', icon: <FaChartPie />, label: 'Painel controle Empresas' }
+        ].map((item, index) => (
+          <motion.div 
+            key={index} 
+            whileHover={{ scale: 1.1, rotate: 2, transition: { duration: 0.3 } }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Link href={item.href} className={classes.menuItem}>
+              {item.icon} {item.label}
+              <motion.div 
+                className={classes.textEffect}
+                animate={{ x: ["-100%", "100%"] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+              />
+            </Link>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  );
+};
+
+export default BotoesNavegacao;
