@@ -109,10 +109,10 @@ const BotoesNavegacao = () => {
       >
         {[ 
           { href: '/beto/dashboard', icon: <FaTachometerAlt />, label: 'Painel de Controle' },
-          { href: '/beto/requerimento', icon: <FaStore />, label: 'Requerimento Loja' },
-          { href: '/beto/requerimento/digital', icon: <FaPhone />, label: 'Requerimento Digital' },
-          { href: '/beto/dashboard/digital', icon: <FaChartPie />, label: 'Painel Digital' },
-        { href: '/beto/dashboard/empresas', icon: <FaChartPie />, label: 'Painel Empresas' }
+          { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda Loja' },
+          { href: '/beto/requerimento/digital', icon: <FaPhone />, label: 'Intenção de Venda Digital' },
+          { href: '/beto/dashboard/digital', icon: <FaChartPie />, label: 'Painel de Controle Digital' },
+          { href: '/beto/dashboard/empresas', icon: <FaChartPie />, label: 'Menu Empresas' }
         ].map((item, index) => (
           <motion.div 
             key={index} 
