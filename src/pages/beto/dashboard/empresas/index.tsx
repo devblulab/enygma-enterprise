@@ -73,12 +73,12 @@ const useStyles = makeStyles((theme) => ({
       transform: 'translateY(-5px)',
       boxShadow: theme.shadows[10],
     },
-    width: '100px',
-    maxWidth: '100px',
-    margin: '0 auto',
+    width: '100px', // Aumenta a largura dos cards
+    maxWidth: '100px', // Define uma largura máxima para os cards
+    margin: '0 auto', // Centraliza os cards
   },
   dateFilter: {
-    minWidth: '150px',
+    minWidth: '150px', // Define uma largura mínima para os campos de data
   },
   statIcon: {
     fontSize: '2rem',
@@ -165,6 +165,14 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[3],
     overflow: 'hidden',
   },
+
+  
+  listItemPendente: {
+    backgroundColor: '#FFCDD2', // Vermelho claro para pendentes
+  },
+  listItemConcluido: {
+    backgroundColor: '#C8E6C9', // Verde claro para concluídos
+  },
   field3: {
     fontSize: '0.7rem',
     marginBottom: theme.spacing(1),
@@ -181,6 +189,7 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: '1px solid #ccc',
     paddingBottom: theme.spacing(0),
   },
+  
   sectionTitle4: {
     fontSize: '1rem',
     fontWeight: 'bold',
@@ -192,16 +201,16 @@ const useStyles = makeStyles((theme) => ({
   signatureSection: {
     marginTop: theme.spacing(20),
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'center', // Centraliza o conteúdo horizontalmente
     textAlign: 'center',
-    width: '100%',
+    width: '100%', // Garantir que ocupe toda a largura disponível
   },
   signatureBlock: {
     textAlign: 'center',
-    width: 'auto',
+    width: 'auto', // Ajuste automático para o tamanho do conteúdo
     borderTop: '2px solid #000',
     paddingTop: theme.spacing(1),
-    margin: '0 auto',
+    margin: '0 auto', // Centraliza o bloco na linha
   },
   header: {
     textAlign: 'center',
@@ -209,11 +218,13 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.0rem',
     fontWeight: 'bold',
   },
+
   noPrint: {
     '@media print': {
       display: 'none !important',
     },
   },
+
   downloadButton: {
     marginTop: theme.spacing(1),
     backgroundColor: '#4CAF50',
@@ -222,29 +233,33 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#45a049',
     },
   },
+
   printButton: {
     '@media print': {
       display: 'none',
     },
   },
+
   printContent: {
     "@media print": {
       display: "block !important",
       backgroundColor: "#fff !important",
       color: "#000 !important",
       width: "100%",
-    },
-  },
-  printOnly: {
-    display: 'none',
-    '@media print': {
-      display: 'block',
+      
     },
   },
   pagination: {
     display: 'flex',
     justifyContent: 'center',
     marginTop: theme.spacing(2),
+  },
+
+  printOnly: {
+    display: 'none', // Oculta o conteúdo por padrão
+    '@media print': {
+      display: 'block', // Exibe o conteúdo apenas durante a impressão
+    },
   },
 }));
 
@@ -421,6 +436,36 @@ const Dashboard = () => {
     setLoading(false);
   };
 
+
+
+useEffect(() => {
+    // Adiciona estilos para impressão ao montar o componente
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @media print {
+        body * {
+          visibility: hidden; /* Esconde tudo */
+        }
+        .printContent, .printContent * {
+          visibility: visible; /* Exibe apenas a área de impressão */
+        }
+        .printContent {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  
+    // Remove os estilos quando o componente for desmontado
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  
   const generatePDF = () => {
     const pdf = new jsPDF();
     pdf.text('Relatório Completo de Documentos', 14, 15);
@@ -636,7 +681,8 @@ const Dashboard = () => {
                         </ListItem>
 
                         {expanded === doc.id && (
-                          <Card className={`${classes.paper} printContent`} id="printable-content">
+  <Card className={`${classes.paper} printContent`} id="printable-content">
+
                             <div className={classes.header}>
                               <Typography className={classes.title2}>Estado de Santa Catarina</Typography>
                               <Typography className={classes.subtitle}>Secretaria de Estado de Segurança Pública</Typography>
