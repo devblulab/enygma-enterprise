@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FaShoppingCart, FaStore, FaPhone, FaTachometerAlt, FaChartPie } from 'react-icons/fa';
+import { FaShoppingCart, FaStore, FaPhone, FaTachometerAlt, FaChartPie, FaBars } from 'react-icons/fa';
 import { makeStyles } from '@material-ui/core';
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
@@ -13,7 +13,7 @@ const useStyles = makeStyles({
     height: '100vh',
     position: 'relative',
     overflow: 'hidden',
-    background: 'rgb(255, 255, 255)'
+    background: 'linear-gradient(135deg, #1a2e35 0%, #1a1a2e 100%)', // Gradiente escuro com tons de verde e azul
   },
   videoBackground: {
     position: 'absolute',
@@ -28,22 +28,22 @@ const useStyles = makeStyles({
   menuContainer: {
     width: '90%',
     maxWidth: '500px',
-    background: 'rgba(97, 97, 97, 0.37)',
+    background: 'rgba(255, 255, 255, 0.1)', // Fundo semi-transparente
     borderRadius: '20px',
     padding: '25px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     gap: '15px',
-    boxShadow: '0px 4px 20px rgba(57, 59, 57, 0.5)',
+    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)', // Sombra mais suave
     backdropFilter: 'blur(15px)',
     position: 'relative',
     zIndex: 1,
   },
   menuItem: {
-    color: 'rgb(5, 190, 5)',
-    fontSize: '22px',
-    fontWeight: 'bold',
+    color: '#00ff88', // Verde neon moderno
+    fontSize: '18px',
+   
     background: 'rgba(0, 0, 0, 0.32)',
     padding: '15px 25px',
     borderRadius: '15px',
@@ -56,9 +56,14 @@ const useStyles = makeStyles({
     gap: '10px',
     textDecoration: 'none',
     textTransform: 'uppercase',
-    letterSpacing: '2px',
+    letterSpacing: '1.5px',
     position: 'relative',
     overflow: 'hidden',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: 'rgba(0, 255, 136, 0.1)', // Fundo verde neon ao passar o mouse
+      boxShadow: '0 0 10px rgba(0, 255, 136, 0.5)', // Brilho neon ao passar o mouse
+    },
   },
   textEffect: {
     position: 'absolute',
@@ -112,7 +117,7 @@ const BotoesNavegacao = () => {
           { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda Loja' },
           { href: '/beto/requerimento/digital', icon: <FaPhone />, label: 'Intenção de Venda Digital' },
           { href: '/beto/dashboard/digital', icon: <FaChartPie />, label: 'Painel de Controle Digital' },
-          { href: '/beto/empresas', icon: <FaChartPie />, label: 'Menu Empresas' }
+          { href: '/beto/dashboard/empresas', icon: <FaBars />, label: 'Menu Empresas' }
         ].map((item, index) => (
           <motion.div 
             key={index} 
