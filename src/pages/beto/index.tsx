@@ -111,7 +111,8 @@ const BotoesNavegacao = () => {
           { href: '/beto/dashboard', icon: <FaTachometerAlt />, label: 'Dashboard' },
           { href: '/beto/requerimento', icon: <FaStore />, label: 'Loja' },
           { href: '/beto/requerimento/digital', icon: <FaPhone />, label: 'Digital' },
-          { href: '/beto/dashboard/digital', icon: <FaChartPie />, label: 'Dashboard Digital' }
+          { href: '/beto/dashboard/digital', icon: <FaChartPie />, label: 'Dashboard Digital' },
+        { href: '/beto/dashboard/empresas', icon: <FaChartPie />, label: 'Dashboard Empresas' }
         ].map((item, index) => (
           <motion.div 
             key={index} 
