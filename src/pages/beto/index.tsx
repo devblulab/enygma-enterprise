@@ -113,7 +113,7 @@ const BotoesNavegacao = () => {
         transition={{ duration: 1, ease: "easeOut" }}
       >
         {[ 
-          { href: '/beto/dashboard', icon: <FaTachometerAlt />, label: 'Painel de Controle' },
+          { href: '/beto/dashboard', icon: <FaTachometerAlt />, label: 'Painel de Controle Loja' },
           { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda Loja' },
           { href: '/beto/requerimento/digital', icon: <FaPhone />, label: 'Intenção de Venda Digital' },
           { href: '/beto/dashboard/digital', icon: <FaChartPie />, label: 'Painel de Controle Digital' },
