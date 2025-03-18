@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { collection, getFirestore, getDocs, updateDoc, doc, onSnapshot, deleteDoc } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { app } from '@/logic/firebase/config/app';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -26,6 +26,8 @@ import {
 } from 'chart.js';
 import { Timestamp } from 'firebase/firestore';
 import { Bar } from 'react-chartjs-2';
+import html2canvas from 'html2canvas';
+
 
 // Configuração do Firebase
 const db = getFirestore(app);
@@ -60,7 +62,7 @@ const theme = createTheme({
 const useStyles = makeStyles((theme) => ({
   dashboardHeader: {
     marginBottom: theme.spacing(2),
-    padding: theme.spacing(),
+    padding: theme.spacing(0),
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[3],
     backgroundColor: '#000'
@@ -202,7 +204,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(0),
   },
   signatureSection: {
-    marginTop: theme.spacing(20),
+    marginTop: theme.spacing(15),
     display: 'flex',
     justifyContent: 'center', // Centraliza o conteúdo horizontalmente
     textAlign: 'center',
@@ -407,6 +409,15 @@ const Dashboard = () => {
     }
   };
 
+
+  const sendWhatsApp = async (pdfURL: string) => { 
+    const telefone = '5548988449379'; // WhatsApp fixo
+
+    const mensagemWhatsApp = `Olá! Seu documento foi gerado e está pronto. Você pode baixá-lo aqui: ${pdfURL}`;
+    const linkWhatsApp = `https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagemWhatsApp)}`;
+
+    window.open(linkWhatsApp, '_blank'); // Abre o WhatsApp automaticamente
+};
   // Buscar documentos
   const fetchDocuments = async () => {
     setLoading(true);
@@ -520,20 +531,35 @@ const Dashboard = () => {
   }, []);
 
   // Gerar PDF
-  const generatePDF = () => {
-    const pdf = new jsPDF();
-    pdf.text('Relatório Completo de Documentos', 14, 15);
-    autoTable(pdf, {
-      head: [['Empresa', 'CNPJ', 'Status', 'Valor', 'Data Criação']],
-      body: documents.map(d => [
-        d.nomeempresa,
-        d.cnpjempresa,
-        d.status,
-        `R$ ${Number(d.valordevenda || 0).toFixed(2)}`,
-        formatDate(d.dataCriacao) // Já retorna uma string
-      ]),
-    });
-    pdf.save('relatorio-documentos.pdf');
+   const generatePDF = async () => {
+    const input = document.getElementById('pdf-content'); // Captura o formulário
+    if (!input) return;
+
+    const canvas = await html2canvas(input, { scale: 2 });
+
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = 210;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+    // Converter para Blob e gerar URL
+    const pdfBlob = pdf.output('blob');
+const storageRef = ref(storage, `pdfs/documento_${Date.now()}.pdf`);
+await uploadBytes(storageRef, pdfBlob);
+const pdfURL = await getDownloadURL(storageRef);
+sendWhatsApp(pdfURL);
+
+    
+
+
+    // Salvar PDF localmente
+    
+
+    // Enviar para o WhatsApp
+    await sendWhatsApp(pdfURL);
   };
 
   // Agrupar documentos por dia e contar quantos foram criados em cada dia
@@ -653,12 +679,54 @@ const Dashboard = () => {
     const printContent = document.getElementById("printable-content");
     if (!printContent) return;
   
-    // Redimensiona para caber em uma única página
-    printContent.style.transform = "scale(0.9)";
+    // Remove o redimensionamento (scale) para evitar distorções
     printContent.style.width = "100%";
-    
+    printContent.style.margin = "0";
+    printContent.style.padding = "0";
+  
     window.print();
   };
+
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @media print {
+        @page {
+          size: A4;
+          margin: -35mm 10mm; /* Reduzindo a margem superior e lateral */
+        }
+  
+        body {
+          margin: 0;
+          padding: 0;
+        }
+  
+        .printContent {
+          visibility: visible;
+          position: absolute;
+          left: 0;
+          top: 0; /* Garante que o conteúdo comece no topo */
+          width: 100%;
+          height: auto;
+          min-height: 9vh; /* Garante que o conteúdo ocupe toda a página */
+          background: white !important;
+        }
+        
+        .printContent * {
+          visibility: visible;
+        }
+  
+        .noPrint {
+          display: none !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   
 
 
