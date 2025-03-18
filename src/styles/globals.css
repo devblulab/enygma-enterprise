@@ -18,18 +18,15 @@ html {
     background-color: white !important;
     margin: 0 !important;
     padding: 0 !important;
-  
-    transform: scale(1.0); /* Aumenta um pouco o tamanho do conteúdo */
   }
 
   #pdf-content {
     width: 100%;
     max-width: 100%;
-    padding: 5px;
+    padding: 0;
     margin: 0;
     page-break-before: auto;
     page-break-inside: avoid;
-    transform: scale(1.4); /* Aumenta um pouco o tamanho do conteúdo */
   }
 
   .MuiPaper-root {
@@ -48,8 +45,6 @@ html {
   /* 📌 Ajuste as margens e o tamanho da página */
   @page {
     size: A4 portrait; /* Define o tamanho como A4 retrato */
-    margin: -5cm; /* Remove todas as margens padrão */
-    
+    margin: -5mm; /* Define margens menores */
   }
 }
-
