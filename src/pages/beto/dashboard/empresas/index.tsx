@@ -86,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
   },
   paper: {
-    padding: theme.spacing(4),
+    padding: theme.spacing(1),
     margin: '20px auto',
     maxWidth: '1000px',
     backgroundColor: theme.palette.background.paper,
@@ -199,7 +199,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(0),
   },
   signatureSection: {
-    marginTop: theme.spacing(20),
+    marginTop: theme.spacing(5),
     display: 'flex',
     justifyContent: 'center', // Centraliza o conteúdo horizontalmente
     textAlign: 'center',
@@ -453,7 +453,7 @@ useEffect(() => {
           position: absolute;
           left: 0;
           top: 0;
-          width: 100%;
+          width: 9%;
         }
       }
     `;
