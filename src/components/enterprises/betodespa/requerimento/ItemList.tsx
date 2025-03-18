@@ -412,9 +412,7 @@ sendWhatsApp(pdfURL);
               ))
             )}
           </div>
-          <Button onClick={handlePrint} className={`${classes.downloadButton} ${classes.noPrint}`}>
-            Imprimir Documento
-          </Button>
+         
          
      
           
