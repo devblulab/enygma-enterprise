@@ -34,44 +34,8 @@ const useStyles = makeStyles((theme) => ({
       pageBreakBefore: 'auto',
     },
   },
-  '@global': {
-    // Regras globais de impressão
-    '@page': {
-      margin: '20mm',
-      size: 'A4',
-    },
-    '@media print': {
-      body: {
-        margin: 0,
-        padding: 0,
-        width: '100%',
-        overflow: 'visible',
-      },
-      '*': {
-        boxShadow: 'none !important',
-        background: 'transparent !important',
-      },
-      '.no-print': {
-        display: 'none !important',
-      },
-      '#pdf-content': {
-        display: 'block',
-        pageBreakBefore: 'auto',
-        pageBreakInside: 'avoid',
-      },
-    },
-    // Quando a tela for menor que "sm" (ex.: celular), mudar algumas regras
-    [theme.breakpoints.down('sm')]: {
-      '@media print': {
-       '@page': {
-  margin: '20mm',
-  size: 'auto',
-},
+  
 
-
-      },
-    },
-  },
 
   noPrint: {
     '@media print': {
@@ -314,7 +278,49 @@ sendWhatsApp(pdfURL);
     // Enviar para o WhatsApp
     await sendWhatsApp(pdfURL);
   };
+  
+  useEffect(() => {
+      const style = document.createElement('style');
+      style.innerHTML = `
+        @media print {
+          @page {
+            size: A4;
+            margin: 20mm 10mm; /* Reduzindo a margem superior e lateral */
+          }
+    
+          body {
+            margin: 0;
+            padding: 0;
+          }
+    
+          .printContent {
+            visibility: visible;
+            position: absolute;
+            left: 0;
+            top: 0; /* Garante que o conteúdo comece no topo */
+            width: 100%;
+            height: auto;
+            min-height: 100vh; /* Garante que o conteúdo ocupe toda a página */
+            background: white !important;
+          }
+          
+          .printContent * {
+            visibility: visible;
+          }
+    
+          .noPrint {
+            display: none !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    
+      return () => {
+        document.head.removeChild(style);
+      };
+    }, []);
 
+  
   return (
     <div>
       <div className={classes.noPrint} style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
@@ -412,7 +418,7 @@ sendWhatsApp(pdfURL);
          
      
           
-          <Button
+          <Button 
   onClick={() => {
     if (filteredItems.length > 0) {
       const item = filteredItems[0]; // Pega o primeiro item encontrado
@@ -425,8 +431,8 @@ sendWhatsApp(pdfURL);
   }}
   variant="contained"
   size="large"
-  className={classes.downloadButton}
->
+  className={`${classes.downloadButton} ${classes.noPrint}`}>
+
   Enviar Despachante
 </Button>
            <Button
@@ -442,7 +448,7 @@ sendWhatsApp(pdfURL);
   }}
   variant="contained"
   size="large"
-  className={classes.downloadButton}
+  className={`${classes.downloadButton} ${classes.noPrint}`}
 >
   Enviar Digital
 </Button>
