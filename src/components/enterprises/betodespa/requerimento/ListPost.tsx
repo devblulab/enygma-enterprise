@@ -815,7 +815,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
       Ex: Procuração...
     </span>
   </Typography>
-</Grid>
+
 
 
 
