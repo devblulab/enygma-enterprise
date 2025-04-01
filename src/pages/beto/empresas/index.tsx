@@ -43,7 +43,6 @@ const useStyles = makeStyles({
   menuItem: {
     color: '#00ff88', // Verde neon moderno
     fontSize: '18px',
-   
     background: 'rgba(0, 0, 0, 0.32)',
     padding: '15px 25px',
     borderRadius: '15px',
@@ -63,6 +62,20 @@ const useStyles = makeStyles({
     '&:hover': {
       background: 'rgba(0, 255, 136, 0.1)', // Fundo verde neon ao passar o mouse
       boxShadow: '0 0 10px rgba(0, 255, 136, 0.5)', // Brilho neon ao passar o mouse
+    },
+  },
+  copyButton: {
+    background: 'transparent',
+    border: '1px solid #00ff88',
+    color: '#00ff88',
+    borderRadius: '10px',
+    fontSize: '0.75rem',
+    padding: '5px 10px',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: '#00ff88',
+      color: '#1a1a2e',
     },
   },
   textEffect: {
@@ -100,6 +113,13 @@ const BotoesNavegacao = () => {
     }
   }, []);
 
+  const copyToClipboard = (path: string) => {
+    const baseUrl = 'https://enygna-enterprises.com.br';
+    navigator.clipboard.writeText(`${baseUrl}${path}`).catch((err) => {
+      console.error('Failed to copy to clipboard:', err);
+    });
+  };
+
   return (
     <div className={classes.menuWrapper}>
       <video ref={videoRef} autoPlay loop muted className={classes.videoBackground}>
@@ -121,14 +141,23 @@ const BotoesNavegacao = () => {
             whileHover={{ scale: 1.05, transition: { duration: 0.3 } }} // Efeito de hover mais suave
             whileTap={{ scale: 0.95 }}
           >
-            <Link href={item.href} className={classes.menuItem}>
-              {item.icon} {item.label}
-              <motion.div 
-                className={classes.textEffect}
-                animate={{ x: ["-100%", "100%"] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-              />
-            </Link>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+              <Link href={item.href} className={classes.menuItem}>
+                {item.icon} {item.label}
+                <motion.div 
+                  className={classes.textEffect}
+                  animate={{ x: ["-100%", "100%"] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                />
+              </Link>
+              <button
+                className={classes.copyButton}
+                onClick={() => copyToClipboard(item.href)}
+                aria-label={`Copy ${item.label} URL`}
+              >
+                Copy
+              </button>
+            </div>
           </motion.div>
         ))}
       </motion.div>
