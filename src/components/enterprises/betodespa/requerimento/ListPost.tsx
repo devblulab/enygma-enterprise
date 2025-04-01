@@ -689,7 +689,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
               { label: 'Placa', value: 'id' },
               { label: 'Renavam', value: 'renavam' },
               { label: 'CRV', value: 'crv' },
-              { label: 'Valor de Venda', value: 'valordevenda', type: 'number' },
+              { label: 'Valor de Venda ex 21.000', value: 'valordevenda', type: 'number' },
             ].map((field) => (
               <TextField
                 key={field.value}
@@ -734,7 +734,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
               { label: 'NOME', value: 'nomecomprador' },
               { label: 'CPF', value: 'cpfcomprador' },
               { label: 'CEP', value: 'cepcomprador' },
-              { label: 'ENDEREÇO', value: 'enderecocomprador' },
+              { label: 'ENDEREÇO/NUMERO', value: 'enderecocomprador' },
               { label: 'ESTADO', value: 'complementocomprador' },
               { label: 'MUNICÍPIO', value: 'municipiocomprador' },
               { label: 'BAIRRO', value: 'bairrocomprador' },
