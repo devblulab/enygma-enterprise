@@ -810,8 +810,12 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
           <Grid item xs={12}>
             <Typography variant="h6" className={classes.sectionTitle}>
               Anexar Documentos (Opcional)
+            </   <Typography variant="h6" className={classes.sectionTitle}>
+              Ex:Procuração..
             </Typography>
-            
+
+
+
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
               <input
                 accept="image/*"
