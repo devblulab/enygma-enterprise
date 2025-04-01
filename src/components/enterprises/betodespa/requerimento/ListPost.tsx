@@ -807,12 +807,15 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
           </Grid>
 
           {/* Seção Documentos */}
-          <Grid item xs={12}>
-            <Typography variant="h6" className={classes.sectionTitle}>
-              Anexar Documentos (Opcional)
-            </   <Typography variant="h6" className={classes.sectionTitle}>
-              Ex:Procuração..
-            </Typography>
+       <Grid item xs={12}>
+  <Typography variant="h6" className={classes.subTitle}>
+    Anexar Documentos (Opcional)  
+    <br />
+    <span style={{ fontWeight: 'normal', fontSize: '0.9em' }}>
+      Ex: Procuração...
+    </span>
+  </Typography>
+</Grid>
 
 
 
