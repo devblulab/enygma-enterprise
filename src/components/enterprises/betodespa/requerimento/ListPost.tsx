@@ -8,7 +8,7 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { motion } from 'framer-motion';
 import { PhotoCamera, Delete, Close, Crop, CloudUpload, Print, Send } from '@material-ui/icons';
 import Cropper from 'react-easy-crop';
-import SignaturePad from './SignaturePad';
+import SignaturePad from './SingnaturePad';
 import Colecao from '@/logic/firebase/db/Colecao';
 import Item from './Item';
 import { jsPDF } from 'jspdf';
