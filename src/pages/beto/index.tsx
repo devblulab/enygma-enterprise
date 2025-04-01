@@ -157,8 +157,9 @@ const NavigationButtons: React.FC = memo(() => {
       ],
     },
     {
-      section: 'EMPRESAS',
+      section: 'MENU',
       items: [
+        { href: '/beto/digital', icon: <FaBars />, label: 'Menu Digital' },
         { href: '/beto/empresas', icon: <FaBars />, label: 'Menu Empresas' },
       ],
     },
