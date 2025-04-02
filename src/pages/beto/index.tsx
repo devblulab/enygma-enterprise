@@ -152,15 +152,18 @@ const NavigationButtons: React.FC = memo(() => {
     {
       section: 'DIGITAL',
       items: [
+        { href: '/beto/digital', icon: <FaBars />, label: 'Menu Digital' },
         { href: '/beto/dashboard/digital', icon: <FaChartPie />, label: 'Painel de Controle Digital' },
         { href: '/beto/requerimento/digital', icon: <FaPhone />, label: 'Intenção de Venda Digital' },
+       
       ],
     },
     {
       section: 'MENU',
       items: [
-        { href: '/beto/digital', icon: <FaBars />, label: 'Menu Digital' },
+       
         { href: '/beto/empresas', icon: <FaBars />, label: 'Menu Empresas' },
+        { href: '/beto/digital/empresas', icon: <FaBars />, label: 'Menu Empresas Digital' },
       ],
     },
   ];
@@ -174,9 +177,7 @@ const NavigationButtons: React.FC = memo(() => {
 
   return (
     <div className={classes.menuWrapper}>
-      <video ref={videoRef} autoPlay loop muted playsInline className={classes.videoBackground}>
-        <source src="/betovideo.mp4" type="video/mp4" />
-      </video>
+      
 
       <motion.div
         className={classes.menuContainer}
