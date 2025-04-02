@@ -1798,10 +1798,6 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
 <Grid item xs={12}>
   <Typography variant="h6" className={classes.sectionTitle}>
     Anexar Documentos (Opcional)  
-    <br />
-    <span style={{ fontWeight: 'normal', fontSize: '0.9em' }}>
-      Ex: Procuração...
-    </span>
   </Typography>
 
   <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 8 }}>
