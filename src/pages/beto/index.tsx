@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { FaShoppingCart, FaStore, FaPhone, FaTachometerAlt, FaChartPie, FaBars } from 'react-icons/fa';
+import { FaShoppingCart, FaStore, FaPhone, FaTachometerAlt, FaChartPie, FaBars, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { makeStyles } from '@material-ui/core';
 import { motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useRef, memo } from 'react';
+import { useEffect, useRef, memo, useState } from 'react';
 
 const useStyles = makeStyles((theme) => ({
   menuWrapper: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     objectFit: 'cover',
     zIndex: 0,
     filter: 'brightness(0.19) blur(10px)',
-    willChange: 'transform, filter', // Performance optimization
+    willChange: 'transform, filter',
   },
   menuContainer: {
     width: '90%',
@@ -41,17 +41,29 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     zIndex: 1,
   },
+  sectionHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    cursor: 'pointer',
+    padding: theme.spacing(1.5, 3),
+    borderRadius: '15px',
+    background: 'rgba(0, 0, 0, 0.32)',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: 'rgba(0, 255, 136, 0.1)',
+      boxShadow: '0 0 10px rgba(0, 255, 136, 0.5)',
+    },
+  },
   sectionTitle: {
     color: '#00ff88',
     fontSize: '20px',
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: '1px',
-    marginBottom: '5px',
-    width: '100%',
-    textAlign: 'center', // <-- Centraliza o texto
+    margin: 0,
   },
-  
   menuItem: {
     color: '#00ff88',
     fontSize: '1.125rem',
@@ -71,6 +83,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     overflow: 'hidden',
     transition: 'all 0.3s ease',
+    marginTop: theme.spacing(1),
     '&:hover': {
       background: 'rgba(0, 255, 136, 0.1)',
       boxShadow: '0 0 10px rgba(0, 255, 136, 0.5)',
@@ -84,7 +97,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     background: 'linear-gradient(90deg, transparent, rgba(80, 80, 80, 0.3), transparent)',
     animation: '$shineEffect 20s infinite',
-    willChange: 'transform', // Performance optimization
+    willChange: 'transform',
   },
   copyButton: {
     background: 'transparent',
@@ -99,6 +112,10 @@ const useStyles = makeStyles((theme) => ({
       background: '#00ff88',
       color: '#1a1a2e',
     },
+  },
+  menuItemsContainer: {
+    width: '100%',
+    overflow: 'hidden',
   },
   '@keyframes shineEffect': {
     '0%': { left: '-100%' },
@@ -122,6 +139,17 @@ const NavigationButtons: React.FC = memo(() => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const baseUrl = 'https://enygna-enterprises.com.br';
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    'LOJA': false,
+    'DIGITAL': false
+  });
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   useEffect(() => {
     const video = videoRef.current;
@@ -147,22 +175,14 @@ const NavigationButtons: React.FC = memo(() => {
       items: [
         { href: '/beto/dashboard', icon: <FaTachometerAlt />, label: 'Painel de Controle' },
         { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda Loja' },
+        { href: '/beto/empresas', icon: <FaBars />, label: 'Menu Empresas' },
       ],
     },
     {
       section: 'DIGITAL',
       items: [
-        { href: '/beto/digital', icon: <FaBars />, label: 'Menu Digital' },
         { href: '/beto/dashboard/digital', icon: <FaChartPie />, label: 'Painel de Controle Digital' },
         { href: '/beto/requerimento/digital', icon: <FaPhone />, label: 'Intenção de Venda Digital' },
-       
-      ],
-    },
-    {
-      section: 'MENU',
-      items: [
-       
-        { href: '/beto/empresas', icon: <FaBars />, label: 'Menu Empresas' },
         { href: '/beto/digital/empresas', icon: <FaBars />, label: 'Menu Empresas Digital' },
       ],
     },
@@ -171,14 +191,17 @@ const NavigationButtons: React.FC = memo(() => {
   const motionVariants = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
-    hover: shouldReduceMotion ? {} : { scale: 0.99, rotate: 1 },
-    tap: { scale: 0.99 },
+    hover: shouldReduceMotion ? {} : { scale: 0.99 },
+    tap: { scale: 0.98 },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, height: 0 },
+    visible: { opacity: 1, height: 'auto' },
   };
 
   return (
     <div className={classes.menuWrapper}>
-      
-
       <motion.div
         className={classes.menuContainer}
         initial="initial"
@@ -188,38 +211,59 @@ const NavigationButtons: React.FC = memo(() => {
       >
         {menuSections.map((section, sectionIndex) => (
           <div key={sectionIndex} style={{ width: '100%' }}>
-            <div className={classes.sectionTitle}>{section.section}</div>
-            {section.items.map((item, itemIndex) => (
-              <motion.div
-                key={itemIndex}
-                variants={motionVariants}
-                whileHover="hover"
-                whileTap="tap"
-                transition={{ duration: 0.2 }}
-                style={{ width: '100%', marginBottom: '10px' }}
-              >
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                  <Link href={item.href} className={classes.menuItem}>
-                    {item.icon}
-                    {item.label}
-                    {!shouldReduceMotion && (
-                      <motion.div
-                        className={classes.textEffect}
-                        animate={{ x: ['-100%', '100%'] }}
-                        transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-                      />
-                    )}
-                  </Link>
-                  <button
-                    className={classes.copyButton}
-                    onClick={() => copyToClipboard(item.href)}
-                    aria-label={`Copy ${item.label} URL`}
-                  >
-                    Copy
-                  </button>
-                </div>
-              </motion.div>
-            ))}
+            <motion.div 
+              className={classes.sectionHeader}
+              onClick={() => toggleSection(section.section)}
+              whileHover="hover"
+              whileTap="tap"
+              variants={motionVariants}
+            >
+              <h3 className={classes.sectionTitle}>{section.section}</h3>
+              {expandedSections[section.section] ? <FaChevronUp /> : <FaChevronDown />}
+            </motion.div>
+
+            <motion.div
+              className={classes.menuItemsContainer}
+              initial="hidden"
+              animate={expandedSections[section.section] ? "visible" : "hidden"}
+              variants={itemVariants}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+            >
+              {section.items.map((item, itemIndex) => (
+                <motion.div
+                  key={itemIndex}
+                  variants={motionVariants}
+                  whileHover="hover"
+                  whileTap="tap"
+                  transition={{ duration: 0.2 }}
+                  style={{ width: '100%' }}
+                >
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <Link href={item.href} className={classes.menuItem}>
+                      {item.icon}
+                      {item.label}
+                      {!shouldReduceMotion && (
+                        <motion.div
+                          className={classes.textEffect}
+                          animate={{ x: ['-100%', '100%'] }}
+                          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                        />
+                      )}
+                    </Link>
+                    <button
+                      className={classes.copyButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        copyToClipboard(item.href);
+                      }}
+                      aria-label={`Copy ${item.label} URL`}
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
         ))}
       </motion.div>
