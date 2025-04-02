@@ -1,118 +1,255 @@
-import React, { useState } from 'react';
-import { TextField, Button, Grid, Paper, Typography, Box } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { 
+  Button, Grid, Paper, Typography, IconButton, 
+  Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery,
+  CircularProgress, Divider
+} from '@material-ui/core';
+import TextField from '@material-ui/core/TextField'; // Importação separada para evitar conflito
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { motion } from 'framer-motion';
+import { PhotoCamera, Delete, Close, Crop, CloudUpload, Print, Send } from '@material-ui/icons';
+import Cropper from 'react-easy-crop';
 import SignaturePad from './SingnaturePad';
 import Colecao from '@/logic/firebase/db/Colecao';
 import Item from './Item';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Timestamp } from 'firebase/firestore';
+import { storage } from '@/logic/firebase/config/app';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getCroppedImg } from '../cropUtils';
+import debounce from '@/util/debounce';
+import { v4 as uuidv4 } from 'uuid';
 
 const useStyles = makeStyles((theme) => ({
-  formContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-    padding: "3px",
-    maxWidth: "1600px",
-    margin: "auto",
-    background: "linear-gradient(135deg,rgb(185, 185, 185) 0%,rgb(250, 250, 250) 100%)",
-    borderRadius: "15px",
-    boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
-    [theme.breakpoints.down('sm')]: {
-      padding: "10px",
-    },
-  },
-  paper: {
-    background: "linear-gradient(135deg,rgb(33, 30, 49) 0%,rgb(8, 141, 15) 100%)",
-    color: "white",
-    padding: "20px",
-    borderRadius: "12px",
-    boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.1)",
-    transition: "transform 0.2s ease-in-out",
-    "&:hover": {
-      transform: "translateY(-5px)",
-    },
-    [theme.breakpoints.down('sm')]: {
-      padding: "10px",
-    },
-  },
-  logoContainer: {
+  root: {
     display: 'flex',
-    justifyContent: 'center',
-    marginBottom: theme.spacing(0),
-    '& img': {
-      width: '100px',
-      height: 'auto',
-      borderRadius: '50%',
-      boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.3)',
-      border: '4px solid white',
-      transition: 'transform 0.3s ease-in-out',
-      '&:hover': {
-        transform: 'scale(1.1)',
-      },
+    flexDirection: 'column',
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #0A1A2F 0%, #1E3A5F 100%)',
+    padding: theme.spacing(3),
+    color: '#E0E7FF',
+    [theme.breakpoints.down('xs')]: {
+      padding: theme.spacing(1.5),
+    },
+  },
+  formContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(3.5),
+    background: 'linear-gradient(145deg, rgba(30, 40, 60, 0.95) 0%, rgba(50, 70, 100, 0.85) 100%)',
+    maxWidth: '95vw',
+    margin: '0 auto',
+    padding: theme.spacing(4),
+    borderRadius: '20px',
+    boxShadow: '0 10px 40px rgba(0, 10, 50, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.05)',
+    backdropFilter: 'blur(8px)',
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(2.5),
+      gap: theme.spacing(2.5),
+    },
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'column',
+    background: 'linear-gradient(120deg, rgba(40, 50, 80, 0.9) 0%, rgba(10, 20, 40, 0.7) 100%)',
+    alignItems: 'center',
+    padding: theme.spacing(3),
+    borderRadius: '20px',
+    boxShadow: '0 5px 20px rgba(0, 0, 0, 0.2)',
+    marginBottom: theme.spacing(4),
+  },
+  logo: {
+    width: '90px',
+    height: '90px',
+    borderRadius: '50%',
+    objectFit: 'cover',
+    border: '4px solid rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 0 15px rgba(100, 150, 255, 0.5)',
+    marginBottom: theme.spacing(2),
+    transition: 'transform 0.3s ease',
+    '&:hover': {
+      transform: 'scale(1.05)',
     },
   },
   title: {
-    marginBottom: theme.spacing(0),
-    fontSize: '1.3rem',
-    fontWeight: 'bold',
-    fontFamily: 'Playfair Display, serif',
+    fontWeight: 800,
+    fontSize: '2rem',
+    color: '#fff',
     textAlign: 'center',
-    backgroundImage: 'linear-gradient(135deg, rgb(255, 255, 255), rgb(160, 214, 165))',
+    background: 'linear-gradient(90deg, #5C7AEA 0%, #A3BFFA 100%)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
-    boxShadow: '0 4px 6px rgba(247, 247, 247, 0.47)',
-    transform: 'rotateX(4deg)',
-    [theme.breakpoints.down('sm')]: {
-      fontSize: '1.2rem',
-    },
+    textShadow: '0 2px 10px rgba(92, 122, 234, 0.5)',
+    marginBottom: theme.spacing(1),
+  },
+  sectionTitle: {
+    fontWeight: 700,
+    color: '#D6E4FF',
+    marginBottom: theme.spacing(2),
+    paddingBottom: theme.spacing(1),
+    borderBottom: '2px solid rgba(255, 255, 255, 0.1)',
+    letterSpacing: '0.5px',
   },
   textField: {
-    marginBottom: theme.spacing(-1),
-    padding: '0px',
-    backgroundColor: '#fafafa',
-    borderRadius: '8px',
-    color: 'black',
-    border: '1px solid rgb(209, 209, 209)',
-    '&:hover': {
-      backgroundColor: '#f0f0f0',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '12px',
+      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+      color: '#E0E7FF',
+      transition: 'all 0.3s ease',
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#A3BFFA',
+      },
+      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderWidth: '1px',
+        borderColor: '#5C7AEA',
+        boxShadow: '0 0 10px rgba(92, 122, 234, 0.5)',
+      },
     },
-    '& input': {
-      fontSize: '12px',
-      fontWeight: 400,
+    '& .MuiInputLabel-outlined': {
+      color: 'rgba(255, 255, 255, 0.6)',
     },
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
+    '& .MuiInputLabel-outlined.Mui-focused': {
+      color: '#A3BFFA',
     },
   },
   button: {
-    marginTop: theme.spacing(-1),
-    padding: theme.spacing(1),
-    background: 'linear-gradient(135deg,rgba(27, 27, 27, 0.8),rgba(102, 102, 102, 0.34))',
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: '16px',
-    display: 'flex',
-    justifyContent: 'center',
-    fontFamily: 'Playfair Display, serif',
-    borderRadius: '8px',
+    borderRadius: '12px',
+    padding: theme.spacing(1.75),
+    fontWeight: 700,
     textTransform: 'uppercase',
-    transition: 'background-color 0.3s ease',
+    letterSpacing: '1px',
+    boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
+    transition: 'all 0.3s ease',
     '&:hover': {
-      backgroundColor: '#2c3e50',
-    },
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
+      boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
+      transform: 'translateY(-2px)',
     },
   },
-  uploaderContainer: {
+  primaryButton: {
+    background: 'linear-gradient(90deg, #5C7AEA 0%, #A3BFFA 100%)',
+    color: '#fff',
+  },
+  secondaryButton: {
+    border: '1px solid #A3BFFA',
+    color: '#A3BFFA',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  cameraButton: {
+    marginLeft: theme.spacing(2),
+    background: 'linear-gradient(90deg, #00C4B4 0%, #26A69A 100%)',
+    color: '#fff',
+    '&:hover': {
+      background: 'linear-gradient(90deg, #00A896 0%, #00897B 100%)',
+    },
+  },
+  previewContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: theme.spacing(4),
+    padding: theme.spacing(3),
+    border: '1px dashed rgba(255, 255, 255, 0.2)',
+    borderRadius: '12px',
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    boxShadow: 'inset 0 0 10px rgba(255, 255, 255, 0.05)',
+  },
+  previewImage: {
+    maxWidth: '100%',
+    maxHeight: '350px',
+    borderRadius: '12px',
+    boxShadow: '0 5px 20px rgba(0, 0, 0, 0.3)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+  },
+  thumbnailContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: theme.spacing(2.5),
+    marginTop: theme.spacing(2.5),
+  },
+  thumbnail: {
+    position: 'relative',
+    width: '110px',
+    height: '110px',
+    borderRadius: '12px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+    transition: 'transform 0.3s ease',
+    '& img': {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+    },
+    '&:hover': {
+      transform: 'scale(1.05)',
+    },
+  },
+  actionButton: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: '50%',
+    padding: '4px',
+    transition: 'all 0.2s ease',
+    '&:hover': {
+      backgroundColor: '#fff',
+      transform: 'scale(1.1)',
+    },
+  },
+  deleteButton: {
+    top: '6px',
+    right: '6px',
+    color: '#FF6B6B',
+  },
+  cropButton: {
+    bottom: '6px',
+    right: '6px',
+    color: '#5C7AEA',
+  },
+  signatureContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: theme.spacing(4),
+    padding: theme.spacing(3),
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    borderRadius: '12px',
+    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+  },
+  actionBar: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: theme.spacing(3),
+    marginTop: theme.spacing(4),
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'column',
+    },
+  },
+  dialogContent: {
+    position: 'relative',
+    height: '65vh',
+    backgroundColor: '#0A1A2F',
+    borderRadius: '16px',
+    [theme.breakpoints.down('sm')]: {
+      height: '55vh',
+    },
+  },
+  cropControls: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: theme.spacing(2.5),
+    display: 'flex',
+    justifyContent: 'center',
+    background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 100%)',
+    zIndex: 1,
+  },
+  loadingContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '20vh',
-    marginTop: theme.spacing(0),
+    height: '120px',
+    color: '#A3BFFA',
   },
   noPrint: {
     '@media print': {
@@ -121,21 +258,61 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// Função para formatar CPF/CNPJ
+const formatCpfCnpj = (value: string) => {
+  const cleaned = value.replace(/\D/g, '');
+  
+  if (cleaned.length <= 11) {
+    // Formata CPF (000.000.000-00)
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  } else {
+    // Formata CNPJ (00.000.000/0000-00)
+    return cleaned.replace(
+      /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
+      '$1.$2.$3/$4-$5'
+    );
+  }
+};
 
+// Função para validar CPF/CNPJ
+const isValidCpfCnpj = (value: string) => {
+  const cleaned = value.replace(/\D/g, '');
+  if (cleaned.length === 11) {
+    // Validação básica de CPF
+    return /^\d{11}$/.test(cleaned);
+  } else if (cleaned.length === 14) {
+    // Validação básica de CNPJ
+    return /^\d{14}$/.test(cleaned);
+  }
+  return false;
+};
 
-interface ListPostProps {
-  setItems: React.Dispatch<React.SetStateAction<Item[]>>;
-}
-
-const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
+const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>> }> = ({ setItems }) => {
   const classes = useStyles();
-  const [signature, setSignature] = useState<string>('');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('xs'), { noSsr: true });
+  const isTablet = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true });
+  
+  const [files, setFiles] = useState<File[]>([]);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [cropOpen, setCropOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number | null>(null);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
   const [newItem, setNewItem] = useState<Item>({
     id: '',
     cliente: '',
-    status: 'Pendente', // Definindo o status inicial como "Pendente"
+    status: 'Pendente',
     quantidade: 0,
-    imagemUrls: ['', '', '', ''],
+    imagemUrls: [],
     concluido: false,
     placa: '',
     renavam: '',
@@ -165,9 +342,113 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     signature: '',
   });
 
-  
+  // Camera handling
+  useEffect(() => {
+    if (cameraOpen) {
+      startCamera();
+    } else {
+      stopCamera();
+    }
 
-  // Função para buscar o endereço a partir do CEP
+    return () => {
+      stopCamera();
+    };
+  }, [cameraOpen]);
+
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } 
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      console.error("Erro ao acessar a câmera:", err);
+      alert("Não foi possível acessar a câmera. Por favor, verifique as permissões.");
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current?.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+    }
+  };
+
+  const takePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const context = canvasRef.current.getContext('2d');
+      if (!context) return;
+      
+      canvasRef.current.width = videoRef.current.videoWidth;
+      canvasRef.current.height = videoRef.current.videoHeight;
+      context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+      
+      canvasRef.current.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], `photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
+          setFiles(prev => [...prev, file]);
+          setCameraOpen(false);
+        }
+      }, 'image/jpeg', 0.9);
+    }
+  };
+
+  // Image cropping
+  const openCropDialog = (index: number) => {
+    const file = files[index];
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageToCrop(reader.result as string);
+      setCurrentImageIndex(index);
+      setCropOpen(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const onCropComplete = useCallback((_: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const cropImage = async () => {
+    try {
+      if (!imageToCrop || currentImageIndex === null || !croppedAreaPixels) return;
+      
+      const croppedImage = await getCroppedImg(imageToCrop, croppedAreaPixels);
+      const blob = await fetch(croppedImage).then(r => r.blob());
+      const file = new File([blob], `cropped-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      
+      setFiles(prev => prev.map((f, i) => i === currentImageIndex ? file : f));
+      setCropOpen(false);
+    } catch (e) {
+      console.error('Erro ao cortar imagem:', e);
+      alert('Ocorreu um erro ao processar a imagem. Por favor, tente novamente.');
+    }
+  };
+
+  // Data handling
+  const fetchEmpresaFromCNPJ = async (cnpj: string) => {
+    try {
+      const cnpjLimpo = cnpj.replace(/\D/g, '');
+      if (cnpjLimpo.length !== 14) return;
+  
+      setIsLoading(true);
+      const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
+      if (!response.ok) throw new Error('CNPJ não encontrado');
+  
+      const data = await response.json();
+      setNewItem(prev => ({
+        ...prev,
+        nomeempresa: data.razao_social || '',
+      }));
+    } catch (error) {
+      console.error('Erro ao buscar CNPJ:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const fetchAddressFromCEP = async (cep: string) => {
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
@@ -178,7 +459,7 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
           enderecocomprador: data.logradouro,
           municipiocomprador: data.localidade,
           bairrocomprador: data.bairro,
-          complementocomprador: data.estado,
+          complementocomprador: data.uf,
         }));
       } else {
         console.error('CEP não encontrado');
@@ -188,250 +469,491 @@ const ListPost: React.FC<ListPostProps> = ({ setItems }) => {
     }
   };
 
-  const sendWhatsApp = async (pdfURL: string) => {
-    let telefone = newItem.celtelcomprador.replace(/\D/g, ''); // Remove caracteres não numéricos
-
-    // Se o telefone do comprador não estiver preenchido, usa o WhatsApp fixo
-    if (!telefone) {
-      telefone = '5548988449379'; // WhatsApp padrão
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const selectedFiles = Array.from(e.target.files);
+      setFiles(prev => [...prev, ...selectedFiles]);
     }
-
-    const mensagemWhatsApp = `Olá, ${newItem.nomecomprador || 'cliente'}! Seu documento foi gerado e está pronto. Você pode baixá-lo aqui: ${pdfURL}`;
-    const linkWhatsApp = `https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagemWhatsApp)}`;
-
-    window.open(linkWhatsApp, '_blank'); // Abre o WhatsApp automaticamente
   };
 
-  const generatePDF = async () => {
-    const input = document.getElementById('pdf-content'); // Captura o formulário
+  const handleRemoveFile = (index: number) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadFiles = async (): Promise<string[]> => {
+    if (files.length === 0) return [];
+    
+    setIsLoading(true);
+    try {
+      const uploadPromises = files.map(file => {
+        const storageRef = ref(storage, `uploads/${Date.now()}-${file.name}`);
+        return uploadBytes(storageRef, file)
+          .then(snapshot => getDownloadURL(snapshot.ref));
+      });
+
+      return await Promise.all(uploadPromises);
+    } catch (error) {
+      console.error('Erro ao fazer upload:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Form handling
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
+    const { value } = e.target;
+  
+    setNewItem(prev => {
+      let updated = { ...prev, [field]: value };
+  
+      if (field === 'placa') {
+        updated.id = value.toUpperCase();
+      }
+  
+      if (field === 'cepcomprador' && value.replace(/\D/g, '').length === 8) {
+        fetchAddressFromCEP(value);
+      } else if (field === 'cnpjempresa' && value.replace(/\D/g, '').length === 14) {
+        fetchEmpresaFromCNPJ(value);
+      }
+  
+      return updated;
+    });
+  };
+  
+  const generatePreview = async () => {
+    const input = document.getElementById('pdf-content');
     if (!input) return;
 
-    const canvas = await html2canvas(input);
-    const imgData = canvas.toDataURL('image/png');
-
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 210;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-
-    // Converter para Blob e gerar URL
-    const pdfBlob = pdf.output('blob');
-    const pdfURL = URL.createObjectURL(pdfBlob);
-
-    // Salvar PDF localmente
-    pdf.save(`Requerimento_${newItem.nomecomprador || 'documento'}.pdf`);
-
-    // Enviar para o WhatsApp
-    await sendWhatsApp(pdfURL);
+    try {
+      const canvas = await html2canvas(input, { 
+        scale: isMobile ? 1.5 : 2,
+        useCORS: true,
+        logging: false
+      });
+      setPreviewImage(canvas.toDataURL('image/png'));
+    } catch (error) {
+      console.error('Erro ao gerar pré-visualização:', error);
+    }
   };
 
   const handleAddItem = async () => {
     try {
+      if (!newItem.id) {
+        alert('ID do item não foi gerado corretamente. Por favor, recarregue a página.');
+        return;
+      }
+
+      setIsLoading(true);
+      
+      const uploadedUrls = files.length > 0 ? await uploadFiles() : [];
+
       const colecao = new Colecao();
       const itemParaSalvar = {
         ...newItem,
-        dataCriacao: new Date().toISOString().split('T')[0], // Ou Timestamp.fromDate(new Date())
+        imagemUrls: uploadedUrls,
+        dataCriacao: Timestamp.fromDate(new Date())
       };
-      const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevendaoficialdigital', newItem);
 
-      const adaptedItemSalvo: Item = {
-        ...newItem,
-        id: itemSalvo.id,
-      };
-      setItems((prevItems) => [...prevItems, adaptedItemSalvo]);
+      console.log('Salvando item:', itemParaSalvar);
 
-      await generatePDF(); // Gera o PDF após salvar
-
-      setNewItem({
-        id: '',
-        cliente: '',
-        status: '',
-        quantidade: 0,
-        imagemUrls: ['', '', '', ''],
-        concluido: false,
-        placa: '',
-        renavam: '',
-        crv: '',
-        valordevenda: '',
-        bairrocomprador: '',
-        nomevendedor: '',
-        cpfvendedor: '',
-        enderecovendedor: '',
-        complementovendedor: '',
-        municipiovendedor: '',
-        emailvendedor: '',
-        dataCriacao: Timestamp.fromDate(new Date()),
-        nomecomprador: '',
-        cpfcomprador: '',
-        enderecocomprador: '',
-        complementocomprador: '',
-        municipiocomprador: '',
-        emailcomprador: '',
-        celtelcomprador: '',
-        cepvendedor: '',
-        cepcomprador: '',
-        tipo: '',
-        cnpjempresa: '',
-        nomeempresa: '',
-        signature: '',
-        celtelvendedor: '',
-      });
-
-      setItems((prevItems) => [...prevItems, adaptedItemSalvo]);
+      const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevendaoficialdigital', itemParaSalvar);
+      
+      setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
+      
+      await generatePDF();
+      resetForm();
+      
+      alert('Item adicionado com sucesso!');
     } catch (error) {
-      console.error('Erro ao adicionar o item:', error);
+      console.error('Erro ao adicionar item:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const shouldShowImageUploader = newItem.imagemUrls.length < 4;
-  const shouldShowAddItemButton = newItem.imagemUrls.length === 4;
+  const resetForm = () => {
+    setNewItem({
+      id: '',
+      cliente: '',
+      status: 'Pendente',
+      quantidade: 0,
+      imagemUrls: [],
+      concluido: false,
+      placa: '',
+      renavam: '',
+      crv: '',
+      valordevenda: '',
+      nomevendedor: '',
+      cpfvendedor: '',
+      enderecovendedor: '',
+      complementovendedor: '',
+      municipiovendedor: '',
+      emailvendedor: 'b3certificacao@gmail.com',
+      bairrocomprador: '',
+      nomecomprador: '',
+      cpfcomprador: '',
+      enderecocomprador: '',
+      complementocomprador: '',
+      municipiocomprador: '',
+      emailcomprador: 'b3certificacao@gmail.com',
+      celtelcomprador: '',
+      cepvendedor: '',
+      cepcomprador: '',
+      tipo: '',
+      cnpjempresa: '',
+      nomeempresa: '',
+      dataCriacao: Timestamp.fromDate(new Date()),
+      celtelvendedor: '',
+      signature: '',
+    });
+    setFiles([]);
+    setPreviewImage(null);
+  };
+
+  const generatePDF = async () => {
+    const input = document.getElementById('pdf-content');
+    if (!input) return;
+
+    try {
+      const canvas = await html2canvas(input, { 
+        scale: 2,
+        useCORS: true,
+        logging: false
+      });
+      
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
+      pdf.save(`Requerimento_${newItem.nomecomprador || 'documento'}.pdf`);
+
+      await sendWhatsApp(URL.createObjectURL(pdf.output('blob')));
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+    }
+  };
+
+  const sendWhatsApp = async (pdfURL: string) => {
+    const telefone = newItem.celtelcomprador.replace(/\D/g, '') || '5548988449379';
+    const mensagem = `Olá ${newItem.nomecomprador || 'Cliente'}, seu documento está pronto: ${pdfURL}`;
+    window.open(`https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagem)}`, '_blank');
+  };
 
   return (
     <div className={`${classes.formContainer} ${classes.noPrint}`}>
-      <Box />
-      <Paper className={classes.paper}>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 3 }}
-        >
-          <div className={classes.logoContainer}>
-            <img src="/betologo.jpeg" alt="Logo Betodespachante" />
-          </div>
-          <Typography className={classes.title}>Criar Requerimento de Intenção de Venda</Typography>
+      <Paper className={classes.formContainer}>
+        <div className={classes.header}>
+          <img src="/betologo.jpg" alt="Logo" className={classes.logo} />
+          <Typography variant="h4" className={classes.title}>
+            Requerimento de Intenção de Venda
+          </Typography>
+        </div>
 
-          {/* Seções lado a lado */}
-          <Grid container spacing={3}>
-            {/* Identificação Do Veículo */}
-            <Grid item xs={12} md={3}>
-              <Typography className={classes.title}>Identificação Do Veículo</Typography>
-              {[
-                { label: 'Placa', value: 'id' },
-                { label: 'Renavam', value: 'renavam' },
-                { label: 'CRV', value: 'crv' },
-                { label: 'Valor de Venda', value: 'valordevenda', type: 'number' },
-              ].map((field) => (
-                <TextField
-                  key={field.value}
-                  label={field.label}
-                  value={newItem[field.value as keyof Item] || ''}
-                  onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
-                  fullWidth
-                  variant="outlined"
-                  InputProps={{ className: classes.textField }}
-                  style={{ marginBottom: '16px' }}
-                />
-              ))}
-            </Grid>
-
-            {/* Identificação Do Vendedor */}
-            <Grid item xs={12} md={3}>
-              <Typography className={classes.title}>Identificação Do Vendedor</Typography>
-              {[
-                { label: 'NOME', value: 'nomevendedor' },
-                { label: 'CPF', value: 'cpfvendedor' },
-               
-
-              ].map((field) => (
-                <TextField
-                  key={field.value}
-                  label={field.label}
-                  value={newItem[field.value as keyof Item] || ''}
-                  onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
-                  fullWidth
-                  variant="outlined"
-                  InputProps={{ className: classes.textField }}
-                  style={{ marginBottom: '16px' }}
-                />
-              ))}
-            </Grid>
-
-            {/* Identificação Do Comprador */}
-            <Grid item xs={12} md={3}>
-              <Typography className={classes.title}>Identificação Do Comprador</Typography>
-              {[
-                { label: 'NOME', value: 'nomecomprador' },
-                { label: 'CPF', value: 'cpfcomprador' },
-                { label: 'CEP', value: 'cepcomprador' },
-                { label: 'ENDEREÇO', value: 'enderecocomprador' },
-                { label: 'ESTADO', value: 'complementocomprador' },
-                { label: 'MUNICÍPIO', value: 'municipiocomprador' },
-                { label: 'BAIRRO', value: 'bairrocomprador' },
-               
-                { label: 'CEL/TEL', value: 'celtelcomprador' },
-              ].map((field) => (
-                <TextField
-                  key={field.value}
-                  label={field.label}
-                  value={newItem[field.value as keyof Item] || ''}
-                  onChange={(e) => {
-                    setNewItem({ ...newItem, [field.value]: e.target.value });
-                    if (field.value === 'cepcomprador' && e.target.value.length === 8) {
-                      fetchAddressFromCEP(e.target.value);
-                    }
-                  }}
-                  fullWidth
-                  variant="outlined"
-                  InputProps={{ className: classes.textField }}
-                  style={{ marginBottom: '16px' }}
-                />
-              ))}
-            </Grid>
-
-            {/* Identificação Da Empresa */}
-            <Grid item xs={12} md={3}>
-              <Typography className={classes.title}>Assinante</Typography>
-              {[
-                { label: 'Nome', value: 'nomeempresa' },
-                { label: 'CPF/CNPJ', value: 'cnpjempresa' },
-              ].map((field) => (
-                <TextField
-                  key={field.value}
-                  label={field.label}
-                  value={newItem[field.value as keyof Item] || ''}
-                  onChange={(e) => setNewItem({ ...newItem, [field.value]: e.target.value })}
-                  fullWidth
-                  variant="outlined"
-                  InputProps={{ className: classes.textField }}
-                  style={{ marginBottom: '16px' }}
-                />
-              ))}
-            </Grid>
-          </Grid>
-
-          <Grid container justifyContent="center" spacing={2}>
-            <Grid item xs={12}>
-              <Typography className={classes.title}>Assinatura do Cliente</Typography>
-            </Grid>
-
-            <Grid item xs={12} md={8}>
-              <SignaturePad
-                onSave={(signature: string) => setNewItem((prev) => ({ ...prev, signature }))}
+        <Grid container spacing={3}>
+          {/* Seção Veículo */}
+          <Grid item xs={12} md={3}>
+            <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Veículo</Typography>
+            {[
+              { label: 'Placa', value: 'id' },
+              { label: 'Renavam', value: 'renavam' },
+              { label: 'CRV', value: 'crv' },
+              { label: 'Valor de Venda', value: 'valordevenda', type: 'number' },
+            ].map((field) => (
+              <TextField
+                key={field.value}
+                label={field.label}
+                value={newItem[field.value as keyof Item] || ''}
+                onChange={(e) => handleInputChange(e, field.value)}
+                fullWidth
+                variant="outlined"
+                className={classes.textField}
+                margin="normal"
+                type={field.type}
               />
-            </Grid>
+            ))}
           </Grid>
 
-          {/* Botão condicional */}
-          {shouldShowAddItemButton && (
-            <Grid container justifyContent="center" alignItems="center" spacing={3}>
-              <Grid item>
+          {/* Seção Vendedor */}
+          <Grid item xs={12} md={3}>
+            <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Vendedor</Typography>
+            {[
+              { label: 'NOME', value: 'nomevendedor' },
+              { label: 'CPF', value: 'cpfvendedor' },
+            ].map((field) => (
+              <TextField
+                key={field.value}
+                label={field.label}
+                value={newItem[field.value as keyof Item] || ''}
+                onChange={(e) => handleInputChange(e, field.value)}
+                fullWidth
+                variant="outlined"
+                className={classes.textField}
+                margin="normal"
+              />
+            ))}
+          </Grid>
+
+          {/* Seção Comprador */}
+          <Grid item xs={12} md={6} lg={3}>
+            <Typography variant="h6" className={classes.sectionTitle}>
+              Dados do Comprador
+            </Typography>
+            {[
+              { label: 'NOME', value: 'nomecomprador' },
+              { label: 'CPF', value: 'cpfcomprador' },
+              { label: 'CEP', value: 'cepcomprador' },
+              { label: 'ENDEREÇO', value: 'enderecocomprador' },
+              { label: 'ESTADO', value: 'complementocomprador' },
+              { label: 'MUNICÍPIO', value: 'municipiocomprador' },
+              { label: 'BAIRRO', value: 'bairrocomprador' },
+              { label: 'CEL/TEL', value: 'celtelcomprador' },
+            ].map((field) => (
+              <TextField
+                key={field.value}
+                label={field.label}
+                value={newItem[field.value as keyof Item] || ''}
+                onChange={(e) => handleInputChange(e, field.value)}
+                fullWidth
+                variant="outlined"
+                className={classes.textField}
+                margin="normal"
+              />
+            ))}
+          </Grid>
+
+          {/* Seção Empresa */}
+          <Grid item xs={12} md={3}>
+            <Typography variant="h6" className={classes.sectionTitle}>Assinante</Typography>
+            
+            <TextField
+              label="CPF/CNPJ"
+              value={formatCpfCnpj(newItem.cnpjempresa || '')}
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/\D/g, '');
+                handleInputChange({
+                  ...e,
+                  target: {
+                    ...e.target,
+                    value: rawValue
+                  }
+                }, 'cnpjempresa');
+              }}
+              fullWidth
+              variant="outlined"
+              className={classes.textField}
+              margin="normal"
+              error={!!newItem.cnpjempresa && !isValidCpfCnpj(newItem.cnpjempresa)}
+              helperText={!!newItem.cnpjempresa && !isValidCpfCnpj(newItem.cnpjempresa) 
+                ? 'CPF/CNPJ inválido' 
+                : ''}
+              InputProps={{
+                endAdornment: isLoading && newItem.cnpjempresa?.length === 14 ? (
+                  <CircularProgress size={24} />
+                ) : null,
+              }}
+            />
+
+            <TextField
+              label="Nome"
+              value={newItem.nomeempresa || ''}
+              onChange={(e) => handleInputChange(e, 'nomeempresa')}
+              fullWidth
+              variant="outlined"
+              className={classes.textField}
+              margin="normal"
+            />
+          </Grid>
+
+          {/* Seção Assinatura */}
+          <Grid item xs={12}>
+            <div className={classes.signatureContainer}>
+              <Typography variant="h6" className={classes.sectionTitle}>
+                Assinatura do Cliente
+              </Typography>
+              <SignaturePad onSave={(signature) => setNewItem(prev => ({ ...prev, signature }))} />
+            </div>
+          </Grid>
+
+          {/* Seção Documentos */}
+          <Grid item xs={12}>
+            <Typography variant="h6" className={classes.sectionTitle}>
+              Anexar Documentos (Opcional)
+            </Typography>
+            <Typography variant="h6" className={classes.sectionTitle}>
+              Ex:Procuração...
+            </Typography>
+            
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <input
+                accept="image/*"
+                style={{ display: 'none' }}
+                id="file-upload"
+                type="file"
+                multiple
+                onChange={handleFileChange}
+              />
+              <label htmlFor="file-upload">
                 <Button
-                  onClick={async () => {
-                    await handleAddItem();
-                  }}
                   variant="contained"
-                  size="large"
-                  className={classes.button}
+                  component="span"
+                  className={`${classes.button} ${classes.secondaryButton}`}
+                  startIcon={<CloudUpload />}
                 >
-                  Adiciona Requerimento
+                  Selecionar Arquivos
                 </Button>
-              </Grid>
+              </label>
+              
+              <Button
+                variant="contained"
+                className={`${classes.button} ${classes.cameraButton}`}
+                startIcon={<PhotoCamera />}
+                onClick={() => setCameraOpen(true)}
+              >
+                Tirar Foto
+              </Button>
+            </div>
+
+            {/* Miniaturas */}
+            {files.length > 0 && (
+              <div className={classes.thumbnailContainer}>
+                {files.map((file, index) => (
+                  <div key={index} className={classes.thumbnail}>
+                    <img src={URL.createObjectURL(file)} alt={`Documento ${index}`} />
+                    <IconButton
+                      className={`${classes.actionButton} ${classes.deleteButton}`}
+                      size="small"
+                      onClick={() => handleRemoveFile(index)}
+                    >
+                      <Delete fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      className={`${classes.actionButton} ${classes.cropButton}`}
+                      size="small"
+                      onClick={() => openCropDialog(index)}
+                    >
+                      <Crop fontSize="small" />
+                    </IconButton>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Grid>
+
+          {/* Pré-visualização */}
+          {previewImage && (
+            <Grid item xs={12}>
+              <div className={classes.previewContainer}>
+                <Typography variant="h6" className={classes.sectionTitle}>
+                  Pré-visualização do Documento
+                </Typography>
+                <img src={previewImage} alt="Pré-visualização" className={classes.previewImage} />
+              </div>
             </Grid>
           )}
-        </motion.div>
+        </Grid>
+
+        {/* Botões de ação */}
+        <div className={classes.actionBar}>
+          
+          <Button
+            onClick={handleAddItem}
+            variant="contained"
+            className={`${classes.button} ${classes.primaryButton}`}
+            startIcon={<Send />}
+            disabled={isLoading}
+          >
+            {isLoading ? <CircularProgress size={24} /> : 'Enviar Requerimento'}
+          </Button>
+        </div>
       </Paper>
+
+      {/* Modal Câmera */}
+      <Dialog open={cameraOpen} onClose={() => setCameraOpen(false)} maxWidth="md" fullWidth>
+        <DialogTitle>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6">Tirar Foto</Typography>
+            <IconButton onClick={() => setCameraOpen(false)}>
+              <Close />
+            </IconButton>
+          </div>
+        </DialogTitle>
+        <DialogContent>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            style={{
+              width: '100%',
+              height: isMobile ? '50vh' : '60vh',
+              borderRadius: '8px',
+              backgroundColor: '#000'
+            }}
+          />
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={takePhoto}
+            variant="contained"
+            color="primary"
+            fullWidth
+            size="large"
+            startIcon={<PhotoCamera />}
+          >
+            Capturar Foto
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Modal Recorte */}
+      <Dialog open={cropOpen} onClose={() => setCropOpen(false)} maxWidth="md" fullWidth>
+        <DialogTitle>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6">Recortar Imagem</Typography>
+            <IconButton onClick={() => setCropOpen(false)}>
+              <Close />
+            </IconButton>
+          </div>
+        </DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <Cropper
+            image={imageToCrop || ''}
+            crop={crop}
+            zoom={zoom}
+            aspect={4 / 3}
+            onCropChange={setCrop}
+            onCropComplete={onCropComplete}
+            onZoomChange={setZoom}
+            style={{
+              containerStyle: {
+                width: '100%',
+                height: '100%',
+                position: 'relative',
+                backgroundColor: '#f5f5f5'
+              }
+            }}
+          />
+          <div className={classes.cropControls}>
+            <Button
+              onClick={() => setCropOpen(false)}
+              variant="outlined"
+              color="secondary"
+              style={{ marginRight: '16px' }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={cropImage}
+              variant="contained"
+              color="primary"
+            >
+              Aplicar Recorte
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
