@@ -171,7 +171,7 @@ const NavigationButtons: React.FC = memo(() => {
 
   const menuSections: MenuSection[] = [
     {
-      section: 'LOJA',
+      section: 'LOJA Tubarão',
       items: [
         { href: '/beto/dashboard', icon: <FaTachometerAlt />, label: 'Painel de Controle' },
         { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda Loja' },
