@@ -806,8 +806,8 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
             </div>
           </Grid>
 
-          {/* Seção Documentos */}
-       <Grid item xs={12}>
+        {/* Seção Documentos */}
+<Grid item xs={12}>
   <Typography variant="h6" className={classes.subTitle}>
     Anexar Documentos (Opcional)  
     <br />
@@ -816,39 +816,40 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     </span>
   </Typography>
 
+  <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 8 }}>
+    {/* Input escondido de arquivos */}
+    <input
+      accept="image/*"
+      style={{ display: 'none' }}
+      id="file-upload"
+      type="file"
+      multiple
+      onChange={handleFileChange}
+    />
 
+    {/* Botão de selecionar arquivos */}
+    <label htmlFor="file-upload">
+      <Button
+        variant="contained"
+        component="span"
+        className={`${classes.button} ${classes.secondaryButton}`}
+        startIcon={<CloudUpload />}
+      >
+        Selecionar Arquivos
+      </Button>
+    </label>
 
-
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <input
-                accept="image/*"
-                style={{ display: 'none' }}
-                id="file-upload"
-                type="file"
-                multiple
-                onChange={handleFileChange}
-              />
-              <label htmlFor="file-upload">
-                <Button
-                  variant="contained"
-                  component="span"
-                  className={`${classes.button} ${classes.secondaryButton}`}
-                  startIcon={<CloudUpload />}
-                >
-                  Selecionar Arquivos
-                </Button>
-              </label>
-              
-              <Button
-                variant="contained"
-                className={`${classes.button} ${classes.cameraButton}`}
-                startIcon={<PhotoCamera />}
-                onClick={() => setCameraOpen(true)}
-              >
-                Tirar Foto
-              </Button>
-            </div>
-
+    {/* Botão de tirar foto */}
+    <Button
+      variant="contained"
+      className={`${classes.button} ${classes.cameraButton}`}
+      startIcon={<PhotoCamera />}
+      onClick={() => setCameraOpen(true)}
+    >
+      Tirar Foto
+    </Button>
+  </div>
+</Grid>
             {/* Miniaturas */}
             {files.length > 0 && (
               <div className={classes.thumbnailContainer}>
