@@ -680,9 +680,7 @@ useEffect(() => {
         />
         
         <div className={classes.noPrint}>
-          <IconButton onClick={() => handleDeleteDocument(doc.id)}>
-            <Delete />
-          </IconButton>
+         
           
           <IconButton onClick={() => setExpanded(expanded === doc.id ? null : doc.id)}>
             {expanded === doc.id ? <ExpandLess /> : <ExpandMore />}
