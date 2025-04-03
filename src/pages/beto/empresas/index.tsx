@@ -1,44 +1,19 @@
 import Link from 'next/link';
-import { FaShoppingCart, FaStore, FaPhone, FaTachometerAlt, FaChartPie } from 'react-icons/fa';
+import { FaShoppingCart, FaStore, FaPhone, FaTachometerAlt, FaChartPie, FaBars, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { makeStyles } from '@material-ui/core';
-import { motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useRef, memo, useState } from 'react';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   menuWrapper: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh',
+    minHeight: '100vh',
     position: 'relative',
     overflow: 'hidden',
-    background: 'linear-gradient(135deg, #1a2e35 0%, #1a1a2e 100%)', // Gradiente escuro com tons de verde e azul
-  },
-  videoBackground: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    zIndex: 0,
-    filter: 'brightness(0.19) blur(10px)',import Link from 'next/link';
-import { FaShoppingCart, FaStore, FaPhone, FaTachometerAlt, FaChartPie } from 'react-icons/fa';
-import { makeStyles } from '@material-ui/core';
-import { motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
-
-const useStyles = makeStyles({
-  menuWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    position: 'relative',
-    overflow: 'hidden',
-    background: 'linear-gradient(135deg, #1a2e35 0%, #1a1a2e 100%)', // Gradiente escuro com tons de verde e azul
+    background: 'linear-gradient(135deg, rgb(26, 46, 53) 0%, #1a1a2e 100%)',
   },
   videoBackground: {
     position: 'absolute',
@@ -49,58 +24,69 @@ const useStyles = makeStyles({
     objectFit: 'cover',
     zIndex: 0,
     filter: 'brightness(0.19) blur(10px)',
+    willChange: 'transform, filter',
   },
   menuContainer: {
     width: '90%',
     maxWidth: '500px',
-    background: 'rgba(255, 255, 255, 0.1)', // Fundo semi-transparente
+    background: 'rgba(255, 255, 255, 0.1)',
     borderRadius: '20px',
-    padding: '25px',
+    padding: theme.spacing(3),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: '15px',
-    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)', // Sombra mais suave
+    gap: theme.spacing(3),
+    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
     backdropFilter: 'blur(15px)',
     position: 'relative',
     zIndex: 1,
   },
-  menuItem: {
-    color: '#00ff88', // Verde neon moderno
-    fontSize: '18px',
+  sectionHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    cursor: 'pointer',
+    padding: theme.spacing(1.5, 3),
+    borderRadius: '15px',
     background: 'rgba(0, 0, 0, 0.32)',
-    padding: '15px 25px',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: 'rgba(0, 255, 136, 0.1)',
+      boxShadow: '0 0 10px rgba(0, 255, 136, 0.5)',
+    },
+  },
+  sectionTitle: {
+    color: '#00ff88',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    letterSpacing: '1px',
+    margin: 0,
+  },
+  menuItem: {
+    color: '#00ff88',
+    fontSize: '1.125rem',
+    background: 'rgba(0, 0, 0, 0.32)',
+    padding: theme.spacing(1.5, 3),
     borderRadius: '15px',
     width: '100%',
     textAlign: 'center',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: '10px',
+    justifyContent: 'space-between',
+    gap: theme.spacing(1),
     textDecoration: 'none',
     textTransform: 'uppercase',
     letterSpacing: '1.5px',
     position: 'relative',
     overflow: 'hidden',
     transition: 'all 0.3s ease',
+    marginTop: theme.spacing(1),
     '&:hover': {
-      background: 'rgba(0, 255, 136, 0.1)', // Fundo verde neon ao passar o mouse
-      boxShadow: '0 0 10px rgba(0, 255, 136, 0.5)', // Brilho neon ao passar o mouse
-    },
-  },
-  copyButton: {
-    background: 'transparent',
-    border: '1px solid #00ff88',
-    color: '#00ff88',
-    borderRadius: '10px',
-    fontSize: '0.75rem',
-    padding: '5px 10px',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      background: '#00ff88',
-      color: '#1a1a2e',
+      background: 'rgba(0, 255, 136, 0.1)',
+      boxShadow: '0 0 10px rgba(0, 255, 136, 0.5)',
     },
   },
   textEffect: {
@@ -109,128 +95,9 @@ const useStyles = makeStyles({
     left: '-100%',
     width: '100%',
     height: '100%',
-    background: 'linear-gradient(90deg, transparent, rgba(247, 247, 247, 0.3), transparent)',
+    background: 'linear-gradient(90deg, transparent, rgba(80, 80, 80, 0.3), transparent)',
     animation: '$shineEffect 20s infinite',
-  },
-  '@keyframes shineEffect': {
-    '0%': { left: '-100%' },
-    '100%': { left: '100%' }
-  }
-});
-
-const BotoesNavegacao = () => {
-  const classes = useStyles();
-  const videoRef = useRef<HTMLVideoElement | null>(null); // TIPAGEM CORRETA
-
-  useEffect(() => {
-    const video = videoRef.current;
-
-    if (video) {
-      const handleLoadedMetadata = () => {
-        video.playbackRate = 0.4; // Reduz a velocidade para 40%
-      };
-
-      video.addEventListener('loadedmetadata', handleLoadedMetadata);
-
-      return () => {
-        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      };
-    }
-  }, []);
-
-  const copyToClipboard = (path: string) => {
-    const baseUrl = 'https://enygna-enterprises.com.br';
-    navigator.clipboard.writeText(`${baseUrl}${path}`).catch((err) => {
-      console.error('Failed to copy to clipboard:', err);
-    });
-  };
-
-  return (
-    <div className={classes.menuWrapper}>
-      <video ref={videoRef} autoPlay loop muted className={classes.videoBackground}>
-        <source src="/betovideo.mp4" type="video/mp4" />
-      </video>
-
-      <motion.div 
-        className={classes.menuContainer}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-      >
-        {[ 
-          { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda' },
-          { href: '/beto/dashboard/empresas', icon: <FaChartPie />, label: 'Painel de Controle Empresas' }
-        ].map((item, index) => (
-          <motion.div 
-            key={index} 
-            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }} // Efeito de hover mais suave
-            whileTap={{ scale: 0.95 }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-              <Link href={item.href} className={classes.menuItem}>
-                {item.icon} {item.label}
-                <motion.div 
-                  className={classes.textEffect}
-                  animate={{ x: ["-100%", "100%"] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                />
-              </Link>
-              <button
-                className={classes.copyButton}
-                onClick={() => copyToClipboard(item.href)}
-                aria-label={`Copy ${item.label} URL`}
-              >
-                Copy
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
-  );
-};
-
-export default BotoesNavegacao;
-
-  },
-  menuContainer: {
-    width: '90%',
-    maxWidth: '500px',
-    background: 'rgba(255, 255, 255, 0.1)', // Fundo semi-transparente
-    borderRadius: '20px',
-    padding: '25px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '15px',
-    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)', // Sombra mais suave
-    backdropFilter: 'blur(15px)',
-    position: 'relative',
-    zIndex: 1,
-  },
-  menuItem: {
-    color: '#00ff88', // Verde neon moderno
-    fontSize: '18px',
-    background: 'rgba(0, 0, 0, 0.32)',
-    padding: '15px 25px',
-    borderRadius: '15px',
-    width: '100%',
-    textAlign: 'center',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '10px',
-    textDecoration: 'none',
-    textTransform: 'uppercase',
-    letterSpacing: '1.5px',
-    position: 'relative',
-    overflow: 'hidden',
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      background: 'rgba(0, 255, 136, 0.1)', // Fundo verde neon ao passar o mouse
-      boxShadow: '0 0 10px rgba(0, 255, 136, 0.5)', // Brilho neon ao passar o mouse
-    },
+    willChange: 'transform',
   },
   copyButton: {
     background: 'transparent',
@@ -238,7 +105,7 @@ export default BotoesNavegacao;
     color: '#00ff88',
     borderRadius: '10px',
     fontSize: '0.75rem',
-    padding: '5px 10px',
+    padding: theme.spacing(0.5, 1),
     cursor: 'pointer',
     transition: 'all 0.3s ease',
     '&:hover': {
@@ -246,89 +113,156 @@ export default BotoesNavegacao;
       color: '#1a1a2e',
     },
   },
-  textEffect: {
-    position: 'absolute',
-    top: 0,
-    left: '-100%',
+  menuItemsContainer: {
     width: '100%',
-    height: '100%',
-    background: 'linear-gradient(90deg, transparent, rgba(247, 247, 247, 0.3), transparent)',
-    animation: '$shineEffect 20s infinite',
+    overflow: 'hidden',
   },
   '@keyframes shineEffect': {
     '0%': { left: '-100%' },
-    '100%': { left: '100%' }
-  }
-});
+    '100%': { left: '100%' },
+  },
+}));
 
-const BotoesNavegacao = () => {
+interface MenuItem {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+}
+
+interface MenuSection {
+  section: string;
+  items: MenuItem[];
+}
+
+const NavigationButtons: React.FC = memo(() => {
   const classes = useStyles();
-  const videoRef = useRef<HTMLVideoElement | null>(null); // TIPAGEM CORRETA
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+  const baseUrl = 'https://enygna-enterprises.com.br';
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    'LOJA': false,
+    'DIGITAL': false
+  });
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   useEffect(() => {
     const video = videoRef.current;
+    if (!video) return;
 
-    if (video) {
-      const handleLoadedMetadata = () => {
-        video.playbackRate = 0.4; // Reduz a velocidade para 40%
-      };
+    const handleLoadedMetadata = () => {
+      video.playbackRate = 0.4;
+    };
 
-      video.addEventListener('loadedmetadata', handleLoadedMetadata);
-
-      return () => {
-        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      };
-    }
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    return () => video.removeEventListener('loadedmetadata', handleLoadedMetadata);
   }, []);
 
-  const copyToClipboard = (path: string) => {
-    const baseUrl = 'https://enygna-enterprises.com.br';
+  const copyToClipboard = (path: string): void => {
     navigator.clipboard.writeText(`${baseUrl}${path}`).catch((err) => {
       console.error('Failed to copy to clipboard:', err);
     });
   };
 
+  const menuSections: MenuSection[] = [
+    {
+      section: 'Menus',
+      items: [
+    
+        { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda Loja' },
+        { href: '/beto/dashboard/empresas', icon: <FaBars />, label: 'Menu Empresas' },
+      ],
+    },
+   
+
+  const motionVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    hover: shouldReduceMotion ? {} : { scale: 0.99 },
+    tap: { scale: 0.98 },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, height: 0 },
+    visible: { opacity: 1, height: 'auto' },
+  };
+
   return (
     <div className={classes.menuWrapper}>
-      
-
-      <motion.div 
+      <motion.div
         className={classes.menuContainer}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
+        initial="initial"
+        animate="animate"
+        variants={motionVariants}
+        transition={{ duration: 1, ease: 'easeOut' }}
       >
-        {[ 
-          { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda' },
-          { href: '/beto/dashboard/empresas', icon: <FaChartPie />, label: 'Painel de Controle Empresas' }
-        ].map((item, index) => (
-          <motion.div 
-            key={index} 
-            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }} // Efeito de hover mais suave
-            whileTap={{ scale: 0.95 }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-              <Link href={item.href} className={classes.menuItem}>
-                {item.icon} {item.label}
-                <motion.div 
-                  className={classes.textEffect}
-                  animate={{ x: ["-100%", "100%"] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                />
-              </Link>
-              <button
-                className={classes.copyButton}
-                onClick={() => copyToClipboard(item.href)}
-                aria-label={`Copy ${item.label} URL`}
-              >
-                Copy
-              </button>
-            </div>
-          </motion.div>
+        {menuSections.map((section, sectionIndex) => (
+          <div key={sectionIndex} style={{ width: '100%' }}>
+            <motion.div 
+              className={classes.sectionHeader}
+              onClick={() => toggleSection(section.section)}
+              whileHover="hover"
+              whileTap="tap"
+              variants={motionVariants}
+            >
+              <h3 className={classes.sectionTitle}>{section.section}</h3>
+              {expandedSections[section.section] ? <FaChevronUp /> : <FaChevronDown />}
+            </motion.div>
+
+            <motion.div
+              className={classes.menuItemsContainer}
+              initial="hidden"
+              animate={expandedSections[section.section] ? "visible" : "hidden"}
+              variants={itemVariants}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+            >
+              {section.items.map((item, itemIndex) => (
+                <motion.div
+                  key={itemIndex}
+                  variants={motionVariants}
+                  whileHover="hover"
+                  whileTap="tap"
+                  transition={{ duration: 0.2 }}
+                  style={{ width: '100%' }}
+                >
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <Link href={item.href} className={classes.menuItem}>
+                      {item.icon}
+                      {item.label}
+                      {!shouldReduceMotion && (
+                        <motion.div
+                          className={classes.textEffect}
+                          animate={{ x: ['-100%', '100%'] }}
+                          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                        />
+                      )}
+                    </Link>
+                    <button
+                      className={classes.copyButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        copyToClipboard(item.href);
+                      }}
+                      aria-label={`Copy ${item.label} URL`}
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         ))}
       </motion.div>
     </div>
   );
-};
+});
 
-export default BotoesNavegacao;
+NavigationButtons.displayName = 'NavigationButtons';
+
+export default NavigationButtons;
