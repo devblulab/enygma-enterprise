@@ -178,7 +178,7 @@ const NavigationButtons: React.FC = memo(() => {
         { href: '/beto/dashboard/empresas', icon: <FaBars />, label: 'Menu Empresas' },
       ],
     },
-   
+   ]; 
 
   const motionVariants = {
     initial: { opacity: 0, y: 20 },
