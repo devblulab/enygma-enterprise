@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
-import { ThemeProvider, createGlobalStyle } from 'styled-components';
+import { ThemeProvider, createGlobalStyle, DefaultTheme } from 'styled-components';
 import { AutenticacaoProvider } from '@/data/contexts/AutenticacaoContext';
 import { MantineProvider } from '@mantine/core';
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import muiTheme from '@/theme'; // certifique-se que este arquivo existe
+import muiTheme from '@/theme'; // Verifique se esse arquivo está certo
 import Particles from '@/components/landing/particles';
 import { FaSun, FaMoon } from 'react-icons/fa';
 import type { AppProps } from 'next/app';
 
 import '@/styles/globals.css';
 
-const lightTheme = {
+const lightTheme: DefaultTheme = {
   backgroundColor: 'lightgray',
   textColor: 'black',
 };
 
-const darkTheme = {
+const darkTheme: DefaultTheme = {
   backgroundColor: 'black',
   textColor: 'white',
 };
@@ -29,7 +29,7 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 function App({ Component, pageProps }: AppProps) {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
