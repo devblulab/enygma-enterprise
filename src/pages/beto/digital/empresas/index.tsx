@@ -1,82 +1,11 @@
 import Link from 'next/link';
 import { FaStore, FaChartPie } from 'react-icons/fa';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 
-const BotoesNavegacao = () => {
-  const classes = useStyles();
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  useEffect(() => {
-    const video = videoRef.current;
-
-    if (video) {
-      const handleLoadedMetadata = () => {
-        video.playbackRate = 0.4;
-      };
-
-      video.addEventListener('loadedmetadata', handleLoadedMetadata);
-
-      return () => {
-        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      };
-    }
-  }, []);
-
-  const copyToClipboard = (path: string) => {
-    const baseUrl = 'https://enygna-enterprises.com.br';
-    navigator.clipboard.writeText(`${baseUrl}${path}`).catch((err) => {
-      console.error('Failed to copy to clipboard:', err);
-    });
-  };
-
-  return (
-    <div className={classes.menuWrapper}>
-      <video ref={videoRef} autoPlay loop muted className={classes.videoBackground}>
-        <source src="/betovideo.mp4" type="video/mp4" />
-      </video>
-
-      <motion.div 
-        className={classes.menuContainer}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-      >
-        {[ 
-          { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda' },
-          { href: '/beto/dashboard/empresas', icon: <FaChartPie />, label: 'Painel de Controle Empresas' }
-        ].map((item, index) => (
-          <motion.div 
-            key={index} 
-            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-              <Link href={item.href} className={classes.menuItem}>
-                {item.icon} {item.label}
-                <motion.div 
-                  className={classes.textEffect}
-                  animate={{ x: ["-100%", "100%"] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                />
-              </Link>
-              <button
-                className={classes.copyButton}
-                onClick={() => copyToClipboard(item.href)}
-                aria-label={`Copy ${item.label} URL`}
-              >
-                Copy
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
-  );
-};
-
-const useStyles = makeStyles({
+// 🟢 Tipo de retorno explícito para evitar erro de inferência circular
+const useStyles = makeStyles(() => ({
   menuWrapper: {
     display: 'flex',
     flexDirection: 'column',
@@ -163,6 +92,78 @@ const useStyles = makeStyles({
     '0%': { left: '-100%' },
     '100%': { left: '100%' }
   }
-});
+}));
+
+const BotoesNavegacao = () => {
+  const classes = useStyles();
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+
+    if (video) {
+      const handleLoadedMetadata = () => {
+        video.playbackRate = 0.4;
+      };
+
+      video.addEventListener('loadedmetadata', handleLoadedMetadata);
+
+      return () => {
+        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      };
+    }
+  }, []);
+
+  const copyToClipboard = (path: string) => {
+    const baseUrl = 'https://enygna-enterprises.com.br';
+    navigator.clipboard.writeText(`${baseUrl}${path}`).catch((err) => {
+      console.error('Failed to copy to clipboard:', err);
+    });
+  };
+
+  return (
+    <div className={classes.menuWrapper}>
+      <video ref={videoRef} autoPlay loop muted className={classes.videoBackground}>
+        <source src="/betovideo.mp4" type="video/mp4" />
+      </video>
+
+      <motion.div 
+        className={classes.menuContainer}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
+        {[ 
+          { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda' },
+          { href: '/beto/dashboard/empresas', icon: <FaChartPie />, label: 'Painel de Controle Empresas' }
+        ].map((item, index) => (
+          <motion.div 
+            key={index} 
+            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+              <Link href={item.href} className={classes.menuItem}>
+                {item.icon} {item.label}
+                <motion.div 
+                  className={classes.textEffect}
+                  animate={{ x: ["-100%", "100%"] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                />
+              </Link>
+              <button
+                className={classes.copyButton}
+                onClick={() => copyToClipboard(item.href)}
+                aria-label={`Copy ${item.label} URL`}
+              >
+                Copy
+              </button>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  );
+};
 
 export default BotoesNavegacao;
