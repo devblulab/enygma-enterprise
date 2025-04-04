@@ -651,7 +651,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
 
       console.log('Salvando item:', itemParaSalvar);
 
-      const itemSalvo = await colecao.salvar('Betotst', itemParaSalvar);
+      const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevendaoficial', itemParaSalvar);
       
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
       
