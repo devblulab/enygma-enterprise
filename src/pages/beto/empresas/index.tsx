@@ -175,7 +175,7 @@ const NavigationButtons: React.FC = memo(() => {
       items: [
     
         { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda Loja' },
-        { href: '/beto/dashboard/empresas', icon: <FaBars />, label: 'Menu Empresas' },
+        { href: '/beto/dashboard/empresas', icon: <FaBars />, label: 'Painel De Controle Enterprise' },
       ],
     },
    ]; 
