@@ -367,10 +367,23 @@ const Dashboard = () => {
         const start = startDate ? new Date(startDate) : null;
         const end = endDate ? new Date(endDate) : null;
 
-        if (
-          data.nomeempresa.toLowerCase().includes(searchText.toLowerCase()) ||
-          data.cnpjempresa.includes(searchText)
-        ) {
+       if (
+  data.nomeempresa?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.cnpjempresa?.includes(searchText) ||
+  data.placa?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.renavam?.includes(searchText) ||
+  data.crv?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.nomevendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.cpfvendedor?.includes(searchText) ||
+  data.municipiovendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.emailvendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.nomecomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.cpfcomprador?.includes(searchText) ||
+  data.municipiocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.emailcomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.celtelcomprador?.includes(searchText) ||
+  data.celtelvendedor?.includes(searchText)
+) {
           if ((!start || new Date(documentDate) >= start) && (!end || new Date(documentDate) <= end)) {
             fetchedItems.push({ id: doc.id, ...data });
           }
