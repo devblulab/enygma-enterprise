@@ -827,18 +827,23 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
       const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevendaoficialdigital', itemParaSalvar);
   
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
-  
       const pdfURL = await generatePDF();
-const numeroWhatsApp = '5548988749403';
-const servicos = produtosSelecionados.length > 0 ? produtosSelecionados.join(', ') : 'Nenhum serviço selecionado';
-const mensagem = `Olá! Preenchi o formulario .\n\n📌 *Placa:* ${newItem.id}\n🛠️ *Serviços:* ${servicos}\n📄 *Documento:* ${pdfURL}`;
-
-const whatsappLink = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
-
-// Usa setTimeout pra garantir que o navegador trate como uma nova ação
-setTimeout(() => {
-  window.open(whatsappLink, '_blank');
-}, 100);
+  
+      const numeroWhatsApp = '5548988449379';
+      const servicos = produtosSelecionados.length > 0 ? produtosSelecionados.join(', ') : 'Nenhum serviço selecionado';
+      const mensagemInicial = `Olá! Tudo certo, o requerimento foi preenchido!\n\n📌 *Placa:* ${newItem.id}\n🛠️ *Serviços:* ${servicos}\n📄 *Documento:* ${pdfURL}`;
+      
+      window.location.href = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagemInicial)}`;
+      
+      // Gera PDF depois, em background
+      generatePDF().then((pdfURL) => {
+        if (pdfURL) {
+          const mensagemComLink = `${mensagemInicial}\n📄 *Documento:* ${pdfURL}`;
+          console.log('PDF gerado:', pdfURL);
+          // Você pode salvar isso no banco ou enviar por email depois se quiser
+        }
+      });
+      
 
 
 resetForm();
@@ -942,7 +947,7 @@ resetForm();
     </div>
 
     <Typography className={classes.title2} style={{ textAlign: 'center' }}>
-      Requerimento de Intenção de Venda
+      Requerimento de Intenção de Venda Digital
     </Typography>
 
     <Typography className={classes.sectionTitle2}>Identificação do Veículo</Typography>
@@ -999,14 +1004,14 @@ resetForm();
         <div className={classes.header}>
           <img src="/betologo.jpg" alt="Logo" className={classes.logo} />
           <Typography variant="h4" className={classes.title}>
-            Requerimento de Intenção de Venda
+            Requerimento de Intenção de Venda DIGITAL
           </Typography>
         </div>
   
         <Grid container spacing={3}>
 
         <Grid item xs={12}>
-  <Typography variant="h6" className={classes.sectionTitle}>Selecione os Serviços  Desejados</Typography>
+  <Typography variant="h6" className={classes.sectionTitle}>Selecione os Serviços Desejados</Typography>
   <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
     {['ATPV', 'Assinatura', 'Comunicação de Venda'].map((produto) => (
       <Button
@@ -1121,7 +1126,7 @@ resetForm();
           </Grid>
   
           <Grid item xs={12} md={3}>
-            <Typography variant="h6" className={classes.sectionTitle}>Solicitante</Typography>
+            <Typography variant="h6" className={classes.sectionTitle}>Assinante</Typography>
   
             <TextField
               name="cnpjempresa"
