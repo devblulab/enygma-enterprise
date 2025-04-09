@@ -400,7 +400,7 @@ const Dashboard = () => {
 
         if (
           data.nomeempresa.toLowerCase().includes(searchText.toLowerCase()) ||
-          data.cnpjempresa.includes(searchText)
+          data.id.includes(searchText)
         ) {
           if ((!start || new Date(documentDate) >= start) && (!end || new Date(documentDate) <= end)) {
             fetchedItems.push({ id: doc.id, ...data });
