@@ -4,7 +4,7 @@ import {
   Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery,
   CircularProgress, Divider
 } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField'; // Importação separada para evitar conflito
+import TextField from '@material-ui/core/TextField';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { motion } from 'framer-motion';
 import { PhotoCamera, Delete, Close, Crop, CloudUpload, Print, Send } from '@material-ui/icons';
@@ -17,8 +17,7 @@ import html2canvas from 'html2canvas';
 import { Timestamp } from 'firebase/firestore';
 import { storage } from '@/logic/firebase/config/app';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { getCroppedImg } from '../cropUtils';
-import debounce from '@/util/debounce';
+import { getCroppedImg } from './cropUtils';
 import { v4 as uuidv4 } from 'uuid';
 
 const useStyles = makeStyles((theme) => ({
@@ -258,33 +257,108 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// Função para formatar CPF/CNPJ
+const formatarMoedaBrasileira = (valor: string) => {
+  const numeroLimpo = valor.replace(/\D/g, '');
+  const numero = parseFloat(numeroLimpo) / 100;
+
+  if (isNaN(numero)) return '';
+
+  return numero.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2
+  }).replace('R$', '').trim();
+};
+
 const formatCpfCnpj = (value: string) => {
   const cleaned = value.replace(/\D/g, '');
-  
+
   if (cleaned.length <= 11) {
-    // Formata CPF (000.000.000-00)
-    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    return cleaned
+      .replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, (_, p1, p2, p3, p4) => {
+        return [p1, p2, p3].filter(Boolean).join('.') + (p4 ? `-${p4}` : '');
+      });
   } else {
-    // Formata CNPJ (00.000.000/0000-00)
-    return cleaned.replace(
-      /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
-      '$1.$2.$3/$4-$5'
-    );
+    return cleaned
+      .replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2})/, (_, p1, p2, p3, p4, p5) => {
+        return `${p1}.${p2}.${p3}/${p4}-${p5}`;
+      });
   }
 };
 
-// Função para validar CPF/CNPJ
 const isValidCpfCnpj = (value: string) => {
   const cleaned = value.replace(/\D/g, '');
   if (cleaned.length === 11) {
-    // Validação básica de CPF
     return /^\d{11}$/.test(cleaned);
   } else if (cleaned.length === 14) {
-    // Validação básica de CNPJ
     return /^\d{14}$/.test(cleaned);
   }
   return false;
+};
+
+const useDebounce = (callback: Function, delay: number) => {
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  return (...args: any[]) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    debounceTimerRef.current = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  };
+};
+
+const useCpfCnpjSearch = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const search = async (doc: string, target: keyof Item, setNewItem: React.Dispatch<React.SetStateAction<Item>>) => {
+    let tipo = ''; // Define tipo here
+    
+    try {
+      const cleaned = doc.replace(/\D/g, '');
+      if (cleaned.length !== 11 && cleaned.length !== 14) return;
+      
+      setIsLoading(true);
+      tipo = cleaned.length === 14 ? 'cnpj' : 'cpf'; // Set the value
+      
+      console.log(`Iniciando consulta de ${tipo.toUpperCase()}:`, cleaned);
+      
+      const response = await fetch(`/api/${tipo}?${tipo}=${cleaned}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          `Erro ${response.status} ao buscar ${tipo.toUpperCase()}: ${errorData.error || response.statusText}`
+        );
+      }
+      
+      const data = await response.json();
+      
+      console.log(`Resposta da consulta de ${tipo.toUpperCase()}:`, data);
+      
+      if (data.nome) {
+        setNewItem(prev => ({ ...prev, [target]: data.nome }));
+      } else {
+        console.warn(`Nenhum nome encontrado para ${tipo.toUpperCase()} ${cleaned}`);
+      }
+    } catch (error) {
+      console.error(`Erro na consulta de ${tipo || 'documento'}:`, {
+        error: error instanceof Error ? error.message : 'Erro desconhecido',
+        document: doc
+      });
+      
+      // Mostra feedback para o usuário (opcional)
+      if (error instanceof Error && error.message.includes('Erro 404')) {
+        alert('Serviço de consulta temporariamente indisponível. Por favor, preencha o nome manualmente.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { search, isLoading };
 };
 
 const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>> }> = ({ setItems }) => {
@@ -303,6 +377,10 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [produtosSelecionados, setProdutosSelecionados] = useState<string[]>([]);
+
+  const { search: searchCpfCnpj, isLoading: isLoadingSearch } = useCpfCnpjSearch();
+  const debouncedSearch = useDebounce(searchCpfCnpj, 1000);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -341,6 +419,16 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     celtelvendedor: '',
     signature: '',
   });
+
+
+  const toggleProduto = (produto: string) => {
+    setProdutosSelecionados(prev =>
+      prev.includes(produto)
+        ? prev.filter(p => p !== produto)
+        : [...prev, produto]
+    );
+  };
+  
 
   // Camera handling
   useEffect(() => {
@@ -427,34 +515,12 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     }
   };
 
-  // Data handling
-  const fetchEmpresaFromCNPJ = async (cnpj: string) => {
-    try {
-      const cnpjLimpo = cnpj.replace(/\D/g, '');
-      if (cnpjLimpo.length !== 14) return;
-  
-      setIsLoading(true);
-      const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
-      if (!response.ok) throw new Error('CNPJ não encontrado');
-  
-      const data = await response.json();
-      setNewItem(prev => ({
-        ...prev,
-        nomeempresa: data.razao_social || '',
-      }));
-    } catch (error) {
-      console.error('Erro ao buscar CNPJ:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const fetchAddressFromCEP = async (cep: string) => {
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const data = await response.json();
       if (!data.erro) {
-        setNewItem((prev) => ({
+        setNewItem(prev => ({
           ...prev,
           enderecocomprador: data.logradouro,
           municipiocomprador: data.localidade,
@@ -500,27 +566,65 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     }
   };
 
-  // Form handling
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
-    const { value } = e.target;
-  
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: keyof Item
+  ) => {
+    let { value } = e.target;
+
     setNewItem(prev => {
-      let updated = { ...prev, [field]: value };
-  
+      const updated = { ...prev };
+
       if (field === 'placa') {
         updated.id = value.toUpperCase();
+        updated[field] = value.toUpperCase();
+        return updated;
       }
-  
+
+      // Máscara para moeda
+      if (field === 'valordevenda') {
+        value = formatarMoedaBrasileira(value);
+      }
+      
+
+      const camposCpfCnpj: (keyof Item)[] = ['cpfvendedor', 'cpfcomprador', 'cnpjempresa'];
+      if (camposCpfCnpj.includes(field)) {
+        const raw = value.replace(/\D/g, '');
+        const formatado = formatCpfCnpj(raw);
+        (updated as Record<keyof Item, any>)[field] = value;
+
+
+
+        // Atualiza o valor formatado no input
+        setTimeout(() => {
+          const input = document.querySelector(`input[name="${field}"]`) as HTMLInputElement;
+          if (input) input.value = formatado;
+        }, 0);
+
+        // Busca o nome associado ao documento
+        if (isValidCpfCnpj(raw)) {
+          const target =
+            field === 'cpfvendedor'
+              ? 'nomevendedor'
+              : field === 'cpfcomprador'
+              ? 'nomecomprador'
+              : 'nomeempresa';
+          
+          debouncedSearch(raw, target, setNewItem);
+        }
+      }
+
       if (field === 'cepcomprador' && value.replace(/\D/g, '').length === 8) {
         fetchAddressFromCEP(value);
-      } else if (field === 'cnpjempresa' && value.replace(/\D/g, '').length === 14) {
-        fetchEmpresaFromCNPJ(value);
       }
-  
+
+      (updated as Record<keyof Item, any>)[field] = value;
+
+
       return updated;
     });
   };
-  
+
   const generatePreview = async () => {
     const input = document.getElementById('pdf-content');
     if (!input) return;
@@ -543,27 +647,28 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
         alert('ID do item não foi gerado corretamente. Por favor, recarregue a página.');
         return;
       }
-
+  
       setIsLoading(true);
-      
+  
       const uploadedUrls = files.length > 0 ? await uploadFiles() : [];
-
+  
       const colecao = new Colecao();
       const itemParaSalvar = {
         ...newItem,
         imagemUrls: uploadedUrls,
-        dataCriacao: Timestamp.fromDate(new Date())
+        dataCriacao: Timestamp.fromDate(new Date()),
+        produtosSelecionados,
       };
-
+  
       console.log('Salvando item:', itemParaSalvar);
-
+  
       const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevendaoficialdigital', itemParaSalvar);
-      
+  
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
-      
+  
       await generatePDF();
       resetForm();
-      
+  
       alert('Item adicionado com sucesso!');
     } catch (error) {
       console.error('Erro ao adicionar item:', error);
@@ -571,7 +676,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
       setIsLoading(false);
     }
   };
-
+  
   const resetForm = () => {
     setNewItem({
       id: '',
@@ -609,6 +714,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     });
     setFiles([]);
     setPreviewImage(null);
+    setProdutosSelecionados([]);
   };
 
   const generatePDF = async () => {
@@ -650,84 +756,129 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
             Requerimento de Intenção de Venda
           </Typography>
         </div>
-
+  
         <Grid container spacing={3}>
+
+        <Grid item xs={12}>
+  <Typography variant="h6" className={classes.sectionTitle}>Selecione os produtos desejados</Typography>
+  <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+    {['ATPV', 'Assinatura', 'Comunicação de Venda'].map((produto) => (
+      <Button
+        key={produto}
+        variant={produtosSelecionados.includes(produto) ? 'contained' : 'outlined'}
+        color="primary"
+        onClick={() => toggleProduto(produto)}
+        className={classes.button}
+      >
+        {produto}
+      </Button>
+    ))}
+  </div>
+</Grid>
           {/* Seção Veículo */}
           <Grid item xs={12} md={3}>
             <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Veículo</Typography>
-            {[
-              { label: 'Placa', value: 'id' },
-              { label: 'Renavam', value: 'renavam' },
-              { label: 'CRV', value: 'crv' },
-              { label: 'Valor de Venda', value: 'valordevenda', type: 'number' },
-            ].map((field) => (
+            {(
+              [
+                { label: 'Placa', value: 'id' },
+                { label: 'Renavam', value: 'renavam' },
+                { label: 'CRV', value: 'crv' },
+                { label: 'Valor de Venda', value: 'valordevenda', type: 'text' },
+              ] as Array<{ label: string; value: keyof Item; type?: string }>
+            ).map((field) => (
               <TextField
                 key={field.value}
+                name={field.value}
                 label={field.label}
-                value={newItem[field.value as keyof Item] || ''}
+                value={newItem[field.value] || ''}
                 onChange={(e) => handleInputChange(e, field.value)}
                 fullWidth
                 variant="outlined"
                 className={classes.textField}
                 margin="normal"
-                type={field.type}
+                type={field.type ?? 'text'}
               />
             ))}
           </Grid>
-
-          {/* Seção Vendedor */}
+  
+          {/* Seção Vendedor - Updated with enhanced CPF field */}
           <Grid item xs={12} md={3}>
             <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Vendedor</Typography>
-            {[
-              { label: 'NOME', value: 'nomevendedor' },
-              { label: 'CPF', value: 'cpfvendedor' },
-            ].map((field) => (
-              <TextField
-                key={field.value}
-                label={field.label}
-                value={newItem[field.value as keyof Item] || ''}
-                onChange={(e) => handleInputChange(e, field.value)}
-                fullWidth
-                variant="outlined"
-                className={classes.textField}
-                margin="normal"
-              />
-            ))}
-          </Grid>
-
-          {/* Seção Comprador */}
-          <Grid item xs={12} md={6} lg={3}>
-            <Typography variant="h6" className={classes.sectionTitle}>
-              Dados do Comprador
-            </Typography>
-            {[
-              { label: 'NOME', value: 'nomecomprador' },
-              { label: 'CPF', value: 'cpfcomprador' },
-              { label: 'CEP', value: 'cepcomprador' },
-              { label: 'ENDEREÇO', value: 'enderecocomprador' },
-              { label: 'ESTADO', value: 'complementocomprador' },
-              { label: 'MUNICÍPIO', value: 'municipiocomprador' },
-              { label: 'BAIRRO', value: 'bairrocomprador' },
-              { label: 'CEL/TEL', value: 'celtelcomprador' },
-            ].map((field) => (
-              <TextField
-                key={field.value}
-                label={field.label}
-                value={newItem[field.value as keyof Item] || ''}
-                onChange={(e) => handleInputChange(e, field.value)}
-                fullWidth
-                variant="outlined"
-                className={classes.textField}
-                margin="normal"
-              />
-            ))}
-          </Grid>
-
-          {/* Seção Empresa */}
-          <Grid item xs={12} md={3}>
-            <Typography variant="h6" className={classes.sectionTitle}>Assinante</Typography>
-            
             <TextField
+              name="cpfvendedor"
+              label="CPF"
+              value={formatCpfCnpj(newItem.cpfvendedor || '')}
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/\D/g, '');
+                handleInputChange({
+                  ...e,
+                  target: {
+                    ...e.target,
+                    name: 'cpfvendedor',
+                    value: rawValue
+                  }
+                }, 'cpfvendedor');
+              }}
+              fullWidth
+              variant="outlined"
+              className={classes.textField}
+              margin="normal"
+              error={!!newItem.cpfvendedor && !isValidCpfCnpj(newItem.cpfvendedor)}
+              helperText={!!newItem.cpfvendedor && !isValidCpfCnpj(newItem.cpfvendedor)
+                ? 'CPF inválido'
+                : ''}
+              InputProps={{
+                endAdornment: isLoadingSearch && newItem.cpfvendedor?.length === 11 ? (
+                  <CircularProgress size={24} />
+                ) : null,
+              }}
+            />
+  
+            <TextField
+              label="Nome do Vendedor"
+              value={newItem.nomevendedor || ''}
+              onChange={(e) => handleInputChange(e, 'nomevendedor')}
+              fullWidth
+              variant="outlined"
+              className={classes.textField}
+              margin="normal"
+              helperText="Preencha manualmente se a consulta automática falhar"
+            />
+          </Grid>
+  
+          <Grid item xs={12} md={6} lg={3}>
+            <Typography variant="h6" className={classes.sectionTitle}>Dados do Comprador</Typography>
+            {(
+              [
+                { label: 'CPF', value: 'cpfcomprador' },
+                { label: 'NOME', value: 'nomecomprador' },
+                { label: 'CEP', value: 'cepcomprador' },
+                { label: 'ENDEREÇO/NUMERO', value: 'enderecocomprador' },
+                { label: 'BAIRRO', value: 'bairrocomprador' },
+                { label: 'MUNICÍPIO', value: 'municipiocomprador' },
+                { label: 'ESTADO', value: 'complementocomprador' },
+                { label: 'CEL/TEL', value: 'celtelcomprador' },
+              ] as Array<{ label: string; value: keyof Item }>
+            ).map((field) => (
+              <TextField
+                key={field.value}
+                name={field.value}
+                label={field.label}
+                value={newItem[field.value] || ''}
+                onChange={(e) => handleInputChange(e, field.value)}
+                fullWidth
+                variant="outlined"
+                className={classes.textField}
+                margin="normal"
+              />
+            ))}
+          </Grid>
+  
+          <Grid item xs={12} md={3}>
+            <Typography variant="h6" className={classes.sectionTitle}>Solicitante</Typography>
+  
+            <TextField
+              name="cnpjempresa"
               label="CPF/CNPJ"
               value={formatCpfCnpj(newItem.cnpjempresa || '')}
               onChange={(e) => {
@@ -736,6 +887,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
                   ...e,
                   target: {
                     ...e.target,
+                    name: 'cnpjempresa',
                     value: rawValue
                   }
                 }, 'cnpjempresa');
@@ -745,16 +897,16 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
               className={classes.textField}
               margin="normal"
               error={!!newItem.cnpjempresa && !isValidCpfCnpj(newItem.cnpjempresa)}
-              helperText={!!newItem.cnpjempresa && !isValidCpfCnpj(newItem.cnpjempresa) 
-                ? 'CPF/CNPJ inválido' 
+              helperText={!!newItem.cnpjempresa && !isValidCpfCnpj(newItem.cnpjempresa)
+                ? 'CPF/CNPJ inválido'
                 : ''}
               InputProps={{
-                endAdornment: isLoading && newItem.cnpjempresa?.length === 14 ? (
+                endAdornment: isLoadingSearch && newItem.cnpjempresa?.length === 14 ? (
                   <CircularProgress size={24} />
                 ) : null,
               }}
             />
-
+  
             <TextField
               label="Nome"
               value={newItem.nomeempresa || ''}
@@ -765,7 +917,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
               margin="normal"
             />
           </Grid>
-
+  
           {/* Seção Assinatura */}
           <Grid item xs={12}>
             <div className={classes.signatureContainer}>
@@ -775,7 +927,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
               <SignaturePad onSave={(signature) => setNewItem(prev => ({ ...prev, signature }))} />
             </div>
           </Grid>
-
+  
           {/* Seção Documentos */}
           <Grid item xs={12}>
             <Typography variant="h6" className={classes.sectionTitle}>
@@ -814,7 +966,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
                 Tirar Foto
               </Button>
             </div>
-
+  
             {/* Miniaturas */}
             {files.length > 0 && (
               <div className={classes.thumbnailContainer}>
@@ -840,7 +992,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
               </div>
             )}
           </Grid>
-
+  
           {/* Pré-visualização */}
           {previewImage && (
             <Grid item xs={12}>
@@ -853,10 +1005,9 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
             </Grid>
           )}
         </Grid>
-
+  
         {/* Botões de ação */}
         <div className={classes.actionBar}>
-          
           <Button
             onClick={handleAddItem}
             variant="contained"
@@ -868,7 +1019,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
           </Button>
         </div>
       </Paper>
-
+  
       {/* Modal Câmera */}
       <Dialog open={cameraOpen} onClose={() => setCameraOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>
@@ -906,7 +1057,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
           </Button>
         </DialogActions>
       </Dialog>
-
+  
       {/* Modal Recorte */}
       <Dialog open={cropOpen} onClose={() => setCropOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>
