@@ -171,11 +171,11 @@ const NavigationButtons: React.FC = memo(() => {
 
   const menuSections: MenuSection[] = [
     {
-      section: 'LOJA Tubarão',
+      section: 'Empresa Tubarão',
       items: [
         { href: '/beto/dashboard', icon: <FaTachometerAlt />, label: 'Painel de Controle' },
-        { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda Loja' },
-        { href: '/beto/empresas', icon: <FaBars />, label: 'Menu Empresas' },
+        { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda ' },
+        { href: '/beto/empresas', icon: <FaBars />, label: 'Menu Cliente' },
       ],
     },
     {
@@ -183,7 +183,7 @@ const NavigationButtons: React.FC = memo(() => {
       items: [
         { href: '/beto/dashboard/digital', icon: <FaChartPie />, label: 'Painel de Controle Digital' },
         { href: '/beto/requerimento/digital', icon: <FaPhone />, label: 'Intenção de Venda Digital' },
-        { href: '/beto/digital/empresas', icon: <FaBars />, label: 'Menu Empresas Digital' },
+        { href: '/beto/digital/empresas', icon: <FaBars />, label: 'Menu Cliente Digital' },
       ],
     },
   ];
