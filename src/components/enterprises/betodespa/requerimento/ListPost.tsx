@@ -377,7 +377,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [produtosSelecionados, setProdutosSelecionados] = useState<string[]>([]);
 
   const { search: searchCpfCnpj, isLoading: isLoadingSearch } = useCpfCnpjSearch();
   const debouncedSearch = useDebounce(searchCpfCnpj, 1000);
@@ -419,6 +419,16 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     celtelvendedor: '',
     signature: '',
   });
+
+
+  const toggleProduto = (produto: string) => {
+    setProdutosSelecionados(prev =>
+      prev.includes(produto)
+        ? prev.filter(p => p !== produto)
+        : [...prev, produto]
+    );
+  };
+  
 
   // Camera handling
   useEffect(() => {
@@ -637,27 +647,28 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
         alert('ID do item não foi gerado corretamente. Por favor, recarregue a página.');
         return;
       }
-
+  
       setIsLoading(true);
-      
+  
       const uploadedUrls = files.length > 0 ? await uploadFiles() : [];
-
+  
       const colecao = new Colecao();
       const itemParaSalvar = {
         ...newItem,
         imagemUrls: uploadedUrls,
-        dataCriacao: Timestamp.fromDate(new Date())
+        dataCriacao: Timestamp.fromDate(new Date()),
+        produtosSelecionados,
       };
-
+  
       console.log('Salvando item:', itemParaSalvar);
-
+  
       const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevendaoficial', itemParaSalvar);
-      
+  
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
-      
+  
       await generatePDF();
       resetForm();
-      
+  
       alert('Item adicionado com sucesso!');
     } catch (error) {
       console.error('Erro ao adicionar item:', error);
@@ -665,7 +676,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
       setIsLoading(false);
     }
   };
-
+  
   const resetForm = () => {
     setNewItem({
       id: '',
@@ -703,6 +714,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     });
     setFiles([]);
     setPreviewImage(null);
+    setProdutosSelecionados([]);
   };
 
   const generatePDF = async () => {
@@ -746,6 +758,23 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
         </div>
   
         <Grid container spacing={3}>
+
+        <Grid item xs={12}>
+  <Typography variant="h6" className={classes.sectionTitle}>Selecione os produtos desejados</Typography>
+  <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+    {['ATPV', 'Assinatura', 'Comunicação de Venda'].map((produto) => (
+      <Button
+        key={produto}
+        variant={produtosSelecionados.includes(produto) ? 'contained' : 'outlined'}
+        color="primary"
+        onClick={() => toggleProduto(produto)}
+        className={classes.button}
+      >
+        {produto}
+      </Button>
+    ))}
+  </div>
+</Grid>
           {/* Seção Veículo */}
           <Grid item xs={12} md={3}>
             <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Veículo</Typography>
