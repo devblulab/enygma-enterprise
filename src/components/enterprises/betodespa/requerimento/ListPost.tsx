@@ -827,22 +827,23 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
       const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevendaoficial', itemParaSalvar);
   
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
+      const pdfURL = await generatePDF();
   
       const numeroWhatsApp = '5548988449379';
-const servicos = produtosSelecionados.length > 0 ? produtosSelecionados.join(', ') : 'Nenhum serviço selecionado';
-const mensagemInicial = `Olá! O requerimento foi preenchido com sucesso.\n\n📌 *Placa:* ${newItem.id}\n🛠️ *Serviços:* ${servicos}`;
-
-window.location.href = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagemInicial)}`;
-
-// Gera PDF depois, em background
-generatePDF().then((pdfURL) => {
-  if (pdfURL) {
-    const mensagemComLink = `${mensagemInicial}\n📄 *Documento:* ${pdfURL}`;
-    console.log('PDF gerado:', pdfURL);
-    // Você pode salvar isso no banco ou enviar por email depois se quiser
-  }
-});
-
+      const servicos = produtosSelecionados.length > 0 ? produtosSelecionados.join(', ') : 'Nenhum serviço selecionado';
+      const mensagemInicial = `Olá! Tudo certo, o requerimento foi preenchido!\n\n📌 *Placa:* ${newItem.id}\n🛠️ *Serviços:* ${servicos}\n📄 *Documento:* ${pdfURL}`;
+      
+      window.location.href = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagemInicial)}`;
+      
+      // Gera PDF depois, em background
+      generatePDF().then((pdfURL) => {
+        if (pdfURL) {
+          const mensagemComLink = `${mensagemInicial}\n📄 *Documento:* ${pdfURL}`;
+          console.log('PDF gerado:', pdfURL);
+          // Você pode salvar isso no banco ou enviar por email depois se quiser
+        }
+      });
+      
 
 
 resetForm();
