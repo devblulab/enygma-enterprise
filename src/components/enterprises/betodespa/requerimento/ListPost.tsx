@@ -828,17 +828,21 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
   
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
   
-      const pdfURL = await generatePDF();
-const numeroWhatsApp = '5548988449379';
+      const numeroWhatsApp = '5548988449379';
 const servicos = produtosSelecionados.length > 0 ? produtosSelecionados.join(', ') : 'Nenhum serviço selecionado';
-const mensagem = `Olá! Preenchi o formulario .\n\n📌 *Placa:* ${newItem.id}\n🛠️ *Serviços:* ${servicos}\n📄 *Documento:* ${pdfURL}`;
+const mensagemInicial = `Olá! O requerimento foi preenchido com sucesso.\n\n📌 *Placa:* ${newItem.id}\n🛠️ *Serviços:* ${servicos}`;
 
-const whatsappLink = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
+window.location.href = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagemInicial)}`;
 
-// Usa setTimeout pra garantir que o navegador trate como uma nova ação
-setTimeout(() => {
-  window.open(whatsappLink, '_blank');
-}, 100);
+// Gera PDF depois, em background
+generatePDF().then((pdfURL) => {
+  if (pdfURL) {
+    const mensagemComLink = `${mensagemInicial}\n📄 *Documento:* ${pdfURL}`;
+    console.log('PDF gerado:', pdfURL);
+    // Você pode salvar isso no banco ou enviar por email depois se quiser
+  }
+});
+
 
 
 resetForm();
@@ -1006,7 +1010,7 @@ resetForm();
         <Grid container spacing={3}>
 
         <Grid item xs={12}>
-  <Typography variant="h6" className={classes.sectionTitle}>Selecione os Serviços  Desejados</Typography>
+  <Typography variant="h6" className={classes.sectionTitle}>Selecione os produtos desejados</Typography>
   <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
     {['ATPV', 'Assinatura', 'Comunicação de Venda'].map((produto) => (
       <Button
