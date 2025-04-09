@@ -216,6 +216,28 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#45a049',
     },
   },
+
+  imagemDashboard: {
+    width: 200,
+    marginTop: 8,
+    maxWidth: '100%',
+    display: 'block',
+    Shadow: '0 2px 4px rgb(224, 18, 207)',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  textoBrancoDiva: {
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: 600,
+    fontSize: '2rem',
+    fontFamily: '"Playfair Display", serif',
+    textTransform: 'uppercase',
+    textShadow: '0 2px 4px rgb(224, 18, 207)',
+    marginTop: 16,
+  },
+  
+  
 }));
 
 interface Item {
@@ -304,8 +326,16 @@ const DashboardHeader: React.FC<{ stats: Stats }> = ({ stats }) => {
             <Typography variant="h6">Concluídos</Typography>
             <Typography variant="h4">{stats.concluidos}</Typography>
           </Card>
+          
+
+
         </Grid>
       </Grid>
+      <Typography variant="h6" className={classes.textoBrancoDiva}>
+  Semana Da DIVA !!!
+</Typography>
+<img src="/gabi.png" alt="Concluídos" className={classes.imagemDashboard} />
+
     </Paper>
   );
 };
