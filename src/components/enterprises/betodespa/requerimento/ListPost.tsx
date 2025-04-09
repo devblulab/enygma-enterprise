@@ -1006,7 +1006,7 @@ resetForm();
         <Grid container spacing={3}>
 
         <Grid item xs={12}>
-  <Typography variant="h6" className={classes.sectionTitle}>Selecione os produtos desejados</Typography>
+  <Typography variant="h6" className={classes.sectionTitle}>Selecione os Serviços  Desejados</Typography>
   <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
     {['ATPV', 'Assinatura', 'Comunicação de Venda'].map((produto) => (
       <Button
