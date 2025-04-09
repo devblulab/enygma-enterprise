@@ -251,6 +251,7 @@ interface Item {
   nomeempresa: string;
   dataCriacao: string | Timestamp;
   signature?: string;
+  produtosSelecionados?: string[];
 }
 
 const formatDate = (date: string | Timestamp): string => {
@@ -367,23 +368,10 @@ const Dashboard = () => {
         const start = startDate ? new Date(startDate) : null;
         const end = endDate ? new Date(endDate) : null;
 
-       if (
-  data.nomeempresa?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.cnpjempresa?.includes(searchText) ||
-  data.placa?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.renavam?.includes(searchText) ||
-  data.crv?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.nomevendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.cpfvendedor?.includes(searchText) ||
-  data.municipiovendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.emailvendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.nomecomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.cpfcomprador?.includes(searchText) ||
-  data.municipiocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.emailcomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.celtelcomprador?.includes(searchText) ||
-  data.celtelvendedor?.includes(searchText)
-) {
+        if (
+          data.nomeempresa.toLowerCase().includes(searchText.toLowerCase()) ||
+          data.cnpjempresa.includes(searchText)
+        ) {
           if ((!start || new Date(documentDate) >= start) && (!end || new Date(documentDate) <= end)) {
             fetchedItems.push({ id: doc.id, ...data });
           }
@@ -674,23 +662,28 @@ useEffect(() => {
         </Avatar>
         
         <ListItemText 
-        className={classes.noPrint}
-          primary={`${doc.nomeempresa} - ${doc.cnpjempresa}`}
-          secondary={
-            <>
-              <Typography variant="body2">
-                Placa: {doc.id} | Responsável: {doc.nomevendedor}
-              </Typography>
-              <Typography variant="body2">
-                Data: {formatDate(doc.dataCriacao)} | 
-                Valor: R$ {String(doc.valordevenda || '0')}
-              </Typography>
-              <div className={classes.noPrint}>
-                <Thumbnails urls={doc.imagemUrls} />
-              </div>
-            </>
-          }
-        />
+  className={classes.noPrint}
+  primary={`${doc.nomeempresa} - ${doc.cnpjempresa}`}
+  secondary={
+    <>
+      {doc.produtosSelecionados && doc.produtosSelecionados.length > 0 && (
+        <Typography variant="body2" style={{ marginBottom: 4 }}>
+          <strong>Serviços:</strong> {doc.produtosSelecionados.join(', ')}
+        </Typography>
+      )}
+      <Typography variant="body2">
+        Placa: {doc.id} | Responsável: {doc.nomevendedor}
+      </Typography>
+      <Typography variant="body2">
+        Data: {formatDate(doc.dataCriacao)} | 
+        Valor: R$ {String(doc.valordevenda || '0')}
+      </Typography>
+      <div className={classes.noPrint}>
+        <Thumbnails urls={doc.imagemUrls} />
+      </div>
+    </>
+  }
+/>
         
         <div className={classes.noPrint}>
          
