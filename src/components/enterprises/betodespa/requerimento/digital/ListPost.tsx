@@ -19,6 +19,7 @@ import { storage } from '@/logic/firebase/config/app';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getCroppedImg } from './cropUtils';
 import { v4 as uuidv4 } from 'uuid';
+import { format } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -255,7 +256,148 @@ const useStyles = makeStyles((theme) => ({
       display: 'none !important',
     },
   },
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  paper: {
+    // Estilos gerais
+    padding: theme.spacing(4),
+    margin: 'auto',
+    maxWidth: '1077px',
+    backgroundColor: '#fff',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    border: '1px solid #ccc',
+    fontFamily: 'Arial, sans-serif',
+    lineHeight: 1.6,
+    '@media print': {
+      boxShadow: 'none',
+      margin: '0',
+      padding: '10px',
+      width: '100%',
+      fontSize: '20pt',
+      boxSizing: 'border-box',
+      pageBreakBefore: 'auto',
+    },
+  },
+  
+
+
+ 
+  header2: {
+    textAlign: 'center',
+    marginBottom: theme.spacing(4),
+    fontSize: '1.0rem',
+    fontWeight: 'bold',
+  },
+  title1: {
+    fontSize: '1.9rem',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  title2: {
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  subtitle: {
+    fontSize: '0.8rem',
+    marginTop: theme.spacing(1),
+    fontWeight: 'bold',
+  },
+  sectionTitle2: {
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+    background: 'rgba(124, 124, 124, 0.58)',
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    textAlign: 'center',
+    borderBottom: '2px solid #000',
+    paddingBottom: theme.spacing(1),
+  },
+  sectionTitle3: {
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    marginTop: theme.spacing(0),
+    marginBottom: theme.spacing(2),
+    borderBottom: '1px solid #ccc',
+    paddingBottom: theme.spacing(0),
+  },
+  sectionTitle4: {
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    marginTop: theme.spacing(5),
+    marginBottom: theme.spacing(2),
+    borderBottom: '1px solid #ccc',
+    paddingBottom: theme.spacing(0),
+  },
+  field: {
+    fontSize: '1.1rem',
+    
+    marginBottom: theme.spacing(0),
+    paddingLeft: '10px',
+    background: 'rgba(201, 201, 201, 0.58)',
+  },
+  field3: {
+    fontSize: '0.7rem',
+    marginBottom: theme.spacing(1),
+  },
+  field2: {
+    fontSize: '1.3rem',
+    marginBottom: theme.spacing(1),
+  },
+  signatureSection: {
+    marginTop: theme.spacing(4),
+    display: 'flex',
+    justifyContent: 'center',
+    textAlign: 'center',
+    width: '100%',
+  },
+  signatureBlock: {
+    textAlign: 'center',
+    width: 'auto',
+    borderTop: '2px solid #000',
+    paddingTop: theme.spacing(0),
+    margin: '0 auto',
+  },
+  searchField: {
+    marginBottom: theme.spacing(1),
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '8px',
+    },
+  },
+  downloadButton: {
+    marginTop: theme.spacing(1),
+    backgroundColor: '#4CAF50',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#45a049',
+    },
+  },
+
+
+
+
+
+
+
+
+
 }));
+
+interface ItemListProps {
+  items: Item[];
+}
 
 const formatarMoedaBrasileira = (valor: string) => {
   const numeroLimpo = valor.replace(/\D/g, '');
@@ -641,6 +783,26 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     }
   };
 
+  const formatDate = (date: string | Timestamp | undefined | null) => {
+      if (!date) return 'Data inválida';
+  
+      let localDate;
+  
+      if (date instanceof Timestamp) {
+        localDate = date.toDate();
+      } else {
+        localDate = new Date(date);
+      }
+  
+      if (isNaN(localDate.getTime())) return 'Data inválida';
+  
+      const offsetMs = localDate.getTimezoneOffset() * 60000;
+      const adjustedDate = new Date(localDate.getTime() - offsetMs - 3 * 3600000);
+  
+      return format(adjustedDate, 'dd/MM/yyyy');
+    };
+
+  
   const handleAddItem = async () => {
     try {
       if (!newItem.id) {
@@ -666,8 +828,20 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
   
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
   
-      await generatePDF();
-      resetForm();
+      const pdfURL = await generatePDF();
+const numeroWhatsApp = '5548988749403';
+const servicos = produtosSelecionados.length > 0 ? produtosSelecionados.join(', ') : 'Nenhum serviço selecionado';
+const mensagem = `Olá! Preenchi o formulario .\n\n📌 *Placa:* ${newItem.id}\n🛠️ *Serviços:* ${servicos}\n📄 *Documento:* ${pdfURL}`;
+
+const whatsappLink = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
+
+// Usa setTimeout pra garantir que o navegador trate como uma nova ação
+setTimeout(() => {
+  window.open(whatsappLink, '_blank');
+}, 100);
+
+
+resetForm();
   
       alert('Item adicionado com sucesso!');
     } catch (error) {
@@ -717,39 +891,111 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     setProdutosSelecionados([]);
   };
 
-  const generatePDF = async () => {
+  const generatePDF = async (): Promise<string | null> => {
     const input = document.getElementById('pdf-content');
-    if (!input) return;
-
+    if (!input) return null;
+  
     try {
-      const canvas = await html2canvas(input, { 
+      const canvas = await html2canvas(input, {
         scale: 2,
         useCORS: true,
-        logging: false
+        logging: false,
       });
-      
+  
       const pdf = new jsPDF('p', 'mm', 'a4');
       const imgWidth = 210;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
+  
       pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
-      pdf.save(`Requerimento_${newItem.nomecomprador || 'documento'}.pdf`);
-
-      await sendWhatsApp(URL.createObjectURL(pdf.output('blob')));
+  
+      const blob = pdf.output('blob');
+      const fileName = `Requerimento_${newItem.id}_${Date.now()}.pdf`;
+      const pdfRef = ref(storage, `pdfs/${fileName}`);
+  
+      await uploadBytes(pdfRef, blob);
+      const pdfURL = await getDownloadURL(pdfRef);
+  
+      return pdfURL;
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
+      return null;
     }
   };
 
-  const sendWhatsApp = async (pdfURL: string) => {
-    const telefone = newItem.celtelcomprador.replace(/\D/g, '') || '5548988449379';
-    const mensagem = `Olá ${newItem.nomecomprador || 'Cliente'}, seu documento está pronto: ${pdfURL}`;
-    window.open(`https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagem)}`, '_blank');
-  };
+
+
+  
 
   return (
     <div className={`${classes.formContainer} ${classes.noPrint}`}>
       <Paper className={classes.formContainer}>
+
+
+        
+  <div id="pdf-content" style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+  <Paper className={classes.paper}>
+    <div className={classes.header2}>
+      <Typography className={classes.title1}>Estado de Santa Catarina</Typography>
+      <Typography className={classes.subtitle}>Secretaria de Estado de Segurança Pública</Typography>
+      <Typography className={classes.subtitle}>Departamento Estadual de Trânsito</Typography>
+      <Typography className={classes.subtitle}>Diretoria de Veículo</Typography>
+    </div>
+
+    <Typography className={classes.title2} style={{ textAlign: 'center' }}>
+      Requerimento de Intenção de Venda
+    </Typography>
+
+    <Typography className={classes.sectionTitle2}>Identificação do Veículo</Typography>
+    <Typography className={classes.field}><strong>Placa:</strong> {newItem.id}</Typography>
+    <Typography className={classes.field}><strong>Renavam:</strong> {newItem.renavam}</Typography>
+    <Typography className={classes.field}><strong>CRV:</strong> {newItem.crv}</Typography>
+    <Typography className={classes.field}><strong>Valor de Venda:</strong> R$ {newItem.valordevenda}</Typography>
+
+    <Typography className={classes.sectionTitle2}>Identificação do Vendedor</Typography>
+    <Typography className={classes.field}><strong>Nome:</strong> {newItem.nomevendedor}</Typography>
+    <Typography className={classes.field}><strong>CPF/CNPJ:</strong> {newItem.cpfvendedor}</Typography>
+    <Typography className={classes.field}><strong>E-mail:</strong> {newItem.emailvendedor}</Typography>
+
+    <Typography className={classes.sectionTitle2}>Identificação do Comprador</Typography>
+    <Typography className={classes.field}><strong>Nome:</strong> {newItem.nomecomprador}</Typography>
+    <Typography className={classes.field}><strong>CPF/CNPJ:</strong> {newItem.cpfcomprador}</Typography>
+    <Typography className={classes.field}><strong>CEP:</strong> {newItem.cepcomprador}</Typography>
+    <Typography className={classes.field}><strong>Endereço:</strong> {newItem.enderecocomprador}</Typography>
+    <Typography className={classes.field}><strong>Bairro:</strong> {newItem.bairrocomprador}</Typography>
+    <Typography className={classes.field}><strong>Município:</strong> {newItem.municipiocomprador}</Typography>
+    <Typography className={classes.field}><strong>Estado:</strong> {newItem.complementocomprador}</Typography>
+    <Typography className={classes.field}><strong>E-mail:</strong> {newItem.emailcomprador}</Typography>
+    <Typography className={classes.field}><strong>CEL/TEL:</strong> {newItem.celtelcomprador}</Typography>
+
+    <Typography className={classes.field2} style={{ marginTop: '20px' }}>
+  Eu <strong>VENDEDOR</strong>, com base na Resolução do CONTRAN nº 809, de 15 de dezembro 2020,
+  informo ao Departamento Estadual de Trânsito de Santa Catarina (DETRAN-SC) a,
+  <strong>INTENÇÃO DE VENDA</strong> em {formatDate(newItem.dataCriacao)}, para o <strong>COMPRADOR</strong> conforme indicado acima.
+</Typography>
+
+
+    {newItem.signature && (
+      <div className={classes.signatureSection}>
+        <img src={newItem.signature} alt="Assinatura do Cliente" style={{ maxWidth: '300px' }} />
+      </div>
+    )}
+
+    <div className={classes.signatureSection}>
+      <div className={classes.signatureBlock}>
+        Assinatura do Vendedor ou Responsável
+      </div>
+    </div>
+
+    <Typography className={classes.sectionTitle4}>b3certificacao@gmail.com</Typography>
+    <Typography className={classes.sectionTitle3}>Documentação Básica</Typography>
+    <Typography className={classes.field3}>Pessoa Física: Cópia da CNH ou RG/CPF</Typography>
+    <Typography className={classes.field3}>Pessoa Jurídica: Cópia do ato constitutivo e Cartão CNPJ</Typography>
+    <Typography className={classes.field3}>
+      Obs: Cópia autenticada de procuração e cópia da CNH ou RG/CPF do procurador caso solicitado por terceiro.
+    </Typography>
+  </Paper>
+</div>
+
         <div className={classes.header}>
           <img src="/betologo.jpg" alt="Logo" className={classes.logo} />
           <Typography variant="h4" className={classes.title}>
