@@ -135,7 +135,7 @@ const BotoesNavegacao = () => {
       >
         {[ 
           { href: '/beto/requerimento', icon: <FaStore />, label: 'Intenção de Venda' },
-          { href: '/beto/dashboard/empresas', icon: <FaChartPie />, label: 'Painel de Controle Empresas' }
+          { href: '/beto/dashboard/empresas', icon: <FaChartPie />, label: 'Painel de Controle ' }
         ].map((item, index) => (
           <motion.div 
             key={index} 
