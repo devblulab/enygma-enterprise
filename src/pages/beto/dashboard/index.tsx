@@ -399,9 +399,32 @@ const Dashboard = () => {
         const end = endDate ? new Date(endDate) : null;
 
         if (
-          data.nomeempresa.toLowerCase().includes(searchText.toLowerCase()) ||
-          data.id.includes(searchText)
-        ) {
+  data.nomeempresa?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.id?.includes(searchText) ||
+  data.placa?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.renavam?.includes(searchText) ||
+  data.crv?.includes(searchText) ||
+  data.nomevendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.cpfvendedor?.includes(searchText) ||
+  data.enderecovendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.complementovendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.municipiovendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.emailvendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.nomecomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.cpfcomprador?.includes(searchText) ||
+  data.enderecocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.complementocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.municipiocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.bairrocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.emailcomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.celtelcomprador?.includes(searchText) ||
+  data.celtelvendedor?.includes(searchText) ||
+  data.cepvendedor?.includes(searchText) ||
+  data.cepcomprador?.includes(searchText) ||
+  data.tipo?.toLowerCase().includes(searchText.toLowerCase()) ||
+  data.cnpjempresa?.includes(searchText)
+)
+ {
           if ((!start || new Date(documentDate) >= start) && (!end || new Date(documentDate) <= end)) {
             fetchedItems.push({ id: doc.id, ...data });
           }
