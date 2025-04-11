@@ -360,39 +360,47 @@ const Dashboard = () => {
       const querySnapshot = await getDocs(itemsCollectionRef);
       const fetchedItems: Item[] = [];
       
-      querySnapshot.forEach((doc) => {
-        const data = doc.data() as Omit<Item, 'id'>;
-        const documentDate = formatDate(data.dataCriacao);
+    querySnapshot.forEach((doc) => {
+  const data = {
+    id: doc.id, // adiciona o ID manualmente
+    ...doc.data()
+  } as Item;
 
-        const start = startDate ? new Date(startDate) : null;
-        const end = endDate ? new Date(endDate) : null;
+  const documentDate = formatDate(data.dataCriacao);
 
-        if (
-  data.nomeempresa?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.id?.includes(searchText) ||
-  data.placa?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.renavam?.includes(searchText) ||
-  data.crv?.includes(searchText) ||
-  data.nomevendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.cpfvendedor?.includes(searchText) ||
-  data.enderecovendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.complementovendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.municipiovendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.emailvendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.nomecomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.cpfcomprador?.includes(searchText) ||
-  data.enderecocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.complementocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.municipiocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.bairrocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.emailcomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.celtelcomprador?.includes(searchText) ||
-  data.celtelvendedor?.includes(searchText) ||
-  data.cepvendedor?.includes(searchText) ||
-  data.cepcomprador?.includes(searchText) ||
-  data.tipo?.toLowerCase().includes(searchText.toLowerCase()) ||
-  data.cnpjempresa?.includes(searchText)
-)
+  const start = startDate ? new Date(startDate) : null;
+  const end = endDate ? new Date(endDate) : null;
+
+  if (
+    data.nomeempresa?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.id?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.placa?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.renavam?.includes(searchText) ||
+    data.crv?.includes(searchText) ||
+    data.nomevendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.cpfvendedor?.includes(searchText) ||
+    data.enderecovendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.complementovendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.municipiovendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.emailvendedor?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.nomecomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.cpfcomprador?.includes(searchText) ||
+    data.enderecocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.complementocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.municipiocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.bairrocomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.emailcomprador?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.celtelcomprador?.includes(searchText) ||
+    data.celtelvendedor?.includes(searchText) ||
+    data.cepvendedor?.includes(searchText) ||
+    data.cepcomprador?.includes(searchText) ||
+    data.tipo?.toLowerCase().includes(searchText.toLowerCase()) ||
+    data.cnpjempresa?.includes(searchText)
+  ) {
+    fetchedItems.push(data);
+  }
+});
+
  {
           if ((!start || new Date(documentDate) >= start) && (!end || new Date(documentDate) <= end)) {
             fetchedItems.push({ id: doc.id, ...data });
