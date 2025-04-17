@@ -216,6 +216,28 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#45a049',
     },
   },
+
+  imagemDashboard: {
+    width: 200,
+    marginTop: 8,
+    maxWidth: '100%',
+    display: 'block',
+    Shadow: '0 2px 4px rgb(224, 18, 207)',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  textoBrancoDiva: {
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: 600,
+    fontSize: '2rem',
+    fontFamily: '"Playfair Display", serif',
+    textTransform: 'uppercase',
+    textShadow: '0 2px 4px rgb(224, 18, 207)',
+    marginTop: 16,
+  },
+  
+  
 }));
 
 interface Item {
@@ -251,6 +273,7 @@ interface Item {
   nomeempresa: string;
   dataCriacao: string | Timestamp;
   signature?: string;
+  produtosSelecionados?: string[];
 }
 
 const formatDate = (date: string | Timestamp): string => {
@@ -303,8 +326,16 @@ const DashboardHeader: React.FC<{ stats: Stats }> = ({ stats }) => {
             <Typography variant="h6">Concluídos</Typography>
             <Typography variant="h4">{stats.concluidos}</Typography>
           </Card>
+          
+
+
         </Grid>
       </Grid>
+      <Typography variant="h6" className={classes.textoBrancoDiva}>
+  Semana Da DIVA !!!
+</Typography>
+<img src="/gabi.png" alt="Concluídos" className={classes.imagemDashboard} />
+
     </Paper>
   );
 };
@@ -353,10 +384,10 @@ const Dashboard = () => {
     window.open(linkWhatsApp, '_blank');
   };
 
- const fetchDocuments = async () => {
+  const fetchDocuments = async () => {
   setLoading(true);
   try {
-    const itemsCollectionRef = collection(db, 'Betodespachanteintrncaodevendaoficial');
+    const itemsCollectionRef = collection(db, 'Betodespachanteintrncaodevendaoficialdigital');
     const querySnapshot = await getDocs(itemsCollectionRef);
     const fetchedItems: Item[] = [];
 
@@ -422,7 +453,6 @@ const Dashboard = () => {
   setLoading(false);
 };
 
-  
 
 useEffect(() => {
     const style = document.createElement('style');
@@ -694,23 +724,28 @@ useEffect(() => {
         </Avatar>
         
         <ListItemText 
-        className={classes.noPrint}
-          primary={`${doc.nomeempresa} - ${doc.cnpjempresa}`}
-          secondary={
-            <>
-              <Typography variant="body2">
-                Placa: {doc.id} | Responsável: {doc.nomevendedor}
-              </Typography>
-              <Typography variant="body2">
-                Data: {formatDate(doc.dataCriacao)} | 
-                Valor: R$ {String(doc.valordevenda || '0')}
-              </Typography>
-              <div className={classes.noPrint}>
-                <Thumbnails urls={doc.imagemUrls} />
-              </div>
-            </>
-          }
-        />
+  className={classes.noPrint}
+  primary={`${doc.nomeempresa} - ${doc.cnpjempresa}`}
+  secondary={
+    <>
+      {doc.produtosSelecionados && doc.produtosSelecionados.length > 0 && (
+        <Typography variant="body2" style={{ marginBottom: 4 }}>
+          <strong>Serviços:</strong> {doc.produtosSelecionados.join(', ')}
+        </Typography>
+      )}
+      <Typography variant="body2">
+        Placa: {doc.id} | Responsável: {doc.nomevendedor}
+      </Typography>
+      <Typography variant="body2">
+        Data: {formatDate(doc.dataCriacao)} | 
+        Valor: R$ {String(doc.valordevenda || '0')}
+      </Typography>
+      <div className={classes.noPrint}>
+        <Thumbnails urls={doc.imagemUrls} />
+      </div>
+    </>
+  }
+/>
         
         <div className={classes.noPrint}>
          
