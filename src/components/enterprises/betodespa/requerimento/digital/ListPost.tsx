@@ -829,7 +829,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
       const pdfURL = await generatePDF();
   
-      const numeroWhatsApp = '5548988449379';
+      const numeroWhatsApp = '5548988749403';
       const servicos = produtosSelecionados.length > 0 ? produtosSelecionados.join(', ') : 'Nenhum serviço selecionado';
       const mensagemInicial = `Olá! Tudo certo, o requerimento foi preenchido!\n\n📌 *Placa:* ${newItem.id}\n🛠️ *Serviços:* ${servicos}\n📄 *Documento:* ${pdfURL}`;
       
@@ -947,7 +947,7 @@ resetForm();
     </div>
 
     <Typography className={classes.title2} style={{ textAlign: 'center' }}>
-      Requerimento de Intenção de Venda Digital
+      Requerimento de Intenção de Venda 
     </Typography>
 
     <Typography className={classes.sectionTitle2}>Identificação do Veículo</Typography>
@@ -1004,7 +1004,7 @@ resetForm();
         <div className={classes.header}>
           <img src="/betologo.jpg" alt="Logo" className={classes.logo} />
           <Typography variant="h4" className={classes.title}>
-            Requerimento de Intenção de Venda
+            Requerimento de Intenção de Venda Digital
           </Typography>
         </div>
   
