@@ -454,23 +454,7 @@ sendWhatsApp(pdfURL);
          
      
           
-          <Button
-  onClick={() => {
-    if (filteredItems.length > 0) {
-      const item = filteredItems[0]; // Pega o primeiro item encontrado
-      const telefone = '5548988449379';
-      const mensagem = `Olá . Preenchi a Intenção de Venda e a placa é ${item.id}.`;
-      const linkWhatsApp = `https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagem)}`;
-      
-      window.open(linkWhatsApp, '_blank'); // Abre o WhatsApp automaticamente
-    }
-  }}
-  variant="contained"
-  size="large"
-  className={classes.downloadButton}
->
-  Enviar Despachante
-</Button>
+          
            <Button
   onClick={() => {
     if (filteredItems.length > 0) {
