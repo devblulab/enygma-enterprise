@@ -20,6 +20,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getCroppedImg } from './cropUtils';
 import { v4 as uuidv4 } from 'uuid';
 import { format } from 'date-fns';
+import { converterParaSGDW } from '@/util/converterParaSGDW';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -906,6 +907,12 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
       console.log('Salvando item:', itemParaSalvar);
   
       const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevendaoficial', itemParaSalvar);
+
+      // ✅ CONVERTER PARA FORMATO SGDW
+      
+      const jsonSGDW = converterParaSGDW(itemParaSalvar);
+      console.log('📤 JSON pronto para SGDW:', jsonSGDW);
+
   
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
       const pdfURL = await generatePDF();
