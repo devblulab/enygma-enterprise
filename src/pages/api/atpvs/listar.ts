@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '@/logic/firebase/config/app';
 
-const API_KEY = process.env.API_KEY_BLU_DATA!;
+const API_KEY = process.env.BLUDATA_API_KEY;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
