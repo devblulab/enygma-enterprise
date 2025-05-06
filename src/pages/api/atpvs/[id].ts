@@ -3,6 +3,7 @@ import { db } from '@/logic/firebase/config/app';
 
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const apiKey = req.headers.authorization;
   if (apiKey !== `Bearer ${process.env.BLUDATA_API_KEY}`) {
@@ -11,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const id = req.query.id as string;
 
-  const ref = doc(db, 'atpvs', id);
+  const ref = doc(db, 'OrdensDeServicoBludata', id);
 
   if (req.method === 'GET') {
     try {
