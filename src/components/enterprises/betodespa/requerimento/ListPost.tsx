@@ -21,6 +21,8 @@ import { getCroppedImg } from './cropUtils';
 import { v4 as uuidv4 } from 'uuid';
 import { format } from 'date-fns';
 import { converterParaSGDW } from '@/util/converterParaSGDW';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '@/logic/firebase/config/app';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -910,8 +912,16 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
 
       // ✅ CONVERTER PARA FORMATO SGDW
       
-      const jsonSGDW = converterParaSGDW(itemParaSalvar);
-      console.log('📤 JSON pronto para SGDW:', jsonSGDW);
+
+
+// ...
+
+const jsonSGDW = converterParaSGDW(itemParaSalvar);
+console.log('📤 JSON pronto para SGDW:', jsonSGDW);
+
+// ✅ Salvar na coleção da Bludata
+await addDoc(collection(db, 'OrdensDeServicoBludata'), jsonSGDW);
+
 
   
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
