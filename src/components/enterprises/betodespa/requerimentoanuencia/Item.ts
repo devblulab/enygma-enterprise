@@ -21,12 +21,23 @@ interface Item {
    bairroempresa: string,
     
    cargo:string,
-    nomevendedor: string,
-    cpfvendedor: string,
-    enderecovendedor: string,
-    complementovendedor: string,
-    municipiovendedor: string,
-    emailvendedor: string,
+   nomesocio1: string,
+    cpfsocio1: string,
+    enderecosocio1: string,
+    complementosocio1: string,
+    municipiosocio1: string,
+    emailsocio1: string,
+    cepsocio1: string;
+    celtelsocio1: string,
+    cargo2:string,
+   nomesocio2: string,
+    cpfsocio2: string,
+    enderecosocio2: string,
+    complementosocio2: string,
+    municipiosocio2: string,
+    emailsocio2: string,
+    cepsocio2: string;
+    celtelsocio2: string,
     dataCriacao: string | Timestamp;
     nomeempresa: string,
     cpfempresa: string,
@@ -35,13 +46,13 @@ interface Item {
     municipioempresa: string,
     emailempresa: string,
    celtelempresa: string,
-   cepvendedor: string;
+  
     cepempresa: string;
     tipo: string;
     cnpjempresa: string;
    
 
-    celtelvendedor: string,
+    
     signature?: string; 
  
   

@@ -555,8 +555,8 @@ const tutorialSteps = [
   },
   {
     id: 'seller',
-    title: 'Identificação do Vendedor',
-    content: 'Insira o CPF do vendedor. Se válido, o nome será preenchido automaticamente. Caso contrário, preencha o Nome do Vendedor manualmente.',
+    title: 'Identificação do socio1',
+    content: 'Insira o CPF do socio1. Se válido, o nome será preenchido automaticamente. Caso contrário, preencha o Nome do socio1 manualmente.',
   },
   {
     id: 'buyer',
@@ -571,7 +571,7 @@ const tutorialSteps = [
   {
     id: 'signature',
     title: 'Assinatura do Cliente',
-    content: 'Use o painel de assinatura para fornecer a assinatura digital do vendedor. Siga as instruções na tela.',
+    content: 'Use o painel de assinatura para fornecer a assinatura digital do socio1. Siga as instruções na tela.',
   },
   {
     id: 'documents',
@@ -622,14 +622,25 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     crv: '',
     chassi: '',
     cargo: '',
+    cargo2: '',
     modelo: '',
     valordevenda: '',
-    nomevendedor: '',
-    cpfvendedor: '',
-    enderecovendedor: '',
-    complementovendedor: '',
-    municipiovendedor: '',
-    emailvendedor: 'b3certificacao@gmail.com',
+    nomesocio1: '',
+    cpfsocio1: '',
+    enderecosocio1: '',
+    complementosocio1: '',
+    municipiosocio1: '',
+    emailsocio1: 'b3certificacao@gmail.com',
+    celtelsocio1: '',
+    cepsocio1: '',
+    nomesocio2: '',
+    cpfsocio2: '',
+    enderecosocio2: '',
+    complementosocio2: '',
+    municipiosocio2: '',
+    emailsocio2: 'b3certificacao@gmail.com',
+    celtelsocio2: '',
+    cepsocio2: '',
     bairroempresa: '',
     nomeempresa: '',
     cpfempresa: '',
@@ -638,13 +649,13 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     municipioempresa: '',
     emailempresa: 'b3certificacao@gmail.com',
     celtelempresa: '',
-    cepvendedor: '',
+    
     cepempresa: '',
     tipo: '',
     cnpjempresa: '',
     
     dataCriacao: Timestamp.fromDate(new Date()),
-    celtelvendedor: '',
+    
     signature: '',
   });
 
@@ -819,7 +830,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
         value = formatarMoedaBrasileira(value);
       }
       
-      const camposCpfCnpj: (keyof Item)[] = ['cpfvendedor', 'cpfempresa', 'cnpjempresa'];
+      const camposCpfCnpj: (keyof Item)[] = ['cpfsocio1', 'cpfempresa', 'cnpjempresa'];
       if (camposCpfCnpj.includes(field)) {
         const raw = value.replace(/\D/g, '');
         const formatado = formatCpfCnpj(raw);
@@ -832,8 +843,8 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
 
         if (isValidCpfCnpj(raw)) {
           const target =
-            field === 'cpfvendedor'
-              ? 'nomevendedor'
+            field === 'cpfsocio1'
+              ? 'nomesocio1'
               : field === 'cpfempresa'
               ? 'nomeempresa'
               : 'nomeempresa';
@@ -942,40 +953,51 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
   const resetForm = () => {
     setNewItem({
       id: '',
-      cliente: '',
-      status: 'Pendente',
-      quantidade: 0,
-      imagemUrls: [],
-      concluido: false,
-      placa: '',
-      renavam: '',
-      crv: '',
-      chassi: '',
-      modelo:'',
-      cargo:'',
-      valordevenda: '',
-      nomevendedor: '',
-      cpfvendedor: '',
-      enderecovendedor: '',
-      complementovendedor: '',
-      municipiovendedor: '',
-      emailvendedor: 'b3certificacao@gmail.com',
-      bairroempresa: '',
-      nomeempresa: '',
-      cpfempresa: '',
-      enderecoempresa: '',
-      complementoempresa: '',
-      municipioempresa: '',
-      emailempresa: 'b3certificacao@gmail.com',
-      celtelempresa: '',
-      cepvendedor: '',
-      cepempresa: '',
-      tipo: '',
-      cnpjempresa: '',
+    cliente: '',
+    status: 'Pendente',
+    quantidade: 0,
+    imagemUrls: [],
+    concluido: false,
+    placa: '',
+    renavam: '',
+    crv: '',
+    chassi: '',
+    cargo: '',
+    cargo2: '',
+    modelo: '',
+    valordevenda: '',
+    nomesocio1: '',
+    cpfsocio1: '',
+    enderecosocio1: '',
+    complementosocio1: '',
+    municipiosocio1: '',
+    emailsocio1: 'b3certificacao@gmail.com',
+    celtelsocio1: '',
+    cepsocio1: '',
+    nomesocio2: '',
+    cpfsocio2: '',
+    enderecosocio2: '',
+    complementosocio2: '',
+    municipiosocio2: '',
+    emailsocio2: 'b3certificacao@gmail.com',
+    celtelsocio2: '',
+    cepsocio2: '',
+    bairroempresa: '',
+    nomeempresa: '',
+    cpfempresa: '',
+    enderecoempresa: '',
+    complementoempresa: '',
+    municipioempresa: '',
+    emailempresa: 'b3certificacao@gmail.com',
+    celtelempresa: '',
     
-      dataCriacao: Timestamp.fromDate(new Date()),
-      celtelvendedor: '',
-      signature: '',
+    cepempresa: '',
+    tipo: '',
+    cnpjempresa: '',
+    
+    dataCriacao: Timestamp.fromDate(new Date()),
+    
+    signature: '',
     });
     setFiles([]);
     setPreviewImage(null);
@@ -1044,7 +1066,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
             </div>
 
             <Typography className={classes.title2} style={{ textAlign: 'center' }}>
-            Termo de Anuência – Baixa Permanente de Veículo
+            Termo de Anuência 
             </Typography>
             <Typography className={classes.field2} style={{ marginTop: '20px' }}>
               A <strong>empresa</strong>, {newItem.nomeempresa}, inscrita no CNPJ sob o nº, {newItem.cnpjempresa}, com sede localizada à 
@@ -1052,10 +1074,13 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
             <strong>Endereço:</strong> {newItem.enderecoempresa}
            <strong>Bairro:</strong> {newItem.bairroempresa}
             <strong>Município:</strong> {newItem.municipioempresa}
-            <strong>Estado:</strong> {newItem.complementoempresa}, vem por meio deste, declarar que está ciente e anuente com a solicitação de baixa permanente do veículo de sua propriedade, conforme dados abaixo:
+            <strong>Estado:</strong> {newItem.complementoempresa}, representado neste ato por seu socio administrador {newItem.nomesocio1} , e seu socio Diretor {newItem.nomesocio2} , vem por meio deste, declarar que está ciente e anuente com a solicitação de baixa permanente do veículo de sua propriedade, conforme dados abaixo:
             <Typography className={classes.field}><strong>Placa:</strong> {newItem.id}</Typography>
+            <Typography className={classes.field}><strong>Modelo:</strong> {newItem.modelo}</Typography>
+            <Typography className={classes.field}><strong>Chassi:</strong> {newItem.chassi}</Typography>
             <Typography className={classes.field}><strong>Renavam:</strong> {newItem.renavam}</Typography>
-            <Typography className={classes.field}><strong>CRV:</strong> {newItem.crv}</Typography>
+            
+           
             
             </Typography>
 
@@ -1073,7 +1098,25 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
 
             <div className={classes.signatureSection}>
               <div className={classes.signatureBlock}>
-                Assinatura do Vendedor ou Responsável
+                Assinatura do socio ou Responsável
+                      {newItem.nomesocio1}
+                      {newItem.cpfsocio1}
+                      {newItem.cargo}
+              </div>
+            </div>
+
+            {newItem.signature && (
+              <div className={classes.signatureSection}>
+                <img src={newItem.signature} alt="Assinatura do Cliente" style={{ maxWidth: '300px' }} />
+              </div>
+            )}
+
+            <div className={classes.signatureSection}>
+              <div className={classes.signatureBlock}>
+                Assinatura do socio ou Responsável
+                {newItem.nomesocio2}
+                {newItem.cpfsocio2}
+                      {newItem.cargo2}
               </div>
             </div>
 
@@ -1085,7 +1128,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
         <div className={classes.header}>
           <img src="/betologo.jpg" alt="Logo" className={classes.logo} />
           <Typography variant="h4" className={classes.title}>
-          Termo de Anuência – Baixa Permanente de Veículo
+          Termo de Anuência 
           </Typography>
         </div>
   
@@ -1134,43 +1177,43 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
             ))}
           </Grid>
   
-          {/* Seção Vendedor - Updated with enhanced CPF field */}
+          {/* Seção socio1 - Updated with enhanced CPF field */}
           <Grid item xs={12} md={3}>
             <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Responsável Legal</Typography>
             <TextField
-              name="cpfvendedor"
+              name="cpfsocio1"
               label="CPF"
-              value={formatCpfCnpj(newItem.cpfvendedor || '')}
+              value={formatCpfCnpj(newItem.cpfsocio1 || '')}
               onChange={(e) => {
                 const rawValue = e.target.value.replace(/\D/g, '');
                 handleInputChange({
                   ...e,
                   target: {
                     ...e.target,
-                    name: 'cpfvendedor',
+                    name: 'cpfsocio1',
                     value: rawValue
                   }
-                }, 'cpfvendedor');
+                }, 'cpfsocio1');
               }}
               fullWidth
               variant="outlined"
               className={classes.textField}
               margin="normal"
-              error={!!newItem.cpfvendedor && !isValidCpfCnpj(newItem.cpfvendedor)}
-              helperText={!!newItem.cpfvendedor && !isValidCpfCnpj(newItem.cpfvendedor)
+              error={!!newItem.cpfsocio1 && !isValidCpfCnpj(newItem.cpfsocio1)}
+              helperText={!!newItem.cpfsocio1 && !isValidCpfCnpj(newItem.cpfsocio1)
                 ? 'CPF inválido'
                 : ''}
               InputProps={{
-                endAdornment: isLoadingSearch && newItem.cpfvendedor?.length === 11 ? (
+                endAdornment: isLoadingSearch && newItem.cpfsocio1?.length === 11 ? (
                   <CircularProgress size={24} />
                 ) : null,
               }}
             />
   
             <TextField
-              label="Nome do Vendedor"
-              value={newItem.nomevendedor || ''}
-              onChange={(e) => handleInputChange(e, 'nomevendedor')}
+              label="Nome"
+              value={newItem.nomesocio1 || ''}
+              onChange={(e) => handleInputChange(e, 'nomesocio1')}
               fullWidth
               variant="outlined"
               className={classes.textField}
@@ -1181,6 +1224,59 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     label="Cargo"
     value={newItem.cargo || ''}
     onChange={(e) => handleInputChange(e, 'cargo')}
+    fullWidth
+    variant="outlined"
+    className={classes.textField}
+    margin="normal"
+    helperText="Ex: Gerente, Diretor, Representante Legal"
+  />
+          </Grid>]
+          <Grid item xs={12} md={3}>
+            <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Responsável Legal 2</Typography>
+            <TextField
+              name="cpfsocio2"
+              label="CPF"
+              value={formatCpfCnpj(newItem.cpfsocio1 || '')}
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/\D/g, '');
+                handleInputChange({
+                  ...e,
+                  target: {
+                    ...e.target,
+                    name: 'cpfsocio2',
+                    value: rawValue
+                  }
+                }, 'cpfsocio1');
+              }}
+              fullWidth
+              variant="outlined"
+              className={classes.textField}
+              margin="normal"
+              error={!!newItem.cpfsocio1 && !isValidCpfCnpj(newItem.cpfsocio1)}
+              helperText={!!newItem.cpfsocio1 && !isValidCpfCnpj(newItem.cpfsocio1)
+                ? 'CPF inválido'
+                : ''}
+              InputProps={{
+                endAdornment: isLoadingSearch && newItem.cpfsocio1?.length === 11 ? (
+                  <CircularProgress size={24} />
+                ) : null,
+              }}
+            />
+  
+            <TextField
+              label="Nome"
+              value={newItem.nomesocio1 || ''}
+              onChange={(e) => handleInputChange(e, 'nomesocio2')}
+              fullWidth
+              variant="outlined"
+              className={classes.textField}
+              margin="normal"
+              helperText="Preencha manualmente se a consulta automática falhar"
+            />
+             <TextField
+    label="Cargo"
+    value={newItem.cargo || ''}
+    onChange={(e) => handleInputChange(e, 'cargo2')}
     fullWidth
     variant="outlined"
     className={classes.textField}
