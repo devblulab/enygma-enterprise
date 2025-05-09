@@ -334,7 +334,7 @@ const DashboardHeader: React.FC<{ stats: Stats }> = ({ stats }) => {
       <Typography variant="h6" className={classes.textoBrancoDiva}>
   Semana Da DIVA !!!
 </Typography>
-<img src="/gabi.png" alt="Concluídos" className={classes.imagemDashboard} />
+<img src="/gabi.jpeg" alt="Concluídos" className={classes.imagemDashboard} />
 
     </Paper>
   );
