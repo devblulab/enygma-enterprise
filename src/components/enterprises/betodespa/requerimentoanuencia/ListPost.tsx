@@ -623,10 +623,13 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     chassi: '',
     cargo: '',
     cargo2: '',
+    cargo3: '',
     modelo: '',
     valordevenda: '',
     nomesocio1: '',
     cpfsocio1: '',
+    cpfsocio3: '',
+     nomesocio3: '',
     enderecosocio1: '',
     complementosocio1: '',
     municipiosocio1: '',
@@ -830,7 +833,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
         value = formatarMoedaBrasileira(value);
       }
       
-      const camposCpfCnpj: (keyof Item)[] = ['cpfsocio1', 'cpfempresa', 'cnpjempresa'];
+      const camposCpfCnpj: (keyof Item)[] = ['cpfsocio1','cpfsocio2','cpfsocio3', 'cpfempresa', 'cnpjempresa'];
       if (camposCpfCnpj.includes(field)) {
         const raw = value.replace(/\D/g, '');
         const formatado = formatCpfCnpj(raw);
@@ -844,7 +847,12 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
         if (isValidCpfCnpj(raw)) {
           const target =
             field === 'cpfsocio1'
-              ? 'nomesocio1'
+              ? 'nomesocio1':
+               field === 'cpfsocio2'
+              ? 'nomesocio2'
+              :
+               field === 'cpfsocio3'
+              ? 'nomesocio3'
               : field === 'cpfempresa'
               ? 'nomeempresa'
               : 'nomeempresa';
@@ -924,15 +932,9 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
       const pdfURL = await generatePDF();
   
-      const numeroWhatsApp = '5548988449379';
-      const servicos = produtosSelecionados.length > 0 ? produtosSelecionados.join(', ') : 'Nenhum serviço selecionado';
-      const mensagemInicial = `Olá! Tudo certo, o requerimento foi preenchido!\n\n📌 *Placa:* ${newItem.id}\n🛠️ *Serviços:* ${servicos}\n📄 *Documento:* ${pdfURL}`;
-      
-      window.location.href = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagemInicial)}`;
-      
       generatePDF().then((pdfURL) => {
         if (pdfURL) {
-          const mensagemComLink = `${mensagemInicial}\n📄 *Documento:* ${ pdfURL}`;
+          
           console.log('PDF gerado:', pdfURL);
         }
       });
@@ -964,10 +966,12 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     chassi: '',
     cargo: '',
     cargo2: '',
+    cargo3: '',
     modelo: '',
     valordevenda: '',
     nomesocio1: '',
     cpfsocio1: '',
+     cpfsocio3: '',
     enderecosocio1: '',
     complementosocio1: '',
     municipiosocio1: '',
@@ -975,6 +979,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     celtelsocio1: '',
     cepsocio1: '',
     nomesocio2: '',
+    nomesocio3: '',
     cpfsocio2: '',
     enderecosocio2: '',
     complementosocio2: '',
@@ -1052,85 +1057,104 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     setShowTutorial(true);
     setTutorialStep(0); // Reinicia o tutorial do início
   };
+   const renderSociosText = () => {
+    const socios = [];
+    if (newItem.nomesocio1) socios.push(`seu sócio administrador ${newItem.nomesocio1}`);
+    if (newItem.nomesocio2) socios.push(`seu sócio diretor ${newItem.nomesocio2}`);
+    if (newItem.nomesocio3) socios.push(`seu sócio ${newItem.nomesocio3}`);
+
+    if (socios.length === 0) return 'representado neste ato por seu representante legal';
+    
+    return `representado neste ato por ${socios.join(', ')}`;
+  };
+
+ const renderSignatureBlocks = () => {
+    const blocks = [];
+    
+    if (newItem.nomesocio1) {
+      blocks.push(
+        <div key="socio1" className={classes.signatureSection}>
+          {newItem.signature && (
+            <img src={newItem.signature} alt="Assinatura do Cliente" style={{ maxWidth: '300px' }} />
+          )}
+          <div className={classes.signatureBlock}>
+            Assinatura do sócio ou Responsável
+            <br />{newItem.nomesocio1}
+            <br />{newItem.cpfsocio1}
+            <br />{newItem.cargo}
+          </div>
+        </div>
+      );
+    }
+
+    if (newItem.nomesocio2) {
+      blocks.push(
+        <div key="socio2" className={classes.signatureSection}>
+          {newItem.signature && (
+            <img src={newItem.signature} alt="Assinatura do Cliente" style={{ maxWidth: '300px' }} />
+          )}
+          <div className={classes.signatureBlock}>
+            Assinatura do sócio ou Responsável
+            <br />{newItem.nomesocio2}
+            <br />{newItem.cpfsocio2}
+            <br />{newItem.cargo2}
+          </div>
+        </div>
+      );
+    }
+
+    return blocks;
+  };
+
+
 
   return (
-    <div className={`${classes.formContainer} ${classes.noPrint}`}>
+     <div className={`${classes.formContainer} ${classes.noPrint}`}>
       <Paper className={classes.formContainer}>
         <div id="pdf-content" style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
           <Paper className={classes.paper}>
             <div className={classes.header2}>
-              <Typography className={classes.title1}>Detran</Typography>
-        
-              <Typography className={classes.subtitle}>Departamento Estadual de Trânsito</Typography>
-          
+              <Typography component="h1" className={classes.title1}>Detran</Typography>
+              <Typography component="p" className={classes.subtitle}>Departamento Estadual de Trânsito</Typography>
             </div>
 
-            <Typography className={classes.title2} style={{ textAlign: 'center' }}>
-            Termo de Anuência 
+            <Typography component="h2" className={classes.title2} style={{ textAlign: 'center' }}>
+              Termo de Anuência 
             </Typography>
-            <Typography className={classes.field2} style={{ marginTop: '20px' }}>
+            
+            <Typography component="div" className={classes.field2} style={{ marginTop: '20px' }}>
               A <strong>empresa</strong>, {newItem.nomeempresa}, inscrita no CNPJ sob o nº, {newItem.cnpjempresa}, com sede localizada à 
-             <strong>CEP:</strong> {newItem.cepempresa}
-            <strong>Endereço:</strong> {newItem.enderecoempresa}
-           <strong>Bairro:</strong> {newItem.bairroempresa}
-            <strong>Município:</strong> {newItem.municipioempresa}
-            <strong>Estado:</strong> {newItem.complementoempresa}, representado neste ato por seu socio administrador {newItem.nomesocio1} , e seu socio Diretor {newItem.nomesocio2} , vem por meio deste, declarar que está ciente e anuente com a solicitação de baixa permanente do veículo de sua propriedade, conforme dados abaixo:
-            <Typography className={classes.field}><strong>Placa:</strong> {newItem.id}</Typography>
-            <Typography className={classes.field}><strong>Modelo:</strong> {newItem.modelo}</Typography>
-            <Typography className={classes.field}><strong>Chassi:</strong> {newItem.chassi}</Typography>
-            <Typography className={classes.field}><strong>Renavam:</strong> {newItem.renavam}</Typography>
-            
-           
-            
+              <br /><strong>CEP:</strong> {newItem.cepempresa}
+              <br /><strong>Endereço:</strong> {newItem.enderecoempresa}
+              <br /><strong>Bairro:</strong> {newItem.bairroempresa}
+              <br /><strong>Município:</strong> {newItem.municipioempresa}
+              <br /><strong>Estado:</strong> {newItem.complementoempresa}, {renderSociosText()}, vem por meio deste, declarar que está ciente e anuente com a solicitação de baixa permanente do veículo de sua propriedade, conforme dados abaixo:
+              <Typography component="div" className={classes.field}><strong>Placa:</strong> {newItem.id}</Typography>
+              <Typography component="div" className={classes.field}><strong>Modelo:</strong> {newItem.modelo}</Typography>
+              <Typography component="div" className={classes.field}><strong>Chassi:</strong> {newItem.chassi}</Typography>
+              <Typography component="div" className={classes.field}><strong>Renavam:</strong> {newItem.renavam}</Typography>
             </Typography>
 
-            <Typography className={classes.field2} style={{ marginTop: '20px' }}>
-            A empresa declara ainda que a baixa do referido veículo será realizada conforme as normas e procedimentos vigentes estabelecidos pelo DETRAN/SC, 
-            estando ciente de que, uma vez efetuada a baixa permanente, o veículo não poderá retornar à circulação.</Typography>
-            <strong>Nestes termos, pede deferimento.</strong>
-            <strong>Município:</strong> {newItem.municipioempresa} em {formatDate(newItem.dataCriacao)}, para o <strong>empresa</strong> conforme indicado acima.
-      
-            {newItem.signature && (
-              <div className={classes.signatureSection}>
-                <img src={newItem.signature} alt="Assinatura do Cliente" style={{ maxWidth: '300px' }} />
-              </div>
-            )}
+            <Typography component="div" className={classes.field2} style={{ marginTop: '20px' }}>
+              A empresa declara ainda que a baixa do referido veículo será realizada conforme as normas e procedimentos vigentes estabelecidos pelo DETRAN/SC, 
+              estando ciente de que, uma vez efetuada a baixa permanente, o veículo não poderá retornar à circulação.
+              <br /><strong>Nestes termos, pede deferimento.</strong>
+              <br /><strong>Município:</strong> {newItem.municipioempresa} em {formatDate(newItem.dataCriacao)}, para o <strong>empresa</strong> conforme indicado acima.
+            </Typography>
 
-            <div className={classes.signatureSection}>
-              <div className={classes.signatureBlock}>
-                Assinatura do socio ou Responsável
-                      {newItem.nomesocio1}
-                      {newItem.cpfsocio1}
-                      {newItem.cargo}
-              </div>
-            </div>
+            {renderSignatureBlocks()}
 
-            {newItem.signature && (
-              <div className={classes.signatureSection}>
-                <img src={newItem.signature} alt="Assinatura do Cliente" style={{ maxWidth: '300px' }} />
-              </div>
-            )}
-
-            <div className={classes.signatureSection}>
-              <div className={classes.signatureBlock}>
-                Assinatura do socio ou Responsável
-                {newItem.nomesocio2}
-                {newItem.cpfsocio2}
-                      {newItem.cargo2}
-              </div>
-            </div>
-
-            <Typography className={classes.sectionTitle4}>b3certificacao@gmail.com</Typography>
-           
-            </Paper>
-</div>
+            <Typography component="div" className={classes.sectionTitle4}>b3certificacao@gmail.com</Typography>
+          </Paper>
+        </div>
 
         <div className={classes.header}>
           <img src="/betologo.jpg" alt="Logo" className={classes.logo} />
-          <Typography variant="h4" className={classes.title}>
-          Termo de Anuência 
+          <Typography variant="h4" component="h1" className={classes.title}>
+            Termo de Anuência 
           </Typography>
         </div>
+
   
         <Grid container spacing={3}>
 
@@ -1230,13 +1254,13 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     margin="normal"
     helperText="Ex: Gerente, Diretor, Representante Legal"
   />
-          </Grid>]
+          </Grid>
           <Grid item xs={12} md={3}>
             <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Responsável Legal 2</Typography>
             <TextField
               name="cpfsocio2"
               label="CPF"
-              value={formatCpfCnpj(newItem.cpfsocio1 || '')}
+              value={formatCpfCnpj(newItem.cpfsocio2 || '')}
               onChange={(e) => {
                 const rawValue = e.target.value.replace(/\D/g, '');
                 handleInputChange({
@@ -1246,18 +1270,18 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
                     name: 'cpfsocio2',
                     value: rawValue
                   }
-                }, 'cpfsocio1');
+                }, 'cpfsocio2');
               }}
               fullWidth
               variant="outlined"
               className={classes.textField}
               margin="normal"
-              error={!!newItem.cpfsocio1 && !isValidCpfCnpj(newItem.cpfsocio1)}
-              helperText={!!newItem.cpfsocio1 && !isValidCpfCnpj(newItem.cpfsocio1)
+              error={!!newItem.cpfsocio2 && !isValidCpfCnpj(newItem.cpfsocio2)}
+              helperText={!!newItem.cpfsocio2 && !isValidCpfCnpj(newItem.cpfsocio2)
                 ? 'CPF inválido'
                 : ''}
               InputProps={{
-                endAdornment: isLoadingSearch && newItem.cpfsocio1?.length === 11 ? (
+                endAdornment: isLoadingSearch && newItem.cpfsocio2?.length === 11 ? (
                   <CircularProgress size={24} />
                 ) : null,
               }}
@@ -1265,7 +1289,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
   
             <TextField
               label="Nome"
-              value={newItem.nomesocio1 || ''}
+              value={newItem.nomesocio2 || ''}
               onChange={(e) => handleInputChange(e, 'nomesocio2')}
               fullWidth
               variant="outlined"
@@ -1277,6 +1301,59 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     label="Cargo"
     value={newItem.cargo || ''}
     onChange={(e) => handleInputChange(e, 'cargo2')}
+    fullWidth
+    variant="outlined"
+    className={classes.textField}
+    margin="normal"
+    helperText="Ex: Gerente, Diretor, Representante Legal"
+  />
+          </Grid>
+           <Grid item xs={12} md={3}>
+            <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Responsável Legal 3</Typography>
+            <TextField
+              name="cpfsocio3"
+              label="CPF"
+              value={formatCpfCnpj(newItem.cpfsocio3 || '')}
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/\D/g, '');
+                handleInputChange({
+                  ...e,
+                  target: {
+                    ...e.target,
+                    name: 'cpfsocio3',
+                    value: rawValue
+                  }
+                }, 'cpfsocio3');
+              }}
+              fullWidth
+              variant="outlined"
+              className={classes.textField}
+              margin="normal"
+              error={!!newItem.cpfsocio3 && !isValidCpfCnpj(newItem.cpfsocio3)}
+              helperText={!!newItem.cpfsocio3 && !isValidCpfCnpj(newItem.cpfsocio3)
+                ? 'CPF inválido'
+                : ''}
+              InputProps={{
+                endAdornment: isLoadingSearch && newItem.cpfsocio3?.length === 11 ? (
+                  <CircularProgress size={24} />
+                ) : null,
+              }}
+            />
+  
+            <TextField
+              label="Nome"
+              value={newItem.nomesocio3 || ''}
+              onChange={(e) => handleInputChange(e, 'nomesocio3')}
+              fullWidth
+              variant="outlined"
+              className={classes.textField}
+              margin="normal"
+              helperText="Preencha manualmente se a consulta automática falhar"
+            />
+             <TextField
+    label="Cargo"
+    value={newItem.cargo || ''}
+    onChange={(e) => handleInputChange(e, 'cargo3')}
     fullWidth
     variant="outlined"
     className={classes.textField}
@@ -1579,4 +1656,4 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
   );
 };
 
-export default ListPost;
+export default ListPost; 

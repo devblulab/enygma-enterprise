@@ -19,7 +19,7 @@ interface Item {
 
     valordevenda:  string;
    bairroempresa: string,
-    
+    cargo3:string,
    cargo:string,
    nomesocio1: string,
     cpfsocio1: string,
@@ -31,7 +31,9 @@ interface Item {
     celtelsocio1: string,
     cargo2:string,
    nomesocio2: string,
+   nomesocio3: string,
     cpfsocio2: string,
+    cpfsocio3: string,
     enderecosocio2: string,
     complementosocio2: string,
     municipiosocio2: string,
