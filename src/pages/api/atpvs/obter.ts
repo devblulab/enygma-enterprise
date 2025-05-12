@@ -26,7 +26,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ error: true, message: 'ATPV não encontrada.' });
     }
 
-    return res.status(200).json({ atpv: { id: snap.id, ...snap.data() } });
+    const data = snap.data() || {};
+
+    return res.status(200).json({ atpv: { id: snap.id, ...data } });
   } catch (error) {
     console.error('Erro ao buscar ATPV por ID:', error);
     return res.status(500).json({ error: true, message: 'Erro interno ao obter ATPV.' });
