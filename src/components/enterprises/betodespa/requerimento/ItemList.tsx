@@ -204,10 +204,11 @@ const CatalagoList: React.FC<ItemListProps> = () => {
   ? items.filter((item) => {
       const searchLower = searchText.toLowerCase();
       return (
-        item.nomevendedor.toLowerCase().includes(searchLower) ||
-        item.nomecomprador.toLowerCase().includes(searchLower) ||
-        item.id.toLowerCase().includes(searchLower) ||
-        item.renavam.toLowerCase().includes(searchLower)
+        (item.nomevendedor ?? '').toLowerCase().includes(searchLower) ||
+(item.nomecomprador ?? '').toLowerCase().includes(searchLower) ||
+(item.id ?? '').toLowerCase().includes(searchLower) ||
+(item.renavam ?? '').toLowerCase().includes(searchLower)
+
       );
     })
   : [];
