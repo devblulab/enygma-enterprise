@@ -463,17 +463,18 @@ const Dashboard = () => {
   }, []);
 
   // Filtra os documentos quando o texto de pesquisa muda
-  useEffect(() => {
-    if (searchText.length >= 5) {
-      const filtered = documents.filter(doc => 
-        doc.nomeempresa.toLowerCase().includes(searchText.toLowerCase()) ||
-        doc.cnpjempresa.includes(searchText)
-      );
-      setFilteredDocuments(filtered);
-    } else {
-      setFilteredDocuments([]);
-    }
-  }, [searchText, documents]);
+ useEffect(() => {
+  if (searchText.length >= 5) {
+    const filtered = documents.filter(doc => 
+      (doc.nomeempresa ?? '').toLowerCase().includes(searchText.toLowerCase()) ||
+      (doc.cnpjempresa ?? '').includes(searchText)
+    );
+    setFilteredDocuments(filtered);
+  } else {
+    setFilteredDocuments([]);
+  }
+}, [searchText, documents]);
+
 
   const generatePDF = async () => {
     const input = document.getElementById('pdf-content');
