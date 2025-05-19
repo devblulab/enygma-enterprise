@@ -20,6 +20,9 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getCroppedImg } from './cropUtils';
 import { v4 as uuidv4 } from 'uuid';
 import { format } from 'date-fns';
+import { converterParaSGDW } from '@/util/converterParaSGDW';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '@/logic/firebase/config/app';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -555,13 +558,13 @@ const tutorialSteps = [
   },
   {
     id: 'seller',
-    title: 'Identificação do socio1',
-    content: 'Insira o CPF do socio1. Se válido, o nome será preenchido automaticamente. Caso contrário, preencha o Nome do socio1 manualmente.',
+    title: 'Identificação do Vendedor',
+    content: 'Insira o CPF do vendedor. Se válido, o nome será preenchido automaticamente. Caso contrário, preencha o Nome do Vendedor manualmente.',
   },
   {
     id: 'buyer',
-    title: 'Identificação do empresa',
-    content: 'Insira o CPF/CNPJ do empresa. Se válido, o nome é preenchido automaticamente. Insira o CEP para preenchimento automático de endereço, bairro, município e estado. Preencha manualmente se necessário.',
+    title: 'Identificação do Comprador',
+    content: 'Insira o CPF/CNPJ do comprador. Se válido, o nome é preenchido automaticamente. Insira o CEP para preenchimento automático de endereço, bairro, município e estado. Preencha manualmente se necessário.',
   },
   {
     id: 'applicant',
@@ -571,7 +574,7 @@ const tutorialSteps = [
   {
     id: 'signature',
     title: 'Assinatura do Cliente',
-    content: 'Use o painel de assinatura para fornecer a assinatura digital do socio1. Siga as instruções na tela.',
+    content: 'Use o painel de assinatura para fornecer a assinatura digital do vendedor. Siga as instruções na tela.',
   },
   {
     id: 'documents',
@@ -620,45 +623,28 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     placa: '',
     renavam: '',
     crv: '',
-    chassi: '',
-    cargo: '',
-    cargo2: '',
-    cargo3: '',
-    modelo: '',
     valordevenda: '',
-    nomesocio1: '',
-    cpfsocio1: '',
-    cpfsocio3: '',
-     nomesocio3: '',
-    enderecosocio1: '',
-    complementosocio1: '',
-    municipiosocio1: '',
-    emailsocio1: 'b3certificacao@gmail.com',
-    celtelsocio1: '',
-    cepsocio1: '',
-    nomesocio2: '',
-    cpfsocio2: '',
-    enderecosocio2: '',
-    complementosocio2: '',
-    municipiosocio2: '',
-    emailsocio2: 'b3certificacao@gmail.com',
-    celtelsocio2: '',
-    cepsocio2: '',
-    bairroempresa: '',
-    nomeempresa: '',
-    cpfempresa: '',
-    enderecoempresa: '',
-    complementoempresa: '',
-    municipioempresa: '',
-    emailempresa: 'b3certificacao@gmail.com',
-    celtelempresa: '',
-    
-    cepempresa: '',
+    nomevendedor: '',
+    cpfvendedor: '',
+    enderecovendedor: '',
+    complementovendedor: '',
+    municipiovendedor: '',
+    emailvendedor: 'b3certificacao@gmail.com',
+    bairrocomprador: '',
+    nomecomprador: '',
+    cpfcomprador: '',
+    enderecocomprador: '',
+    complementocomprador: '',
+    municipiocomprador: '',
+    emailcomprador: 'b3certificacao@gmail.com',
+    celtelcomprador: '',
+    cepvendedor: '',
+    cepcomprador: '',
     tipo: '',
     cnpjempresa: '',
-    
+    nomeempresa: '',
     dataCriacao: Timestamp.fromDate(new Date()),
-    
+    celtelvendedor: '',
     signature: '',
   });
 
@@ -770,10 +756,10 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
       if (!data.erro) {
         setNewItem(prev => ({
           ...prev,
-          enderecoempresa: data.logradouro,
-          municipioempresa: data.localidade,
-          bairroempresa: data.bairro,
-          complementoempresa: data.uf,
+          enderecocomprador: data.logradouro,
+          municipiocomprador: data.localidade,
+          bairrocomprador: data.bairro,
+          complementocomprador: data.uf,
         }));
       } else {
         console.error('CEP não encontrado');
@@ -833,7 +819,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
         value = formatarMoedaBrasileira(value);
       }
       
-      const camposCpfCnpj: (keyof Item)[] = ['cpfsocio1','cpfsocio2','cpfsocio3', 'cpfempresa', 'cnpjempresa'];
+      const camposCpfCnpj: (keyof Item)[] = ['cpfvendedor', 'cpfcomprador', 'cnpjempresa'];
       if (camposCpfCnpj.includes(field)) {
         const raw = value.replace(/\D/g, '');
         const formatado = formatCpfCnpj(raw);
@@ -846,22 +832,17 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
 
         if (isValidCpfCnpj(raw)) {
           const target =
-            field === 'cpfsocio1'
-              ? 'nomesocio1':
-               field === 'cpfsocio2'
-              ? 'nomesocio2'
-              :
-               field === 'cpfsocio3'
-              ? 'nomesocio3'
-              : field === 'cpfempresa'
-              ? 'nomeempresa'
+            field === 'cpfvendedor'
+              ? 'nomevendedor'
+              : field === 'cpfcomprador'
+              ? 'nomecomprador'
               : 'nomeempresa';
           
           debouncedSearch(raw, target, setNewItem);
         }
       }
 
-      if (field === 'cepempresa' && value.replace(/\D/g, '').length === 8) {
+      if (field === 'cepcomprador' && value.replace(/\D/g, '').length === 8) {
         fetchAddressFromCEP(value);
       }
 
@@ -927,14 +908,34 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
   
       console.log('Salvando item:', itemParaSalvar);
   
-      const itemSalvo = await colecao.salvar('Betodespachanteanuencia', itemParaSalvar);
+      const itemSalvo = await colecao.salvar('Betodespachanteintrncaodevendaoficial', itemParaSalvar);
+
+      // ✅ CONVERTER PARA FORMATO SGDW
+      
+
+
+// ...
+
+const jsonSGDW = converterParaSGDW(itemParaSalvar);
+console.log('📤 JSON pronto para SGDW:', jsonSGDW);
+
+// ✅ Salvar na coleção da Bludata
+await addDoc(collection(db, 'OrdensDeServicoBludata'), jsonSGDW);
+
+
   
       setItems(prev => [...prev, { ...itemParaSalvar, id: itemSalvo.id }]);
       const pdfURL = await generatePDF();
   
+      const numeroWhatsApp = '5548988449379';
+      const servicos = produtosSelecionados.length > 0 ? produtosSelecionados.join(', ') : 'Nenhum serviço selecionado';
+      const mensagemInicial = `Olá! Tudo certo, o requerimento foi preenchido!\n\n📌 *Placa:* ${newItem.id}\n🛠️ *Serviços:* ${servicos}\n📄 *Documento:* ${pdfURL}`;
+      
+      window.location.href = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagemInicial)}`;
+      
       generatePDF().then((pdfURL) => {
         if (pdfURL) {
-          
+          const mensagemComLink = `${mensagemInicial}\n📄 *Documento:* ${ pdfURL}`;
           console.log('PDF gerado:', pdfURL);
         }
       });
@@ -955,54 +956,37 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
   const resetForm = () => {
     setNewItem({
       id: '',
-    cliente: '',
-    status: 'Pendente',
-    quantidade: 0,
-    imagemUrls: [],
-    concluido: false,
-    placa: '',
-    renavam: '',
-    crv: '',
-    chassi: '',
-    cargo: '',
-    cargo2: '',
-    cargo3: '',
-    modelo: '',
-    valordevenda: '',
-    nomesocio1: '',
-    cpfsocio1: '',
-     cpfsocio3: '',
-    enderecosocio1: '',
-    complementosocio1: '',
-    municipiosocio1: '',
-    emailsocio1: 'b3certificacao@gmail.com',
-    celtelsocio1: '',
-    cepsocio1: '',
-    nomesocio2: '',
-    nomesocio3: '',
-    cpfsocio2: '',
-    enderecosocio2: '',
-    complementosocio2: '',
-    municipiosocio2: '',
-    emailsocio2: 'b3certificacao@gmail.com',
-    celtelsocio2: '',
-    cepsocio2: '',
-    bairroempresa: '',
-    nomeempresa: '',
-    cpfempresa: '',
-    enderecoempresa: '',
-    complementoempresa: '',
-    municipioempresa: '',
-    emailempresa: 'b3certificacao@gmail.com',
-    celtelempresa: '',
-    
-    cepempresa: '',
-    tipo: '',
-    cnpjempresa: '',
-    
-    dataCriacao: Timestamp.fromDate(new Date()),
-    
-    signature: '',
+      cliente: '',
+      status: 'Pendente',
+      quantidade: 0,
+      imagemUrls: [],
+      concluido: false,
+      placa: '',
+      renavam: '',
+      crv: '',
+      valordevenda: '',
+      nomevendedor: '',
+      cpfvendedor: '',
+      enderecovendedor: '',
+      complementovendedor: '',
+      municipiovendedor: '',
+      emailvendedor: 'b3certificacao@gmail.com',
+      bairrocomprador: '',
+      nomecomprador: '',
+      cpfcomprador: '',
+      enderecocomprador: '',
+      complementocomprador: '',
+      municipiocomprador: '',
+      emailcomprador: 'b3certificacao@gmail.com',
+      celtelcomprador: '',
+      cepvendedor: '',
+      cepcomprador: '',
+      tipo: '',
+      cnpjempresa: '',
+      nomeempresa: '',
+      dataCriacao: Timestamp.fromDate(new Date()),
+      celtelvendedor: '',
+      signature: '',
     });
     setFiles([]);
     setPreviewImage(null);
@@ -1057,104 +1041,79 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
     setShowTutorial(true);
     setTutorialStep(0); // Reinicia o tutorial do início
   };
-   const renderSociosText = () => {
-    const socios = [];
-    if (newItem.nomesocio1) socios.push(`seu sócio administrador ${newItem.nomesocio1}`);
-    if (newItem.nomesocio2) socios.push(`seu sócio diretor ${newItem.nomesocio2}`);
-    if (newItem.nomesocio3) socios.push(`seu sócio ${newItem.nomesocio3}`);
-
-    if (socios.length === 0) return 'representado neste ato por seu representante legal';
-    
-    return `representado neste ato por ${socios.join(', ')}`;
-  };
-
- const renderSignatureBlocks = () => {
-    const blocks = [];
-    
-    if (newItem.nomesocio1) {
-      blocks.push(
-        <div key="socio1" className={classes.signatureSection}>
-          {newItem.signature && (
-            <img src={newItem.signature} alt="Assinatura do Cliente" style={{ maxWidth: '300px' }} />
-          )}
-          <div className={classes.signatureBlock}>
-            Assinatura do sócio ou Responsável
-            <br />{newItem.nomesocio1}
-            <br />{newItem.cpfsocio1}
-            <br />{newItem.cargo}
-          </div>
-        </div>
-      );
-    }
-
-    if (newItem.nomesocio2) {
-      blocks.push(
-        <div key="socio2" className={classes.signatureSection}>
-          {newItem.signature && (
-            <img src={newItem.signature} alt="Assinatura do Cliente" style={{ maxWidth: '300px' }} />
-          )}
-          <div className={classes.signatureBlock}>
-            Assinatura do sócio ou Responsável
-            <br />{newItem.nomesocio2}
-            <br />{newItem.cpfsocio2}
-            <br />{newItem.cargo2}
-          </div>
-        </div>
-      );
-    }
-
-    return blocks;
-  };
-
-
 
   return (
-     <div className={`${classes.formContainer} ${classes.noPrint}`}>
+    <div className={`${classes.formContainer} ${classes.noPrint}`}>
       <Paper className={classes.formContainer}>
         <div id="pdf-content" style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
           <Paper className={classes.paper}>
             <div className={classes.header2}>
-              <Typography component="h1" className={classes.title1}>Detran</Typography>
-              <Typography component="p" className={classes.subtitle}>Departamento Estadual de Trânsito</Typography>
+              <Typography className={classes.title1}>Estado de Santa Catarina</Typography>
+              <Typography className={classes.subtitle}>Secretaria de Estado de Segurança Pública</Typography>
+              <Typography className={classes.subtitle}>Departamento Estadual de Trânsito</Typography>
+              <Typography className={classes.subtitle}>Diretoria de Veículo</Typography>
             </div>
 
-            <Typography component="h2" className={classes.title2} style={{ textAlign: 'center' }}>
-              Termo de Anuência 
-            </Typography>
-            
-            <Typography component="div" className={classes.field2} style={{ marginTop: '20px' }}>
-              A <strong>empresa</strong>, {newItem.nomeempresa}, inscrita no CNPJ sob o nº, {newItem.cnpjempresa}, com sede localizada à 
-              <br /><strong>CEP:</strong> {newItem.cepempresa}
-              <br /><strong>Endereço:</strong> {newItem.enderecoempresa}
-              <br /><strong>Bairro:</strong> {newItem.bairroempresa}
-              <br /><strong>Município:</strong> {newItem.municipioempresa}
-              <br /><strong>Estado:</strong> {newItem.complementoempresa}, {renderSociosText()}, vem por meio deste, declarar que está ciente e anuente com a solicitação de baixa permanente do veículo de sua propriedade, conforme dados abaixo:
-              <Typography component="div" className={classes.field}><strong>Placa:</strong> {newItem.id}</Typography>
-              <Typography component="div" className={classes.field}><strong>Modelo:</strong> {newItem.modelo}</Typography>
-              <Typography component="div" className={classes.field}><strong>Chassi:</strong> {newItem.chassi}</Typography>
-              <Typography component="div" className={classes.field}><strong>Renavam:</strong> {newItem.renavam}</Typography>
+            <Typography className={classes.title2} style={{ textAlign: 'center' }}>
+              Requerimento de Intenção de Venda
             </Typography>
 
-            <Typography component="div" className={classes.field2} style={{ marginTop: '20px' }}>
-              A empresa declara ainda que a baixa do referido veículo será realizada conforme as normas e procedimentos vigentes estabelecidos pelo DETRAN/SC, 
-              estando ciente de que, uma vez efetuada a baixa permanente, o veículo não poderá retornar à circulação.
-              <br /><strong>Nestes termos, pede deferimento.</strong>
-              <br /><strong>Município:</strong> {newItem.municipioempresa} em {formatDate(newItem.dataCriacao)}, para o <strong>empresa</strong> conforme indicado acima.
+            <Typography className={classes.sectionTitle2}>Identificação do Veículo</Typography>
+            <Typography className={classes.field}><strong>Placa:</strong> {newItem.id}</Typography>
+            <Typography className={classes.field}><strong>Renavam:</strong> {newItem.renavam}</Typography>
+            <Typography className={classes.field}><strong>CRV:</strong> {newItem.crv}</Typography>
+            <Typography className={classes.field}><strong>Valor de Venda:</strong> R$ {newItem.valordevenda}</Typography>
+
+            <Typography className={classes.sectionTitle2}>Identificação do Vendedor</Typography>
+            <Typography className={classes.field}><strong>Nome:</strong> {newItem.nomevendedor}</Typography>
+            <Typography className={classes.field}><strong>CPF/CNPJ:</strong> {newItem.cpfvendedor}</Typography>
+            <Typography className={classes.field}><strong>E-mail:</strong> {newItem.emailvendedor}</Typography>
+
+            <Typography className={classes.sectionTitle2}>Identificação do Comprador</Typography>
+            <Typography className={classes.field}><strong>Nome:</strong> {newItem.nomecomprador}</Typography>
+            <Typography className={classes.field}><strong>CPF/CNPJ:</strong> {newItem.cpfcomprador}</Typography>
+            <Typography className={classes.field}><strong>CEP:</strong> {newItem.cepcomprador}</Typography>
+            <Typography className={classes.field}><strong>Endereço:</strong> {newItem.enderecocomprador}</Typography>
+            <Typography className={classes.field}><strong>Bairro:</strong> {newItem.bairrocomprador}</Typography>
+            <Typography className={classes.field}><strong>Município:</strong> {newItem.municipiocomprador}</Typography>
+            <Typography className={classes.field}><strong>Estado:</strong> {newItem.complementocomprador}</Typography>
+            <Typography className={classes.field}><strong>E-mail:</strong> {newItem.emailcomprador}</Typography>
+            <Typography className={classes.field}><strong>CEL/TEL:</strong> {newItem.celtelcomprador}</Typography>
+
+            <Typography className={classes.field2} style={{ marginTop: '20px' }}>
+              Eu <strong>VENDEDOR</strong>, com base na Resolução do CONTRAN nº 809, de 15 de dezembro 2020,
+              informo ao Departamento Estadual de Trânsito de Santa Catarina (DETRAN-SC) a,
+              <strong>INTENÇÃO DE VENDA</strong> em {formatDate(newItem.dataCriacao)}, para o <strong>COMPRADOR</strong> conforme indicado acima.
             </Typography>
 
-            {renderSignatureBlocks()}
+            {newItem.signature && (
+              <div className={classes.signatureSection}>
+                <img src={newItem.signature} alt="Assinatura do Cliente" style={{ maxWidth: '300px' }} />
+              </div>
+            )}
 
-            <Typography component="div" className={classes.sectionTitle4}>b3certificacao@gmail.com</Typography>
-          </Paper>
-        </div>
+            <div className={classes.signatureSection}>
+              <div className={classes.signatureBlock}>
+                Assinatura do Vendedor ou Responsável
+              </div>
+            </div>
+
+            <Typography className={classes.sectionTitle4}>b3certificacao@gmail.com</Typography>
+            <Typography className={classes.sectionTitle3}>Documentação Básica</Typography>
+            <Typography className={classes.field3}>Pessoa Física: Cópia da CNH ou RG/CPF</Typography>
+            <Typography className={classes.field3}>Pessoa Jurídica: Cópia do ato constitutivo e Cartão CNPJ</Typography>
+            <Typography className={classes.field3}>
+              Obs: Cópia autenticada de procuração e cópia da CNH ou RG/CPF do procurador caso solicitado por terceiro.
+            </Typography>
+            </Paper>
+</div>
 
         <div className={classes.header}>
           <img src="/betologo.jpg" alt="Logo" className={classes.logo} />
-          <Typography variant="h4" component="h1" className={classes.title}>
-            Termo de Anuência 
+          <Typography variant="h4" className={classes.title}>
+            Requerimento de Intenção de Venda
           </Typography>
         </div>
-
   
         <Grid container spacing={3}>
 
@@ -1181,9 +1140,8 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
               [
                 { label: 'Placa', value: 'id' },
                 { label: 'Renavam', value: 'renavam' },
-                { label: 'Marca/Modelo', value: 'modelo' },
-                { label: 'Chassi', value: 'chassi' },
-               
+                { label: 'CRV', value: 'crv' },
+                { label: 'Valor de Venda', value: 'valordevenda', type: 'text' },
               ] as Array<{ label: string; value: keyof Item; type?: string }>
             ).map((field) => (
               <TextField
@@ -1201,179 +1159,63 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
             ))}
           </Grid>
   
-          {/* Seção socio1 - Updated with enhanced CPF field */}
+          {/* Seção Vendedor - Updated with enhanced CPF field */}
           <Grid item xs={12} md={3}>
-            <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Responsável Legal</Typography>
+            <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Vendedor</Typography>
             <TextField
-              name="cpfsocio1"
+              name="cpfvendedor"
               label="CPF"
-              value={formatCpfCnpj(newItem.cpfsocio1 || '')}
+              value={formatCpfCnpj(newItem.cpfvendedor || '')}
               onChange={(e) => {
                 const rawValue = e.target.value.replace(/\D/g, '');
                 handleInputChange({
                   ...e,
                   target: {
                     ...e.target,
-                    name: 'cpfsocio1',
+                    name: 'cpfvendedor',
                     value: rawValue
                   }
-                }, 'cpfsocio1');
+                }, 'cpfvendedor');
               }}
               fullWidth
               variant="outlined"
               className={classes.textField}
               margin="normal"
-              error={!!newItem.cpfsocio1 && !isValidCpfCnpj(newItem.cpfsocio1)}
-              helperText={!!newItem.cpfsocio1 && !isValidCpfCnpj(newItem.cpfsocio1)
+              error={!!newItem.cpfvendedor && !isValidCpfCnpj(newItem.cpfvendedor)}
+              helperText={!!newItem.cpfvendedor && !isValidCpfCnpj(newItem.cpfvendedor)
                 ? 'CPF inválido'
                 : ''}
               InputProps={{
-                endAdornment: isLoadingSearch && newItem.cpfsocio1?.length === 11 ? (
+                endAdornment: isLoadingSearch && newItem.cpfvendedor?.length === 11 ? (
                   <CircularProgress size={24} />
                 ) : null,
               }}
             />
   
             <TextField
-              label="Nome"
-              value={newItem.nomesocio1 || ''}
-              onChange={(e) => handleInputChange(e, 'nomesocio1')}
+              label="Nome do Vendedor"
+              value={newItem.nomevendedor || ''}
+              onChange={(e) => handleInputChange(e, 'nomevendedor')}
               fullWidth
               variant="outlined"
               className={classes.textField}
               margin="normal"
               helperText="Preencha manualmente se a consulta automática falhar"
             />
-             <TextField
-    label="Cargo"
-    value={newItem.cargo || ''}
-    onChange={(e) => handleInputChange(e, 'cargo')}
-    fullWidth
-    variant="outlined"
-    className={classes.textField}
-    margin="normal"
-    helperText="Ex: Gerente, Diretor, Representante Legal"
-  />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Responsável Legal 2</Typography>
-            <TextField
-              name="cpfsocio2"
-              label="CPF"
-              value={formatCpfCnpj(newItem.cpfsocio2 || '')}
-              onChange={(e) => {
-                const rawValue = e.target.value.replace(/\D/g, '');
-                handleInputChange({
-                  ...e,
-                  target: {
-                    ...e.target,
-                    name: 'cpfsocio2',
-                    value: rawValue
-                  }
-                }, 'cpfsocio2');
-              }}
-              fullWidth
-              variant="outlined"
-              className={classes.textField}
-              margin="normal"
-              error={!!newItem.cpfsocio2 && !isValidCpfCnpj(newItem.cpfsocio2)}
-              helperText={!!newItem.cpfsocio2 && !isValidCpfCnpj(newItem.cpfsocio2)
-                ? 'CPF inválido'
-                : ''}
-              InputProps={{
-                endAdornment: isLoadingSearch && newItem.cpfsocio2?.length === 11 ? (
-                  <CircularProgress size={24} />
-                ) : null,
-              }}
-            />
-  
-            <TextField
-              label="Nome"
-              value={newItem.nomesocio2 || ''}
-              onChange={(e) => handleInputChange(e, 'nomesocio2')}
-              fullWidth
-              variant="outlined"
-              className={classes.textField}
-              margin="normal"
-              helperText="Preencha manualmente se a consulta automática falhar"
-            />
-             <TextField
-    label="Cargo"
-    value={newItem.cargo || ''}
-    onChange={(e) => handleInputChange(e, 'cargo2')}
-    fullWidth
-    variant="outlined"
-    className={classes.textField}
-    margin="normal"
-    helperText="Ex: Gerente, Diretor, Representante Legal"
-  />
-          </Grid>
-           <Grid item xs={12} md={3}>
-            <Typography variant="h6" className={classes.sectionTitle}>Identificação Do Responsável Legal 3</Typography>
-            <TextField
-              name="cpfsocio3"
-              label="CPF"
-              value={formatCpfCnpj(newItem.cpfsocio3 || '')}
-              onChange={(e) => {
-                const rawValue = e.target.value.replace(/\D/g, '');
-                handleInputChange({
-                  ...e,
-                  target: {
-                    ...e.target,
-                    name: 'cpfsocio3',
-                    value: rawValue
-                  }
-                }, 'cpfsocio3');
-              }}
-              fullWidth
-              variant="outlined"
-              className={classes.textField}
-              margin="normal"
-              error={!!newItem.cpfsocio3 && !isValidCpfCnpj(newItem.cpfsocio3)}
-              helperText={!!newItem.cpfsocio3 && !isValidCpfCnpj(newItem.cpfsocio3)
-                ? 'CPF inválido'
-                : ''}
-              InputProps={{
-                endAdornment: isLoadingSearch && newItem.cpfsocio3?.length === 11 ? (
-                  <CircularProgress size={24} />
-                ) : null,
-              }}
-            />
-  
-            <TextField
-              label="Nome"
-              value={newItem.nomesocio3 || ''}
-              onChange={(e) => handleInputChange(e, 'nomesocio3')}
-              fullWidth
-              variant="outlined"
-              className={classes.textField}
-              margin="normal"
-              helperText="Preencha manualmente se a consulta automática falhar"
-            />
-             <TextField
-    label="Cargo"
-    value={newItem.cargo || ''}
-    onChange={(e) => handleInputChange(e, 'cargo3')}
-    fullWidth
-    variant="outlined"
-    className={classes.textField}
-    margin="normal"
-    helperText="Ex: Gerente, Diretor, Representante Legal"
-  />
           </Grid>
   
           <Grid item xs={12} md={6} lg={3}>
-            <Typography variant="h6" className={classes.sectionTitle}>Identificação Da Empresa</Typography>
+            <Typography variant="h6" className={classes.sectionTitle}>Identificação do Comprador</Typography>
             {(
               [
-                { label: 'CPF/CNPJ', value: 'cpfempresa' },
-                { label: 'NOME', value: 'nomeempresa' },
-                { label: 'CEP', value: 'cepempresa' },
-                { label: 'ENDEREÇO/NUMERO', value: 'enderecoempresa' },
-                { label: 'BAIRRO', value: 'bairroempresa' },
-                { label: 'MUNICÍPIO', value: 'municipioempresa' },
-                { label: 'ESTADO', value: 'complementoempresa' },
-                { label: 'CEL/TEL', value: 'celtelempresa' },
+                { label: 'CPF', value: 'cpfcomprador' },
+                { label: 'NOME', value: 'nomecomprador' },
+                { label: 'CEP', value: 'cepcomprador' },
+                { label: 'ENDEREÇO/NUMERO', value: 'enderecocomprador' },
+                { label: 'BAIRRO', value: 'bairrocomprador' },
+                { label: 'MUNICÍPIO', value: 'municipiocomprador' },
+                { label: 'ESTADO', value: 'complementocomprador' },
+                { label: 'CEL/TEL', value: 'celtelcomprador' },
               ] as Array<{ label: string; value: keyof Item }>
             ).map((field) => (
               <TextField
@@ -1434,6 +1276,15 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
             />
           </Grid>
   
+          {/* Seção Assinatura */}
+          <Grid item xs={12}>
+            <div className={classes.signatureContainer}>
+              <Typography variant="h6" className={classes.sectionTitle}>
+                Assinatura do Cliente
+              </Typography>
+              <SignaturePad onSave={(signature) => setNewItem(prev => ({ ...prev, signature }))} />
+            </div>
+          </Grid>
   
           {/* Seção Documentos */}
           <Grid item xs={12}>
@@ -1656,4 +1507,4 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
   );
 };
 
-export default ListPost; 
+export default ListPost;
