@@ -13,29 +13,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method !== 'PUT') {
-    return res.status(405).json({ error: true, message: 'Método não permitido' });
+    return res.status(405).json({ error: true, message: 'Método não permitido. Use PUT.' });
   }
 
-  const { id } = req.query;
-  if (!id) {
-    return res.status(400).json({ error: true, message: 'ID não fornecido' });
-  }
+  const { id, status, errorCod, errorStr, pdfUrl } = req.body;
 
-  const { status, errorCod, errorStr, pdfUrl } = req.body;
+  if (!id || typeof id !== 'string') {
+    return res.status(400).json({ error: true, message: 'ID da ATPV não fornecido no corpo da requisição.' });
+  }
 
   try {
     const updates: any = {};
     if (status !== undefined) updates.status = status;
     if (errorCod !== undefined) updates.errorCod = errorCod;
     if (errorStr !== undefined) updates.errorStr = errorStr;
-    if (pdfUrl) updates.pdfUrl = pdfUrl;
+    if (pdfUrl !== undefined) updates.pdfUrl = pdfUrl;
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({ error: true, message: 'Nenhum campo válido enviado para atualização.' });
     }
 
-    await updateDoc(doc(db, 'OrdensDeServicoBludata', id as string), updates);
-    return res.status(200).json({ success: true, message: 'ATPV atualizada com sucesso' });
+    await updateDoc(doc(db, 'OrdensDeServicoBludata', id), updates);
+    return res.status(200).json({
+      success: true,
+      message: 'ATPV atualizada com sucesso',
+      id,
+      updates
+    });
 
   } catch (error) {
     console.error(error);

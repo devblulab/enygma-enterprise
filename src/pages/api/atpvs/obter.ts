@@ -12,10 +12,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: true, message: 'Não autorizado. Token inválido ou ausente.' });
   }
 
-  const { id } = req.query;
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: true, message: 'Método não permitido. Use POST.' });
+  }
+
+  const { id } = req.body;
 
   if (!id || typeof id !== 'string') {
-    return res.status(400).json({ error: true, message: 'ID inválido ou ausente na requisição.' });
+    return res.status(400).json({ error: true, message: 'ID inválido ou ausente no corpo da requisição.' });
   }
 
   try {
@@ -27,8 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const data = snap.data() || {};
-
     return res.status(200).json({ atpv: { id: snap.id, ...data } });
+
   } catch (error) {
     console.error('Erro ao buscar ATPV por ID:', error);
     return res.status(500).json({ error: true, message: 'Erro interno ao obter ATPV.' });
