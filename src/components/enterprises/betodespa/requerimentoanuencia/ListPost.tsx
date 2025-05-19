@@ -1392,7 +1392,7 @@ const ListPost: React.FC<{ setItems: React.Dispatch<React.SetStateAction<Item[]>
   
           <Grid item xs={12} md={3}>
             <Typography variant="h6" className={classes.sectionTitle}>Solicitante</Typography>
-  newItem.cargo
+  
             <TextField
               name="cnpjempresa"
               label="CPF/CNPJ"
