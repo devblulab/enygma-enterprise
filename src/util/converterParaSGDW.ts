@@ -6,7 +6,7 @@ export const converterParaSGDW = (item: any) => {
     renav: item.renavam?.trim() || '',
     chassi: '', // Se disponível
     valorNF: item.valordevenda?.trim() || '',
-    cliente: {
+    vendedor: {
       cpf: item.cpfvendedor?.replace(/\D/g, '') || '',
       nome: item.nomevendedor?.trim() || '',
       email: item.emailvendedor?.trim() || '',
