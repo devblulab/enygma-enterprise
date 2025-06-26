@@ -29,9 +29,15 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     minHeight: '100vh',
-    background: 'linear-gradient(135deg, #0A1A2F 0%, #1E3A5F 100%)',
+    background: 'linear-gradient(135deg, #fafbfc 0%, #f7fafc 100%)',
     padding: theme.spacing(3),
-    color: '#E0E7FF',
+    color: '#1a202c',
+    fontFamily: '"Playfair Display", "Crimson Text", "Libre Baskerville", "Georgia", serif',
+    '@media print': {
+      background: '#ffffff',
+      color: '#000000',
+      padding: 0,
+    },
     [theme.breakpoints.down('xs')]: {
       padding: theme.spacing(1.5),
     },
@@ -40,13 +46,23 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     gap: theme.spacing(3.5),
-    background: 'linear-gradient(145deg, rgba(30, 40, 60, 0.95) 0%, rgba(50, 70, 100, 0.85) 100%)',
+    background: 'rgba(255, 255, 255, 0.95)',
     maxWidth: '95vw',
     margin: '0 auto',
     padding: theme.spacing(4),
     borderRadius: '20px',
-    boxShadow: '0 10px 40px rgba(0, 10, 50, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.05)',
-    backdropFilter: 'blur(8px)',
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(45, 90, 61, 0.1)',
+    backdropFilter: 'blur(20px)',
+    border: '1px solid rgba(45, 90, 61, 0.1)',
+    '@media print': {
+      background: '#ffffff',
+      boxShadow: 'none',
+      border: 'none',
+      borderRadius: 0,
+      maxWidth: '100%',
+      margin: 0,
+      padding: theme.spacing(2),
+    },
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(2.5),
       gap: theme.spacing(2.5),
@@ -55,65 +71,98 @@ const useStyles = makeStyles((theme) => ({
   header: {
     display: 'flex',
     flexDirection: 'column',
-    background: 'linear-gradient(120deg, rgba(40, 50, 80, 0.9) 0%, rgba(10, 20, 40, 0.7) 100%)',
+    background: 'linear-gradient(135deg, #2d5a3d 0%, #4a7c59 100%)',
     alignItems: 'center',
     padding: theme.spacing(3),
     borderRadius: '20px',
-    boxShadow: '0 5px 20px rgba(0, 0, 0, 0.2)',
+    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     marginBottom: theme.spacing(4),
+    '@media print': {
+      background: '#ffffff',
+      boxShadow: 'none',
+      borderRadius: 0,
+      borderBottom: '2px solid #2d5a3d',
+    },
   },
   logo: {
     width: '90px',
     height: '90px',
     borderRadius: '50%',
     objectFit: 'cover',
-    border: '4px solid rgba(255, 255, 255, 0.2)',
-    boxShadow: '0 0 15px rgba(100, 150, 255, 0.5)',
+    border: '4px solid rgba(45, 90, 61, 0.2)',
+    boxShadow: '0 10px 15px -3px rgba(45, 90, 61, 0.3)',
     marginBottom: theme.spacing(2),
-    transition: 'transform 0.3s ease',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    '@media print': {
+      border: '2px solid #2d5a3d',
+      boxShadow: 'none',
+    },
     '&:hover': {
-      transform: 'scale(1.05)',
+      transform: 'translateY(-2px)',
+      boxShadow: '0 20px 25px -5px rgba(45, 90, 61, 0.4)',
     },
   },
   title: {
+    fontFamily: '"Playfair Display", serif',
     fontWeight: 800,
-    fontSize: '2rem',
-    color: '#fff',
+    fontSize: '2.5rem',
+    color: '#ffffff',
     textAlign: 'center',
-    background: 'linear-gradient(90deg, #5C7AEA 0%, #A3BFFA 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    textShadow: '0 2px 10px rgba(92, 122, 234, 0.5)',
+    textShadow: '0 2px 4px rgba(26, 54, 93, 0.3)',
     marginBottom: theme.spacing(1),
+    letterSpacing: '-0.02em',
+    '@media print': {
+      color: '#2d5a3d',
+      textShadow: 'none',
+      fontSize: '2rem',
+    },
   },
   sectionTitle: {
+    fontFamily: '"Playfair Display", serif',
     fontWeight: 700,
-    color: '#D6E4FF',
+    color: '#2d5a3d',
     marginBottom: theme.spacing(2),
     paddingBottom: theme.spacing(1),
-    borderBottom: '2px solid rgba(255, 255, 255, 0.1)',
-    letterSpacing: '0.5px',
+    borderBottom: '2px solid rgba(45, 90, 61, 0.2)',
+    letterSpacing: '-0.01em',
+    fontSize: '1.375rem',
+    '@media print': {
+      borderBottom: '1px solid #2d5a3d',
+    },
   },
   textField: {
+    fontFamily: '"Libre Baskerville", "Crimson Text", "Georgia", serif',
     '& .MuiOutlinedInput-root': {
-      borderRadius: '12px',
-      backgroundColor: 'rgba(255, 255, 255, 0.05)',
-      color: '#E0E7FF',
-      transition: 'all 0.3s ease',
+      borderRadius: '8px',
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      color: '#1a202c',
+      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+      fontFamily: 'inherit',
+      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+      '@media print': {
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
+        '& .MuiOutlinedInput-notchedOutline': {
+          border: '1px solid #000000',
+        },
+      },
       '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#A3BFFA',
+        borderColor: '#2d5a3d',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
       },
       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-        borderWidth: '1px',
-        borderColor: '#5C7AEA',
-        boxShadow: '0 0 10px rgba(92, 122, 234, 0.5)',
+        borderWidth: '2px',
+        borderColor: '#2d5a3d',
+        boxShadow: '0 0 0 3px rgba(45, 90, 61, 0.1)',
       },
     },
     '& .MuiInputLabel-outlined': {
-      color: 'rgba(255, 255, 255, 0.6)',
+      color: '#4a5568',
+      fontFamily: '"Playfair Display", serif',
+      fontWeight: 600,
     },
     '& .MuiInputLabel-outlined.Mui-focused': {
-      color: '#A3BFFA',
+      color: '#2d5a3d',
     },
   },
   button: {
@@ -130,12 +179,12 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   primaryButton: {
-    background: 'linear-gradient(90deg, #5C7AEA 0%, #A3BFFA 100%)',
+    background: 'linear-gradient(135deg, #2d5a3d 0%, #4a7c59 100%)',
     color: '#fff',
   },
   secondaryButton: {
-    border: '1px solid #A3BFFA',
-    color: '#A3BFFA',
+    border: '1px solid #6B8E23',
+    color: '#556B2F',
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
   },
   cameraButton: {
@@ -1124,12 +1173,16 @@ await addDoc(collection(db, 'OrdensDeServicoBludata'), jsonSGDW);
       <Button
         key={produto}
         variant={produtosSelecionados.includes(produto) ? 'contained' : 'outlined'}
-        color="primary"
         onClick={() => toggleProduto(produto)}
-        className={classes.button}
+        className={`${classes.button} ${
+          produtosSelecionados.includes(produto)
+            ? classes.primaryButton
+            : classes.secondaryButton
+        }`}
       >
         {produto}
       </Button>
+
     ))}
   </div>
 </Grid>
