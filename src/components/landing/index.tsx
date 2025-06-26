@@ -9,8 +9,7 @@ export default function Landing() {
     return (
         <Pagina externa>
             <Depoimentos/>
-            <Cabecalho />
-            <Rodape />
+
         </Pagina>
     )
 }
