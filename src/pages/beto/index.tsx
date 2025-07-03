@@ -138,7 +138,7 @@ const NavigationButtons: React.FC = memo(() => {
   const classes = useStyles();
   const videoRef = useRef<HTMLVideoElement>(null);
   const shouldReduceMotion = useReducedMotion();
-  const baseUrl = 'https://enygna-enterprises.com.br';
+  const baseUrl = 'https://betositeoficial.vercel.app';
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     'LOJA': false,
     'DIGITAL': false
