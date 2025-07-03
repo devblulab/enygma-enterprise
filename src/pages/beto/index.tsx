@@ -46,8 +46,8 @@ const NavigationButtons: React.FC = memo(() => {
       icon: <FaRocket />,
       items: [
         { href: 'https://betositeoficial.vercel.app/beto/requerimento', icon: <FaFileAlt />, label: 'Requerimento loja', premium: true },
-        { href: '/beto/dashboard', icon: <FaTachometerAlt />, label: 'Painel Executivo', premium: true, exclusive: true },
-        { href: '/beto/empresas', icon: <FaBars />, label: 'Centro Empresarial' },
+        { href: 'https://betositeoficial.vercel.app/beto/dashboard', icon: <FaTachometerAlt />, label: 'Painel Executivo', premium: true, exclusive: true },
+        { href: 'https://betositeoficial.vercel.app/beto/empresas', icon: <FaBars />, label: 'Centro Empresarial' },
       ],
     },
     {
@@ -55,9 +55,9 @@ const NavigationButtons: React.FC = memo(() => {
       color: 'from-green-600 to-emerald-700',
       icon: <FaMagic />,
       items: [
-        { href: '/beto/requerimento/digital', icon: <FaPhone />, label: 'Requerimento Digital', premium: true },
-        { href: '/beto/dashboard/digital', icon: <FaChartPie />, label: 'Painel Digital', premium: true, exclusive: true },
-        { href: '/beto/digital/empresas', icon: <FaUserTie />, label: 'Digital Empresarial' },
+        { href: 'https://betositeoficial.vercel.app/beto/requerimento/digital', icon: <FaPhone />, label: 'Requerimento Digital', premium: true },
+        { href: 'https://betositeoficial.vercel.app/beto/dashboard/digital', icon: <FaChartPie />, label: 'Painel Digital', premium: true, exclusive: true },
+        { href: 'https://betositeoficial.vercel.app/beto/digital/empresas', icon: <FaUserTie />, label: 'Digital Empresarial' },
       ],
     },
     {
@@ -65,8 +65,8 @@ const NavigationButtons: React.FC = memo(() => {
       color: 'from-amber-600 to-yellow-700',
       icon: <FaTrophy />,
       items: [
-        { href: '/beto/transferencia', icon: <FaStore />, label: 'Transferências', premium: true },
-        { href: '/beto/transferencia/dashboard', icon: <FaChartPie />, label: 'Painel Avançado', premium: true, exclusive: true },
+        { href: 'https://betositeoficial.vercel.app/beto/transferencia', icon: <FaStore />, label: 'Transferências', premium: true },
+        { href: 'https://betositeoficial.vercel.app/beto/transferencia/dashboard', icon: <FaChartPie />, label: 'Painel Avançado', premium: true, exclusive: true },
       ],
     },
     {
