@@ -45,7 +45,7 @@ const NavigationButtons: React.FC = memo(() => {
       color: 'from-emerald-600 to-teal-700',
       icon: <FaRocket />,
       items: [
-        { href: '/beto/requerimento', icon: <FaFileAlt />, label: 'Requerimento loja', premium: true },
+        { href: 'https://betositeoficial.vercel.app/beto/requerimento', icon: <FaFileAlt />, label: 'Requerimento loja', premium: true },
         { href: '/beto/dashboard', icon: <FaTachometerAlt />, label: 'Painel Executivo', premium: true, exclusive: true },
         { href: '/beto/empresas', icon: <FaBars />, label: 'Centro Empresarial' },
       ],
