@@ -1,0 +1,1 @@
+export const GLOBAL_NETWORK_LOGO_PATH = "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5zM30 20h-6v-4h6v4zm20 0h-6v-4h6v4zm20 0h-6v-4h6v4zm20 0h-6v-4h6v4zm20 0h-6v-4h6v4zM12 30h6v4h-6v-4zm20 0h6v4h-6v-4zm20 0h6v4h-6v-4zm20 0h6v4h-6v-4zm20 0h6v4h-6v-4z";
