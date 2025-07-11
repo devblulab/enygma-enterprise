@@ -1,5 +1,5 @@
 import Financas from "@/components/financas";
-import Landing from "@/app/app/page";
+import Landing from "@/app/app/app/page";
 import Carregando from "@/components/template/Carregando";
 import AutenticacaoContext from "@/data/contexts/AutenticacaoContext";
 import { useContext } from "react";
